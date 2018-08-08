@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsgBoard", "MsgBoard\MsgBoard.csproj", "{CDA18C62-903F-4832-83C0-2C2662073727}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashUtility", "HashUtility\HashUtility.csproj", "{BDA209D3-A955-4318-BD4E-9AA74D9DB785}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashUtilityTests", "HashUtilityTests\HashUtilityTests.csproj", "{32674B29-D6E4-4D0A-951F-21EAD4F79679}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{CDA18C62-903F-4832-83C0-2C2662073727}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDA18C62-903F-4832-83C0-2C2662073727}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDA18C62-903F-4832-83C0-2C2662073727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDA209D3-A955-4318-BD4E-9AA74D9DB785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA209D3-A955-4318-BD4E-9AA74D9DB785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA209D3-A955-4318-BD4E-9AA74D9DB785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA209D3-A955-4318-BD4E-9AA74D9DB785}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32674B29-D6E4-4D0A-951F-21EAD4F79679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32674B29-D6E4-4D0A-951F-21EAD4F79679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32674B29-D6E4-4D0A-951F-21EAD4F79679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32674B29-D6E4-4D0A-951F-21EAD4F79679}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
