@@ -1,12 +1,14 @@
 ﻿using System.IO;
-using System.Web;
 using System.Web.Mvc;
+using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
 
 namespace MsgBoard.Controllers
 {
     public class MemberController : Controller
     {
+        private readonly MemberService _service = new MemberService();
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -18,12 +20,11 @@ namespace MsgBoard.Controllers
         public ActionResult Create(MemberCreateViewModel model)
         {
             ViewBag.Title = "新增會員";
-            if (model.File.ContentLength > 0)
-            {
-                var fileName = Path.GetFileName(model.File.FileName);
-                var path = Path.Combine(Server.MapPath("~/FileUploads"), fileName);
-                model.File.SaveAs(path);
-            }
+
+            var fileName = Path.GetFileName(model.File.FileName);
+            var path = Path.Combine(Server.MapPath("~/FileUploads"), fileName);
+            _service.CreateMember(model, path);
+
             return RedirectToAction("Create");
         }
     }
