@@ -63,28 +63,33 @@ namespace MsgBoard.Controllers
         {
             ViewBag.Title = "新增會員";
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(model);
+
+            var isExistSameUser = _memberService.CheckUserExist(ConnectionFactory.GetConnection(), model.Mail);
+            if (isExistSameUser)
             {
-                using (var tranScope = new TransactionScope())
+                ModelState.AddModelError("SameUser", $"{model.Mail} 已被註冊，若忘記密碼請洽系統管理員。");
+                return View(model);
+            }
+
+            using (var tranScope = new TransactionScope())
+            {
+                using (var connection = ConnectionFactory.GetConnection())
                 {
-                    using (var connection = ConnectionFactory.GetConnection())
-                    {
-                        // Table User
-                        var fileName = _memberService.SaveMemberPic(model, Server.MapPath(FileUploadPath));
-                        var user = _memberService.ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
-                        var userId = _memberService.CreateUser(connection, user);
+                    // Table User
+                    var fileName = _memberService.SaveMemberPic(model, Server.MapPath(FileUploadPath));
+                    var user = _memberService.ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
+                    var userId = _memberService.CreateUser(connection, user);
 
-                        // Table Password
-                        var password = _memberService.ConvertToPassEntity(userId, user.Guid, model.Password);
-                        _memberService.CreatePassword(connection, password);
-                    }
-
-                    tranScope.Complete();
+                    // Table Password
+                    var password = _memberService.ConvertToPassEntity(userId, user.Guid, model.Password);
+                    _memberService.CreatePassword(connection, password);
                 }
 
-                return RedirectToAction("Index", "Post");
+                tranScope.Complete();
             }
-            return View(model);
+
+            return RedirectToAction("Index", "Post");
         }
     }
 }

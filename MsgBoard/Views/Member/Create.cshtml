@@ -6,7 +6,7 @@
 
     <div class="form-horizontal">
         <h4>@ViewBag.Title</h4>
-
+        @Html.Partial("_ModelStateError")
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -47,4 +47,13 @@
             </div>
         </div>
     </div>
+}
+@section scripts
+{
+    <script src="~/js/Shared/ModelStateError.js"></script>
+}
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
 }

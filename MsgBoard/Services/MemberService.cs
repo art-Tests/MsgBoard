@@ -178,5 +178,28 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
         {
             return @"select top 1 * from [dbo].[User] (nolock) where Mail=@email";
         }
+
+        /// <summary>
+        /// 檢查系統是否已經存在相同使用者帳號
+        /// </summary>
+        /// <param name="connection">The Connection</param>
+        /// <param name="email">會員Email</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool CheckUserExist(IDbConnection connection, string email)
+        {
+            var sqlCmd = GetCheckUserExistSqlCmd();
+            return connection.QueryFirstOrDefault<bool>(sqlCmd, new { email });
+        }
+
+        private string GetCheckUserExistSqlCmd()
+        {
+            return @"
+if exists(select top 1 * from [dbo].[User] (nolock) where Mail = @email)
+select 'true'
+else
+select 'false'
+";
+        }
     }
 }
