@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Web.Mvc;
-using MsgBoard.Models.Entity;
+﻿using System.Web.Mvc;
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
 using System.Transactions;
@@ -36,7 +33,17 @@ namespace MsgBoard.Controllers
             if (loginResult.Auth.Equals(false)) return View(model);
 
             // 登入成功
+            Session["auth"] = loginResult.Auth;
             Session["memberAreaData"] = loginResult;
+            return RedirectToAction("Index", "Post");
+        }
+
+        /// <summary>
+        /// 會員登出
+        /// </summary>
+        public ActionResult LogOut()
+        {
+            Session.RemoveAll();
             return RedirectToAction("Index", "Post");
         }
 
