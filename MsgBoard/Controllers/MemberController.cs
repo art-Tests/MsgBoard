@@ -1,13 +1,21 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Web.Mvc;
+using MsgBoard.Models.Entity;
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
+using System.Transactions;
 
 namespace MsgBoard.Controllers
 {
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
-        private readonly MemberService _service = new MemberService();
+        private readonly MemberService _memberService;
+
+        public MemberController()
+        {
+            _memberService = new MemberService();
+        }
 
         [HttpGet]
         public ActionResult Create()
@@ -21,11 +29,28 @@ namespace MsgBoard.Controllers
         {
             ViewBag.Title = "新增會員";
 
-            var fileName = Path.GetFileName(model.File.FileName);
-            var path = Path.Combine(Server.MapPath("~/FileUploads"), fileName);
-            _service.CreateMember(model, path);
+            if (ModelState.IsValid)
+            {
+                using (var tranScope = new TransactionScope())
+                {
+                    using (var connection = ConnectionFactory.GetConnection())
+                    {
+                        // Table User
+                        var fileName = _memberService.SaveMemberPic(model, Server.MapPath(FileUploadPath));
+                        var user = _memberService.ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
+                        var userId = _memberService.CreateUser(connection, user);
 
-            return RedirectToAction("Create");
+                        // Table Password
+                        var password = _memberService.ConvertToPassEntity(userId, user.Guid, model.Password);
+                        _memberService.CreatePassword(connection, password);
+                    }
+
+                    tranScope.Complete();
+                }
+
+                return RedirectToAction("Index", "Post");
+            }
+            return View(model);
         }
     }
 }

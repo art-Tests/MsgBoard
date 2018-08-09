@@ -13,7 +13,7 @@ namespace MsgBoard.ViewModel.Member
         /// 使用者大頭照
         /// </summary>
         [Required(ErrorMessage = "請上傳jpg圖檔")]
-        [FileExtensions(Extensions = "jpg", ErrorMessage = "圖片僅支援jpg格式")]
+        //[FileExtensions(Extensions = "jpg", ErrorMessage = "圖片僅支援jpg格式")]
         [DisplayName("頭像")]
         public HttpPostedFileBase File { get; set; }
 
