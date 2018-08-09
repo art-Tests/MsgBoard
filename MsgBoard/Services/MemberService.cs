@@ -5,13 +5,22 @@ using Dapper;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
+using MsgBoard.Models.Interface;
 using MsgBoard.ViewModel.Member;
 
 namespace MsgBoard.Services
 {
-    internal class MemberService
+    public class MemberService : IMemberService
     {
         private readonly HashTool _hashTool = new HashTool();
+        private IUserRepository _userRepo;
+        private IPasswordRepository _passwordRepo;
+
+        public MemberService()
+        {
+            _userRepo = new UserRepository();
+            _passwordRepo = new PasswordRepository();
+        }
 
         /// <summary>
         /// 新增會員資料
@@ -133,50 +142,16 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
         {
             var result = new UserLoginResult();
 
-            var user = FindUserByMail(connection, email);
+            var user = _userRepo.FindUserByMail(connection, email);
             if (user == null) return result;
 
-            var password = FindPasswordByUserId(connection, user.Id);
+            var password = _passwordRepo.FindPasswordByUserId(connection, user.Id);
             if (password == null) return result;
 
             var hashPassword = _hashTool.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
             result.User = user;
             return result;
-        }
-
-        /// <summary>
-        /// 依據UserId取得Password Entity
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <param name="userId">The user identifier.</param>
-        /// <returns></returns>
-        private Password FindPasswordByUserId(IDbConnection connection, int userId)
-        {
-            var sqlCmd = GetFindPasswordByUserIdSqlCmd();
-            return connection.QueryFirstOrDefault<Password>(sqlCmd, new { userId });
-        }
-
-        private string GetFindPasswordByUserIdSqlCmd()
-        {
-            return "select top 1 * from [dbo].[Password] (nolock) where UserId=@userId order by CreateTime desc";
-        }
-
-        /// <summary>
-        /// 依據會員Email取得User Entity
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <param name="email">會員Email</param>
-        /// <returns></returns>
-        private User FindUserByMail(IDbConnection connection, string email)
-        {
-            var sqlCmd = GetFindUserSqlCmd();
-            return connection.QueryFirstOrDefault<User>(sqlCmd, new { email });
-        }
-
-        private string GetFindUserSqlCmd()
-        {
-            return @"select top 1 * from [dbo].[User] (nolock) where Mail=@email";
         }
 
         /// <summary>
@@ -200,6 +175,24 @@ select 'true'
 else
 select 'false'
 ";
+        }
+
+        /// <summary>
+        /// 測試注入用的方法，用來設定UserRepository
+        /// </summary>
+        /// <param name="userRepo">The user repo.</param>
+        public void SetUserRepository(IUserRepository userRepo)
+        {
+            _userRepo = userRepo;
+        }
+
+        /// <summary>
+        /// 測試注入用的方法，用來設定PasswordRepository
+        /// </summary>
+        /// <param name="passRepo">The pass repo.</param>
+        public void SetPasswordRepository(IPasswordRepository passRepo)
+        {
+            _passwordRepo = passRepo;
         }
     }
 }

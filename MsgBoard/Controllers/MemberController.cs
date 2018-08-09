@@ -12,6 +12,7 @@ namespace MsgBoard.Controllers
         public MemberController()
         {
             _memberService = new MemberService();
+            _connFactory = new ConnectionFactory();
         }
 
         [HttpGet]
@@ -28,7 +29,7 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var connection = ConnectionFactory.GetConnection();
+            var connection = _connFactory.GetConnection();
             var loginResult = _memberService.CheckUserPassword(connection, model.Account, model.Password);
             if (loginResult.Auth.Equals(false))
             {
@@ -65,7 +66,7 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var isExistSameUser = _memberService.CheckUserExist(ConnectionFactory.GetConnection(), model.Mail);
+            var isExistSameUser = _memberService.CheckUserExist(_connFactory.GetConnection(), model.Mail);
             if (isExistSameUser)
             {
                 ModelState.AddModelError("SameUser", $"{model.Mail} 已被註冊，若忘記密碼請洽系統管理員。");
@@ -74,7 +75,7 @@ namespace MsgBoard.Controllers
 
             using (var tranScope = new TransactionScope())
             {
-                using (var connection = ConnectionFactory.GetConnection())
+                using (var connection = _connFactory.GetConnection())
                 {
                     // Table User
                     var fileName = _memberService.SaveMemberPic(model, Server.MapPath(FileUploadPath));
