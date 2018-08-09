@@ -3,6 +3,7 @@ using System.Data;
 using System.IO;
 using Dapper;
 using HashUtility.Services;
+using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.ViewModel.Member;
 
@@ -22,7 +23,7 @@ namespace MsgBoard.Services
         /// </returns>
         public int CreateUser(IDbConnection conn, User entity)
         {
-            var sqlCmd = GetCreateSqlCmd();
+            var sqlCmd = GetCreateUserSqlCmd();
             return conn.QueryFirstOrDefault<int>(sqlCmd, entity);
         }
 
@@ -30,7 +31,7 @@ namespace MsgBoard.Services
         /// 新增User的SQL
         /// </summary>
         /// <returns>Sql語句</returns>
-        private string GetCreateSqlCmd()
+        private string GetCreateUserSqlCmd()
         {
             return @"
 INSERT INTO [dbo].[User] ([Name], [Mail], [Pic], [Guid])
@@ -119,6 +120,63 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
                 UserId = userId,
                 HashPw = _hashTool.GetMemberHashPw(guid, userPass)
             };
+        }
+
+        /// <summary>
+        /// 登入帳密檢查
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="email">會員帳號(email)</param>
+        /// <param name="userPass">會員密碼</param>
+        /// <returns>返回會員登入結果</returns>
+        public UserLoginResult CheckUserPassword(IDbConnection connection, string email, string userPass)
+        {
+            var result = new UserLoginResult();
+
+            var user = FindUserByMail(connection, email);
+            if (user == null) return result;
+
+            var password = FindPasswordByUserId(connection, user.Id);
+            if (password == null) return result;
+
+            var hashPassword = _hashTool.GetMemberHashPw(user.Guid, userPass);
+            result.Auth = password.HashPw == hashPassword;
+            result.IsAdmin = user.IsAdmin;
+            return result;
+        }
+
+        /// <summary>
+        /// 依據UserId取得Password Entity
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns></returns>
+        private Password FindPasswordByUserId(IDbConnection connection, int userId)
+        {
+            var sqlCmd = GetFindPasswordByUserIdSqlCmd();
+            return connection.QueryFirstOrDefault<Password>(sqlCmd, new { userId });
+        }
+
+        private string GetFindPasswordByUserIdSqlCmd()
+        {
+            return "select top 1 * from [dbo].[Password] (nolock) where UserId=@userId order by CreateTime desc";
+        }
+
+        /// <summary>
+        /// 依據會員Email取得User Entity
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="email">會員Email</param>
+        /// <returns></returns>
+        private User FindUserByMail(IDbConnection connection, string email)
+        {
+            var sqlCmd = GetFindUserSqlCmd();
+            return connection.QueryFirstOrDefault<User>(sqlCmd, new { email });
+        }
+
+        private string GetFindUserSqlCmd()
+        {
+            return @"select top 1 * from [dbo].[User] (nolock) where Mail=@email";
         }
     }
 }
