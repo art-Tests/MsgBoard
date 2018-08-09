@@ -30,7 +30,11 @@ namespace MsgBoard.Controllers
 
             var connection = ConnectionFactory.GetConnection();
             var loginResult = _memberService.CheckUserPassword(connection, model.Account, model.Password);
-            if (loginResult.Auth.Equals(false)) return View(model);
+            if (loginResult.Auth.Equals(false))
+            {
+                ModelState.AddModelError("LoginError", "帳號或密碼錯誤");
+                return View(model);
+            }
 
             // 登入成功
             Session["auth"] = loginResult.Auth;
