@@ -1,6 +1,4 @@
-﻿using HashUtility.Services;
-
-namespace HashUtility
+﻿namespace HashUtility.Services
 {
     /// <summary>
     /// Hash工具
