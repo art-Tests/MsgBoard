@@ -1,4 +1,5 @@
-﻿<ul class="nav navbar-nav">
-    <li>@Html.ActionLink("登入", "Login", "Member")</li>
-    <li>@Html.ActionLink("註冊", "Create", "Member")</li>
-</ul>
+﻿@using MsgBoard.Models.Dto
+
+@(!(Session["memberAreaData"] is UserLoginResult model)
+        ? Html.Partial("_MemberAreaNotLogin")
+        : Html.Partial("_MemberAreaIsLogin", model))

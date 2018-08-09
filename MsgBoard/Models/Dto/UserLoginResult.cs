@@ -1,4 +1,6 @@
-﻿namespace MsgBoard.Models.Dto
+﻿using MsgBoard.Models.Entity;
+
+namespace MsgBoard.Models.Dto
 {
     /// <summary>
     ///  會員登入結果
@@ -11,8 +13,8 @@
         public bool Auth { get; set; } = false;
 
         /// <summary>
-        /// 是否為管理者
+        /// 會員資料
         /// </summary>
-        public bool IsAdmin { get; set; } = false;
+        public User User { get; set; } = null;
     }
 }

@@ -16,7 +16,8 @@
                     @Html.Partial("_Logo")
                 </div>
                 <div class="navbar-collapse collapse">
-                    @Html.Partial("_MemberArea")
+                    
+                    @RenderSection("memberArea", required: false)
                 </div>
             </div>
         </div>

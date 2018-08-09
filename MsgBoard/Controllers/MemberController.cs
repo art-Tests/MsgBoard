@@ -33,14 +33,11 @@ namespace MsgBoard.Controllers
 
             var connection = ConnectionFactory.GetConnection();
             var loginResult = _memberService.CheckUserPassword(connection, model.Account, model.Password);
-            Session["Auth"] = loginResult.Auth;
-            Session["IsAdmin"] = loginResult.IsAdmin;
+            if (loginResult.Auth.Equals(false)) return View(model);
 
-            if (loginResult.Auth)
-            {
-                return RedirectToAction("Index", "Post");
-            }
-            return View(model);
+            // 登入成功
+            Session["memberAreaData"] = loginResult;
+            return RedirectToAction("Index", "Post");
         }
 
         [HttpGet]

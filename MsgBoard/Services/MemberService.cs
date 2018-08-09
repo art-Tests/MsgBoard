@@ -141,7 +141,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
 
             var hashPassword = _hashTool.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
-            result.IsAdmin = user.IsAdmin;
+            result.User = user;
             return result;
         }
 

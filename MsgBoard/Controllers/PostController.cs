@@ -11,6 +11,7 @@ namespace MsgBoard.Controllers
         // GET: Post
         [Route("~/")]
         [Route("Home")]
+        [Route("Home/Index")]
         [Route("Post")]
         public ActionResult Index()
         {

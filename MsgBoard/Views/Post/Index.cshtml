@@ -1,9 +1,13 @@
 ﻿@{
     ViewBag.Title = "Post List";
 }
-Auth:[@Session["Auth"]] <br />
-Admin:[@Session["IsAdmin"]]
+
 <button type="button" class="btn btn-primary">New Post</button>
 
 <div id="app">
 </div>
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}
