@@ -28,6 +28,7 @@ namespace MsgBoard.ViewModel.Member
         /// <summary>
         /// 會員信箱
         /// </summary>
+        [RegularExpression(@".*@.*", ErrorMessage = "EMail格式須包含小老鼠符號")]
         [MaxLength(50, ErrorMessage = "Email地址不可超過50個字")]
         [Required(ErrorMessage = "請填寫Email")]
         [DisplayName("Email")]
@@ -36,6 +37,7 @@ namespace MsgBoard.ViewModel.Member
         /// <summary>
         /// 會員密碼
         /// </summary>
+        [StringLength(12, ErrorMessage = "{0}長度請設定 {2} 到 {1} 碼之間", MinimumLength = 4)]
         [Required(ErrorMessage = "請填寫密碼")]
         [DisplayName("密碼")]
         public string Password { get; set; }
