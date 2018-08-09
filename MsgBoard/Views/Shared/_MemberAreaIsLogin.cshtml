@@ -1,12 +1,16 @@
 ﻿@model MsgBoard.Models.Dto.UserLoginResult
 
-    <ul class="nav navbar-nav">
-        <li>@Html.ActionLink("修改", "Updte", "Member")</li>
-        <li>@Html.ActionLink("登出", "LogOut", "Member")</li>
-        @{
-            if (Model.User.IsAdmin)
-            {
-                <li>@Html.ActionLink("後台", "Index", "Admin")</li>
-            }
+<ul class="nav navbar-nav">
+    <li class="navbar-text"><img height="17" src="@Url.Content(Model.User.Pic)" /></li>
+    <li class="navbar-text">@Model.User.Name</li>
+    <li class="navbar-text">已發布：xx</li>
+    <li class="navbar-text">已回覆：xx</li>
+    <li>@Html.ActionLink("修改", "Updte", "Member")</li>
+    <li>@Html.ActionLink("登出", "LogOut", "Member")</li>
+    @{
+        if (Model.User.IsAdmin)
+        {
+            <li>@Html.ActionLink("後台", "Index", "Admin")</li>
         }
-    </ul>
+    }
+</ul>
