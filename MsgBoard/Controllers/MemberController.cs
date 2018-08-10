@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Data;
+using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
@@ -133,34 +135,59 @@ namespace MsgBoard.Controllers
 
         [HttpPost]
         [AuthorizePlus]
-        public ActionResult Update(int id, FormCollection form, HttpPostedFileBase file)
+        public ActionResult Update(int id, MemberUpdateViewModel model)
         {
             var connection = _connFactory.GetConnection();
             var user = _memberService.GetUser(connection, id);
 
-            if (TryUpdateModel(user, "", form.AllKeys, new[] { "Id" }))
+            if (ModelState.IsValid.Equals(false))
             {
-                var fileName = _memberService.SaveMemberPic(file, Server.MapPath(FileUploadPath));
-                if (string.IsNullOrEmpty(fileName).Equals(false))
-                {
-                    user.Pic = $"{FileUploadPath}/{fileName}";
-                }
-
-                _memberService.UpdateUser(connection, user);
-
-                // 修改資料完畢之後也要更新Session
-                CreateOrUpdateUserSession(user, true);
-                return RedirectToAction("Index", "Post");
+                model.Pic = user.Pic;
+                return View(model);
             }
 
-            var model = new MemberUpdateViewModel()
+            // Update Table Password
+            var newPassword = model.Password;
+            if (string.IsNullOrEmpty(newPassword).Equals(false))
             {
-                Id = user.Id,
-                Name = user.Name,
-                Password = string.Empty,
-                Pic = user.Pic
-            };
-            return View(model);
+                var newPassEntity = _memberService.ConvertToPassEntity(user.Id, user.Guid, newPassword);
+                var isSamePassword = CheckIsHistroyPassword(connection, user.Id, newPassEntity.HashPw);
+                if (isSamePassword)
+                {
+                    ModelState.AddModelError("HistroyPassword", "新密碼不可跟使用過的舊密碼相同。");
+                    model.Password = string.Empty;
+                    return View(model);
+                }
+                _memberService.CreatePassword(connection, newPassEntity);
+            }
+
+            // 大頭照
+            var fileName = _memberService.SaveMemberPic(model.File, Server.MapPath(FileUploadPath));
+            if (string.IsNullOrEmpty(fileName).Equals(false))
+            {
+                user.Pic = $"{FileUploadPath}/{fileName}";
+            }
+
+            // Update Table User
+            user.Name = model.Name;
+            _memberService.UpdateUser(connection, user);
+
+            // 修改資料完畢之後也要更新Session
+            CreateOrUpdateUserSession(user, true);
+            return RedirectToAction("Index", "Post");
+        }
+
+        /// <summary>
+        /// 檢查歷史密碼中是否存在相同的密碼
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="userId">會員Id</param>
+        /// <param name="newHashPass">要檢查的hash密碼</param>
+        /// <returns>True表示歷史紀錄有相同密碼</returns>
+        private bool CheckIsHistroyPassword(IDbConnection connection, int userId, string newHashPass)
+        {
+            var histroyPasswords = _memberService.GetHistroyPasswords(connection, userId);
+            return histroyPasswords.Any(x => x.HashPw == newHashPass);
         }
 
         /// <summary>

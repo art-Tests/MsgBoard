@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -219,6 +221,17 @@ select 'false'
         public void UpdateUser(IDbConnection connection, User user)
         {
             _userRepo.Update(connection, user);
+        }
+
+        public IEnumerable<Password> GetHistroyPasswords(IDbConnection connection, int userId)
+        {
+            var sqlCmd = GetHistroyPasswordsSqlCmd();
+            return connection.Query<Password>(sqlCmd, new { userId });
+        }
+
+        private string GetHistroyPasswordsSqlCmd()
+        {
+            return "select * from [dbo].[Password] (nolock) where UserId = @userId";
         }
     }
 }

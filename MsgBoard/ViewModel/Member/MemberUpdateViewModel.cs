@@ -32,7 +32,6 @@ namespace MsgBoard.ViewModel.Member
         /// 會員密碼
         /// </summary>
         [StringLength(12, ErrorMessage = "{0}長度請設定 {2} 到 {1} 碼之間", MinimumLength = 4)]
-        [Required(ErrorMessage = "請填寫密碼")]
         [DisplayName("密碼")]
         public string Password { get; set; }
 
