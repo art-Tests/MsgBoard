@@ -2,7 +2,7 @@
 
 <ul class="nav navbar-nav">
     <li class="navbar-text"><img height="17" src="@Url.Content(Model.User.Pic)" /></li>
-    <li class="navbar-text">@Model.User.Name (@Model.User.Id)</li>
+    <li class="navbar-text">@Model.User.Name</li>
     <li class="navbar-text">已發布：xx</li>
     <li class="navbar-text">已回覆：xx</li>
     <li>@Html.ActionLink("修改", "Update", "Member", new { id = Model.User.Id }, null)</li>

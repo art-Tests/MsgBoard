@@ -120,7 +120,14 @@ namespace MsgBoard.Controllers
             var user = _memberService.GetUser(connection, id.Value);
             if (user == null)
             {
-                return HttpNotFound("Member Not Found");
+                //return HttpNotFound("Member Not Found");
+                return RedirectToAction("Index", "Post");
+            }
+
+            var isAllowEdit = CheckAllowEditMember(id);
+            if (isAllowEdit.Equals(false))
+            {
+                return RedirectToAction("Index", "Post");
             }
 
             var model = new MemberUpdateViewModel()
@@ -131,6 +138,13 @@ namespace MsgBoard.Controllers
                 Pic = user.Pic
             };
             return View(model);
+        }
+
+        private bool CheckAllowEditMember(int? id)
+        {
+            var currectUser = Session["memberAreaData"] as UserLoginResult;
+            var isAllowEdit = currectUser != null && (currectUser.User.IsAdmin || currectUser.User.Id == id);
+            return isAllowEdit;
         }
 
         [HttpPost]
