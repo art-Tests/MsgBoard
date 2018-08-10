@@ -1,0 +1,52 @@
+﻿@model MsgBoard.ViewModel.Member.MemberUpdateViewModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+
+        <div class="form-group">
+            <img src="@Url.Content(Model.Pic)" />
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">上傳頭像</label>
+            <div class="col-md-10">
+                <input type="file" name="file" id="file" class="form-control" />
+                @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="修改" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}

@@ -49,7 +49,7 @@ namespace MsgBoard.Services.Tests
 
             var connection = connFactory.GetConnection();
             var userRepo = Substitute.For<IUserRepository>();
-            userRepo.FindUserByMail(connection, fakeUser.Mail).Returns(fakeUser);
+            userRepo.GetUserByMail(connection, fakeUser.Mail).Returns(fakeUser);
 
             var passRepo = Substitute.For<IPasswordRepository>();
             passRepo.FindPasswordByUserId(connection, fakeUser.Id).Returns(GetFakePassword());

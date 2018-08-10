@@ -2,6 +2,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Web;
 using Dapper;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
@@ -54,14 +55,15 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         /// <summary>
         /// 儲存會員大頭照
         /// </summary>
-        /// <param name="model">新增會員ViewModel</param>
+        /// <param name="file">上傳之圖片檔案</param>
         /// <param name="path">圖片上傳實體路徑</param>
         /// <returns>大頭照實際儲存完整路徑</returns>
-        public string SaveMemberPic(MemberCreateViewModel model, string path)
+        internal string SaveMemberPic(HttpPostedFileBase file, string path)
         {
-            if (model.File.ContentLength <= 0) return string.Empty;
+            if (file == null) return string.Empty;
+            if (file.ContentLength <= 0) return string.Empty;
             var savePath = GetSavePath(path);
-            model.File.SaveAs(savePath.Item1);
+            file.SaveAs(savePath.Item1);
             return savePath.Item2;
         }
 
@@ -117,6 +119,17 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
         }
 
         /// <summary>
+        /// 取得會員Entity
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
+        internal User GetUser(IDbConnection connection, int id)
+        {
+            return _userRepo.GetUserById(connection, id);
+        }
+
+        /// <summary>
         /// 取得會員密碼Entity
         /// </summary>
         /// <param name="userId">會員Id</param>
@@ -143,7 +156,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
         {
             var result = new UserLoginResult();
 
-            var user = _userRepo.FindUserByMail(connection, email);
+            var user = _userRepo.GetUserByMail(connection, email);
             if (user == null) return result;
 
             var password = _passwordRepo.FindPasswordByUserId(connection, user.Id);
@@ -196,6 +209,16 @@ select 'false'
         public void SetPasswordRepository(IPasswordRepository passRepo)
         {
             _passwordRepo = passRepo;
+        }
+
+        /// <summary>
+        /// 會員資料修改
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="user">會員資料entity</param>
+        public void UpdateUser(IDbConnection connection, User user)
+        {
+            _userRepo.Update(connection, user);
         }
     }
 }

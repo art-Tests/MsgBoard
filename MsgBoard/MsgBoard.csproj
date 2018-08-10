@@ -175,6 +175,7 @@
     <Compile Include="Services\UserRepository.cs" />
     <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberLoginViewModel.cs" />
+    <Compile Include="ViewModel\Member\MemberUpdateViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Msg.mdf" />
@@ -226,6 +227,7 @@
     <Content Include="Views\Shared\_MemberAreaNotLogin.cshtml" />
     <Content Include="Views\Shared\_MemberAreaIsLogin.cshtml" />
     <Content Include="Views\Shared\_ModelStateError.cshtml" />
+    <Content Include="Views\Member\Update.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />

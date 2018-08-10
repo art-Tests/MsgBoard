@@ -1,9 +1,12 @@
-﻿using System.Web.Mvc;
+﻿using System.Net;
+using System.Web.Mvc;
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
 using System.Transactions;
+using System.Web;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
+using MsgBoard.Models.Entity;
 
 namespace MsgBoard.Controllers
 {
@@ -14,7 +17,6 @@ namespace MsgBoard.Controllers
         public MemberController()
         {
             _memberService = new MemberService();
-            _connFactory = new ConnectionFactory();
         }
 
         [HttpGet]
@@ -39,9 +41,7 @@ namespace MsgBoard.Controllers
                 return View(model);
             }
 
-            // 登入成功
-            Session["auth"] = loginResult.Auth;
-            Session["memberAreaData"] = loginResult;
+            CreateOrUpdateUserSession(loginResult);
             return RedirectToAction("Index", "Post");
         }
 
@@ -50,8 +50,13 @@ namespace MsgBoard.Controllers
         /// </summary>
         public ActionResult LogOut()
         {
-            Session.RemoveAll();
+            RemoveUserSession();
             return RedirectToAction("Index", "Post");
+        }
+
+        private void RemoveUserSession()
+        {
+            Session.RemoveAll();
         }
 
         [HttpGet]
@@ -74,14 +79,13 @@ namespace MsgBoard.Controllers
                 ModelState.AddModelError("SameUser", $"{model.Mail} 已被註冊，若忘記密碼請洽系統管理員。");
                 return View(model);
             }
-            var loginResult = new UserLoginResult();
 
             using (var tranScope = new TransactionScope())
             {
                 using (var connection = _connFactory.GetConnection())
                 {
                     // Table User
-                    var fileName = _memberService.SaveMemberPic(model, Server.MapPath(FileUploadPath));
+                    var fileName = _memberService.SaveMemberPic(model.File, Server.MapPath(FileUploadPath));
                     var user = _memberService.ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
                     var userId = _memberService.CreateUser(connection, user);
 
@@ -89,24 +93,99 @@ namespace MsgBoard.Controllers
                     var password = _memberService.ConvertToPassEntity(userId, user.Guid, model.Password);
                     _memberService.CreatePassword(connection, password);
 
-                    loginResult.User = user;
-                    loginResult.Auth = true;
+                    // 註冊完直接給他登入
+                    CreateOrUpdateUserSession(user, true);
                 }
 
                 tranScope.Complete();
             }
 
-            // 註冊完直接給他登入
-            Session["auth"] = loginResult.Auth;
-            Session["memberAreaData"] = loginResult;
             return RedirectToAction("Index", "Post");
         }
 
         [HttpGet]
         [AuthorizePlus]
-        public ActionResult Update(int id)
+        public ActionResult Update(int? id)
         {
-            return View();
+            ViewBag.Title = "修改會員資料";
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var connection = _connFactory.GetConnection();
+            var user = _memberService.GetUser(connection, id.Value);
+            if (user == null)
+            {
+                return HttpNotFound("Member Not Found");
+            }
+
+            var model = new MemberUpdateViewModel()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Password = string.Empty,
+                Pic = user.Pic
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [AuthorizePlus]
+        public ActionResult Update(int id, FormCollection form, HttpPostedFileBase file)
+        {
+            var connection = _connFactory.GetConnection();
+            var user = _memberService.GetUser(connection, id);
+
+            if (TryUpdateModel(user, "", form.AllKeys, new[] { "Id" }))
+            {
+                var fileName = _memberService.SaveMemberPic(file, Server.MapPath(FileUploadPath));
+                if (string.IsNullOrEmpty(fileName).Equals(false))
+                {
+                    user.Pic = $"{FileUploadPath}/{fileName}";
+                }
+
+                _memberService.UpdateUser(connection, user);
+
+                // 修改資料完畢之後也要更新Session
+                CreateOrUpdateUserSession(user, true);
+                return RedirectToAction("Index", "Post");
+            }
+
+            var model = new MemberUpdateViewModel()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Password = string.Empty,
+                Pic = user.Pic
+            };
+            return View(model);
+        }
+
+        /// <summary>
+        /// 更新會員登入Session資料
+        /// </summary>
+        /// <param name="user">會員Entity</param>
+        /// <param name="isAuth">是否登入</param>
+        private void CreateOrUpdateUserSession(User user, bool isAuth)
+        {
+            var loginResult = new UserLoginResult
+            {
+                Auth = isAuth,
+                User = user
+            };
+            CreateOrUpdateUserSession(loginResult);
+        }
+
+        /// <summary>
+        /// 更新會員登入Session資料
+        /// </summary>
+        /// <param name="loginResult">會員登入結果</param>
+        private void CreateOrUpdateUserSession(UserLoginResult loginResult)
+        {
+            Session["auth"] = loginResult.Auth;
+            Session["memberAreaData"] = loginResult;
         }
     }
 }
