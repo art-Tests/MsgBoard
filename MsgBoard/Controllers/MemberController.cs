@@ -2,6 +2,7 @@
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
 using System.Transactions;
+using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 
 namespace MsgBoard.Controllers
@@ -99,6 +100,13 @@ namespace MsgBoard.Controllers
             Session["auth"] = loginResult.Auth;
             Session["memberAreaData"] = loginResult;
             return RedirectToAction("Index", "Post");
+        }
+
+        [HttpGet]
+        [AuthorizePlus]
+        public ActionResult Update(int id)
+        {
+            return View();
         }
     }
 }

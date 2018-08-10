@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace MsgBoard.Filter
 {
@@ -14,7 +15,8 @@ namespace MsgBoard.Filter
             else
             {
                 // fail
-                base.HandleUnauthorizedRequest(filterContext);
+                filterContext.Result = new RedirectResult("~/Member/Login");
+                //base.HandleUnauthorizedRequest(filterContext);
             }
         }
     }
