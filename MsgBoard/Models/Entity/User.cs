@@ -25,5 +25,7 @@ namespace MsgBoard.Models.Entity
 
         [Required]
         public bool IsAdmin { get; set; }
+
+        public bool IsDel { get; set; }
     }
 }

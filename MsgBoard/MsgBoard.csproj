@@ -154,6 +154,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\PostController.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\PasswordRepository.cs" />
     <Compile Include="Services\UserRepository.cs" />
+    <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberLoginViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberUpdateViewModel.cs" />
@@ -228,6 +230,7 @@
     <Content Include="Views\Shared\_MemberAreaIsLogin.cshtml" />
     <Content Include="Views\Shared\_ModelStateError.cshtml" />
     <Content Include="Views\Member\Update.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />

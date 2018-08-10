@@ -8,6 +8,7 @@
 | 4   | Pic     | nvarchar(200) | 大頭照圖檔路徑   |
 | 5   | Guid    | varchar(36)   | Guid             |
 | 6   | IsAdmin | bit           | 是否為管理者     |
+| 7   | IsDel   | bit           | 是否停權         |
 
 ### Post (主要文章)
 

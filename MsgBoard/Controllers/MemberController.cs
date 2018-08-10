@@ -207,7 +207,7 @@ namespace MsgBoard.Controllers
 
         private bool CheckIsAdmin()
         {
-            return Session["memberAreaData"] is UserLoginResult currectUser && currectUser.User.IsAdmin;
+            return _memberService.CheckIsAdmin(Session["memberAreaData"]);
         }
 
         /// <summary>

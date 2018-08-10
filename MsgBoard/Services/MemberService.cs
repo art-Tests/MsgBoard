@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Web;
 using Dapper;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.Interface;
+using MsgBoard.ViewModel.Admin;
 using MsgBoard.ViewModel.Member;
 
 namespace MsgBoard.Services
@@ -232,6 +234,39 @@ select 'false'
         private string GetHistroyPasswordsSqlCmd()
         {
             return "select * from [dbo].[Password] (nolock) where UserId = @userId";
+        }
+
+        public IEnumerable<AdminIndexViewModel> GetUserCollection(IDbConnection connection, int page, int pageSize)
+        {
+            var sqlCmd = GetUserCollectionSqlCmd();
+            var start = (page - 1) * pageSize + 1;
+            var end = page * pageSize;
+            return connection.Query<AdminIndexViewModel>(sqlCmd, new { start, end });
+        }
+
+        private string GetUserCollectionSqlCmd()
+        {
+            return @"
+select * from (
+	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
+    from [dbo].[user] (nolock)
+) r
+where RowId between @start and @end
+";
+        }
+
+        /// <summary>
+        /// 檢查目前使用者是否為Admin
+        /// </summary>
+        /// <param name="userSession">The user session.</param>
+        /// <returns>True為管理者；False不是</returns>
+        public bool CheckIsAdmin(object userSession)
+        {
+            if (userSession is UserLoginResult currectUser)
+            {
+                return currectUser.User.IsAdmin;
+            }
+            return false;
         }
     }
 }
