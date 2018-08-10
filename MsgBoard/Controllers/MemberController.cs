@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
 using System.Transactions;
-using System.Web;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
@@ -142,9 +141,10 @@ namespace MsgBoard.Controllers
 
         private bool CheckAllowEditMember(int? id)
         {
-            var currectUser = Session["memberAreaData"] as UserLoginResult;
-            var isAllowEdit = currectUser != null && (currectUser.User.IsAdmin || currectUser.User.Id == id);
-            return isAllowEdit;
+            return
+                Session["memberAreaData"] is UserLoginResult currectUser
+                &&
+                (currectUser.User.IsAdmin || currectUser.User.Id == id);
         }
 
         [HttpPost]
@@ -165,13 +165,19 @@ namespace MsgBoard.Controllers
             if (string.IsNullOrEmpty(newPassword).Equals(false))
             {
                 var newPassEntity = _memberService.ConvertToPassEntity(user.Id, user.Guid, newPassword);
-                var isSamePassword = CheckIsHistroyPassword(connection, user.Id, newPassEntity.HashPw);
-                if (isSamePassword)
+
+                // 管理者可以強制變更密碼
+                if (CheckIsAdmin().Equals(false))
                 {
-                    ModelState.AddModelError("HistroyPassword", "新密碼不可跟使用過的舊密碼相同。");
-                    model.Password = string.Empty;
-                    return View(model);
+                    var isSamePassword = CheckIsHistroyPassword(connection, user.Id, newPassEntity.HashPw);
+                    if (isSamePassword)
+                    {
+                        ModelState.AddModelError("HistroyPassword", "新密碼不可跟使用過的舊密碼相同。");
+                        model.Password = string.Empty;
+                        return View(model);
+                    }
                 }
+
                 _memberService.CreatePassword(connection, newPassEntity);
             }
 
@@ -186,9 +192,22 @@ namespace MsgBoard.Controllers
             user.Name = model.Name;
             _memberService.UpdateUser(connection, user);
 
-            // 修改資料完畢之後也要更新Session
-            CreateOrUpdateUserSession(user, true);
+            // 修改自己的資料完畢之後也要更新Session
+            if (CheckIsMySelf(id).Equals(true))
+            {
+                CreateOrUpdateUserSession(user, true);
+            }
             return RedirectToAction("Index", "Post");
+        }
+
+        private bool CheckIsMySelf(int userId)
+        {
+            return Session["memberAreaData"] is UserLoginResult currectUser && currectUser.User.Id == userId;
+        }
+
+        private bool CheckIsAdmin()
+        {
+            return Session["memberAreaData"] is UserLoginResult currectUser && currectUser.User.IsAdmin;
         }
 
         /// <summary>
