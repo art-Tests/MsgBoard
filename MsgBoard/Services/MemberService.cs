@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using Dapper;
 using HashUtility.Services;
@@ -12,7 +13,7 @@ namespace MsgBoard.Services
 {
     public class MemberService : IMemberService
     {
-        private readonly HashTool _hashTool = new HashTool();
+        protected readonly HashTool _hashTool = new HashTool();
         private IUserRepository _userRepo;
         private IPasswordRepository _passwordRepo;
 
@@ -138,7 +139,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
         /// <param name="email">會員帳號(email)</param>
         /// <param name="userPass">會員密碼</param>
         /// <returns>返回會員登入結果</returns>
-        public UserLoginResult CheckUserPassword(IDbConnection connection, string email, string userPass)
+        public virtual UserLoginResult CheckUserPassword(IDbConnection connection, string email, string userPass)
         {
             var result = new UserLoginResult();
 
@@ -181,6 +182,7 @@ select 'false'
         /// 測試注入用的方法，用來設定UserRepository
         /// </summary>
         /// <param name="userRepo">The user repo.</param>
+        [Conditional("DEBUG")]
         public void SetUserRepository(IUserRepository userRepo)
         {
             _userRepo = userRepo;
@@ -190,6 +192,7 @@ select 'false'
         /// 測試注入用的方法，用來設定PasswordRepository
         /// </summary>
         /// <param name="passRepo">The pass repo.</param>
+        [Conditional("DEBUG")]
         public void SetPasswordRepository(IPasswordRepository passRepo)
         {
             _passwordRepo = passRepo;

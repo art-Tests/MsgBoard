@@ -2,6 +2,7 @@
 using MsgBoard.Services;
 using MsgBoard.ViewModel.Member;
 using System.Transactions;
+using MsgBoard.Models.Dto;
 
 namespace MsgBoard.Controllers
 {
@@ -72,6 +73,7 @@ namespace MsgBoard.Controllers
                 ModelState.AddModelError("SameUser", $"{model.Mail} 已被註冊，若忘記密碼請洽系統管理員。");
                 return View(model);
             }
+            var loginResult = new UserLoginResult();
 
             using (var tranScope = new TransactionScope())
             {
@@ -85,11 +87,17 @@ namespace MsgBoard.Controllers
                     // Table Password
                     var password = _memberService.ConvertToPassEntity(userId, user.Guid, model.Password);
                     _memberService.CreatePassword(connection, password);
+
+                    loginResult.User = user;
+                    loginResult.Auth = true;
                 }
 
                 tranScope.Complete();
             }
 
+            // 註冊完直接給他登入
+            Session["auth"] = loginResult.Auth;
+            Session["memberAreaData"] = loginResult;
             return RedirectToAction("Index", "Post");
         }
     }
