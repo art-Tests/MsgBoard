@@ -12,7 +12,7 @@ namespace HashUtilityTests
         [TestInitialize]
         public void BeforeEach()
         {
-            _sut = new HashTool();
+            _sut = new HashTool(HashFactory.GetInstance("SHA512"));
         }
 
         [TestMethod()]

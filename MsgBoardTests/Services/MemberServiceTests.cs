@@ -3,6 +3,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using ExpectedObjects;
+using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.Interface;
@@ -27,6 +28,8 @@ namespace MsgBoard.Services.Tests
 
             var fakeSqlConnection = new SqlConnection();
             var sut = new MemberServiceStub();
+            var hashTool = new HashTool(HashFactory.GetInstance("SHA512"));
+            sut.SetHashTool(hashTool);
             var actual = sut.CheckUserPassword(fakeSqlConnection, email, userPass);
             expected.ToExpectedObject().ShouldEqual(actual);
         }
@@ -57,6 +60,8 @@ namespace MsgBoard.Services.Tests
             var sut = new MemberService();
             sut.SetUserRepository(userRepo);
             sut.SetPasswordRepository(passRepo);
+            var hashTool = new HashTool(HashFactory.GetInstance("SHA512"));
+            sut.SetHashTool(hashTool);
 
             var actual = sut.CheckUserPassword(connection, email, userPass);
             expected.ToExpectedObject().ShouldEqual(actual);

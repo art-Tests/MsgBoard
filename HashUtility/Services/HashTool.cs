@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using HashUtility.Interface;
 
 namespace HashUtility.Services
 {
@@ -9,9 +10,9 @@ namespace HashUtility.Services
     /// </summary>
     public class HashTool
     {
-        public HashTool()
+        public HashTool(IHash hashUtil)
         {
-            _hashType = new Sha512HashTool();
+            _hashUtil = hashUtil;
         }
 
         /// <summary>
@@ -19,7 +20,7 @@ namespace HashUtility.Services
         /// </summary>
         private string _hashKey = "@ehsn";
 
-        private readonly Sha512HashTool _hashType;
+        private readonly IHash _hashUtil;
 
         /// <summary>
         /// 測試用：將Hash Key手動變更
@@ -40,7 +41,7 @@ namespace HashUtility.Services
         public string GetMemberHashPw(string guid, string pass)
         {
             var hashStr = $"{pass}{guid}{_hashKey}";
-            return _hashType.GetHash(hashStr);
+            return _hashUtil.GetHash(hashStr);
         }
     }
 }

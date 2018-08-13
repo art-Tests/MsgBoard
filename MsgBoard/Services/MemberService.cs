@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
 using Dapper;
+using HashUtility.Interface;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
@@ -17,14 +19,20 @@ namespace MsgBoard.Services
 {
     public class MemberService : IMemberService
     {
-        protected readonly HashTool HashTool = new HashTool();
+        protected HashTool HashTool;
         private IUserRepository _userRepo;
         private IPasswordRepository _passwordRepo;
 
         public MemberService()
         {
+            HashTool = new HashTool(HashFactory.GetInstance("SHA512"));
             _userRepo = new UserRepository();
             _passwordRepo = new PasswordRepository();
+        }
+
+        public void SetHashTool(HashTool hashTool)
+        {
+            HashTool = hashTool;
         }
 
         /// <summary>
