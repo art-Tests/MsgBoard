@@ -13,15 +13,13 @@ namespace HashUtility.Services
         /// <summary>
         /// 取得雜湊結果
         /// </summary>
-        /// <param name="inputValue">要雜湊的字串</param>
+        /// <param name="data">要雜湊的資料</param>
         /// <returns>雜湊完畢的字串</returns>
-        public string GetHash(string inputValue)
+        public byte[] GetHash(byte[] data)
         {
-            var data = Encoding.UTF8.GetBytes(inputValue);
             using (SHA512 shaM = new SHA512Managed())
             {
-                var hash = shaM.ComputeHash(data);
-                return Convert.ToBase64String(hash);
+                return shaM.ComputeHash(data);
             }
         }
     }

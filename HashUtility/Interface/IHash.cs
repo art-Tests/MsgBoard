@@ -8,8 +8,8 @@
         /// <summary>
         /// 取得Hash值
         /// </summary>
-        /// <param name="inputValue">要雜湊的字串</param>
+        /// <param name="data">要雜湊的資料</param>
         /// <returns>雜湊完畢的字串</returns>
-        string GetHash(string inputValue);
+        byte[] GetHash(byte[] data);
     }
 }

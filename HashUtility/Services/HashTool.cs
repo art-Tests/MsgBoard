@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Text;
 
 namespace HashUtility.Services
 {
@@ -38,7 +40,9 @@ namespace HashUtility.Services
         public string GetMemberHashPw(string guid, string pass)
         {
             var hashStr = $"{pass}{guid}{_hashKey}";
-            return _hashType.GetHash(hashStr);
+            var data = Encoding.UTF8.GetBytes(hashStr);
+            var hashByte = _hashType.GetHash(data);
+            return Convert.ToBase64String(hashByte);
         }
     }
 }
