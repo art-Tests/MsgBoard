@@ -106,8 +106,11 @@ namespace MsgBoard.Controllers
 
         [HttpGet]
         [AuthorizePlus]
-        public ActionResult Update(int? id)
+        public ActionResult Update(int? id, int? page)
         {
+            var backController = page != null ? "Admin" : "Post";
+            var backAction = "Index";
+
             ViewBag.Title = "修改會員資料";
 
             if (id == null)
@@ -120,13 +123,13 @@ namespace MsgBoard.Controllers
             if (user == null)
             {
                 //return HttpNotFound("Member Not Found");
-                return RedirectToAction("Index", "Post");
+                return RedirectToAction(backAction, backController);
             }
 
             var isAllowEdit = CheckAllowEditMember(id);
             if (isAllowEdit.Equals(false))
             {
-                return RedirectToAction("Index", "Post");
+                return RedirectToAction(backAction, backController);
             }
 
             var model = new MemberUpdateViewModel()
@@ -134,7 +137,10 @@ namespace MsgBoard.Controllers
                 Id = user.Id,
                 Name = user.Name,
                 Password = string.Empty,
-                Pic = user.Pic
+                Pic = user.Pic,
+                BackAction = backAction,
+                BackController = backController,
+                BackPage = page
             };
             return View(model);
         }
@@ -197,7 +203,7 @@ namespace MsgBoard.Controllers
             {
                 CreateOrUpdateUserSession(user, true);
             }
-            return RedirectToAction("Index", "Post");
+            return RedirectToAction(model.BackAction, model.BackController, new { page = model.BackPage });
         }
 
         private bool CheckIsMySelf(int userId)
@@ -246,6 +252,31 @@ namespace MsgBoard.Controllers
         {
             Session["auth"] = loginResult.Auth;
             Session["memberAreaData"] = loginResult;
+        }
+
+        public ActionResult Disable(int? id, int page = 1)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (CheckIsAdmin().Equals(false))
+            {
+                return RedirectToAction("Index", "Post");
+            }
+
+            var connection = _connFactory.GetConnection();
+            var user = _memberService.GetUser(connection, id.Value);
+            if (user == null)
+            {
+                return HttpNotFound("Member Not Found");
+                //return RedirectToAction("Index", "Post");
+            }
+
+            user.IsDel = true;
+            _memberService.UpdateUser(connection, user);
+            return RedirectToAction("Index", "Admin", new { page });
         }
     }
 }

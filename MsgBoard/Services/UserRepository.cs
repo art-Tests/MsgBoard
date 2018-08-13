@@ -36,6 +36,7 @@ namespace MsgBoard.Services
 UPDATE [dbo].[User]
    SET [Name] = @Name
       ,[Pic] = @Pic
+      ,[IsDel] = @IsDel
  WHERE Id = @Id
 ";
         }

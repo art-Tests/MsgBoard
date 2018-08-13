@@ -39,5 +39,9 @@ namespace MsgBoard.ViewModel.Member
         /// 使用者大頭照圖片虛擬路徑
         /// </summary>
         public string Pic { get; set; }
+
+        public string BackAction { get; set; }
+        public string BackController { get; set; }
+        public int? BackPage { get; set; }
     }
 }

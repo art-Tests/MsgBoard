@@ -26,6 +26,8 @@ namespace MsgBoard.Controllers
                 return RedirectToAction("Index", "Post");
             }
 
+            ViewData["nowPage"] = page;
+
             var model = _memberService
                 .GetUserCollection(_connection)
                 .ToPagedList(page, pageSize);
