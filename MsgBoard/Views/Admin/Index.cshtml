@@ -1,5 +1,7 @@
-﻿@using PagedList.Mvc;
+﻿@using MsgBoard.Helper
+@using PagedList.Mvc;
 @using PagedList;
+
 @model IEnumerable<MsgBoard.ViewModel.Admin.AdminIndexViewModel>
 
 <h2>使用者列表</h2>
@@ -27,15 +29,8 @@
                     <div class="col-md-10">
                         <span>@Html.DisplayFor(modelItem => item.Name)</span>
                         @{
-                            if (item.IsAdmin)
-                            {
-                                <label class="label label-warning">Admin</label>
-                            }
-
-                            if (item.IsDel)
-                            {
-                                <label class="label label-danger">停權</label>
-                            }
+                            Html.CreateTag(item.IsAdmin, "Admin");
+                            Html.CreateTag(item.IsDel, "停權");
                         }
                         <br />
                         @Html.DisplayFor(modelItem => item.Mail)

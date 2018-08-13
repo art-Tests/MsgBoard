@@ -168,6 +168,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\TagHelper.cs" />
     <Compile Include="Models\Dto\UserLoginResult.cs" />
     <Compile Include="Models\Entity\Password.cs" />
     <Compile Include="Models\Entity\Post.cs" />
