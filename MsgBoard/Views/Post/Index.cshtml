@@ -5,25 +5,21 @@
 @{
     ViewBag.Title = "文章列表";
 }
-
-<p>
-    @Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-primary" })
-</p>
+<div class="text-center">
+    @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+</div>
 <table class="table">
     <tr>
         <th>
-            #
-        </th>
-        <th>
+            <p class="text-right">
+                @Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-primary" })
+            </p>
         </th>
     </tr>
 
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                @item.RowId
-            </td>
             <td>
                 <div class="row">
                     <div class="col-md-2">
@@ -33,7 +29,7 @@
                     </div>
 
                     <div class="col-md-10">
-                        @Html.DisplayFor(modelItem => item.Content)
+                        <pre style="white-space: pre-wrap">@item.Content</pre>
                     </div>
                 </div>
                 <div class="row">
@@ -50,7 +46,9 @@
         </tr>
     }
 </table>
-@Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+<div class="text-center">
+    @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+</div>
 
 @section memberArea
 {

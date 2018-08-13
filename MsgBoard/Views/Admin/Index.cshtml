@@ -38,15 +38,16 @@
             </td>
             <td>
                 @(item.IsDel ? Html.ActionLink("Enable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = true }, new { @class = "btn btn-sm btn-default" })
-                        : Html.ActionLink("Disable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = false }, new { @class = "btn btn-sm btn-default" }))
+                                : Html.ActionLink("Disable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = false }, new { @class = "btn btn-sm btn-default" }))
                 @Html.ActionLink("Edit", "Update", "Member", new { id = item.Id, page = ViewData["nowPage"] }, new { @class = "btn btn-sm btn-default" })
             </td>
         </tr>
 
     }
 </table>
-@Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
-
+<div class="text-center">
+    @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+</div>
 @section memberArea
 {
     @Html.Partial("_MemberArea")
