@@ -2,7 +2,7 @@
     ViewBag.Title = "Post List";
 }
 
-<button type="button" class="btn btn-primary">New Post</button>
+@Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-primary" })
 
 <div id="app">
 </div>

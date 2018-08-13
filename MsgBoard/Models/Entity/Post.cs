@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace MsgBoard.Models.Entity
 {
@@ -10,6 +12,8 @@ namespace MsgBoard.Models.Entity
 
         [MaxLength(2000)]
         [Required]
+        [DisplayName("內容")]
+        [AllowHtml]
         public string Content { get; set; }
 
         [Required]

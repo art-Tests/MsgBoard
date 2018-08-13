@@ -101,7 +101,7 @@ namespace MsgBoard.Services.Tests
             var password = GetFakePassword();
             if (password == null) return result;
 
-            var hashPassword = _hashTool.GetMemberHashPw(user.Guid, userPass);
+            var hashPassword = HashTool.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
             result.User = user;
             return result;

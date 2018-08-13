@@ -7,7 +7,6 @@ using MsgBoard.ViewModel.Member;
 using System.Transactions;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
-using MsgBoard.Models.Entity;
 
 namespace MsgBoard.Controllers
 {
@@ -42,7 +41,7 @@ namespace MsgBoard.Controllers
                 return View(model);
             }
 
-            CreateOrUpdateUserSession(loginResult);
+            SignInUser.UserLogin(true, loginResult.User);
             return RedirectToAction("Index", "Post");
         }
 
@@ -95,7 +94,7 @@ namespace MsgBoard.Controllers
                     _memberService.CreatePassword(connection, password);
 
                     // 註冊完直接給他登入
-                    CreateOrUpdateUserSession(user, true);
+                    SignInUser.UserLogin(true, user);
                 }
 
                 tranScope.Complete();
@@ -147,10 +146,7 @@ namespace MsgBoard.Controllers
 
         private bool CheckAllowEditMember(int? id)
         {
-            return
-                Session["memberAreaData"] is UserLoginResult currectUser
-                &&
-                (currectUser.User.IsAdmin || currectUser.User.Id == id);
+            return SignInUser.User.IsAdmin || SignInUser.User.Id == id;
         }
 
         [HttpPost]
@@ -173,7 +169,7 @@ namespace MsgBoard.Controllers
                 var newPassEntity = _memberService.ConvertToPassEntity(user.Id, user.Guid, newPassword);
 
                 // 管理者可以強制變更密碼
-                if (CheckIsAdmin().Equals(false))
+                if (SignInUser.User.IsAdmin.Equals(false))
                 {
                     var isSamePassword = CheckIsHistroyPassword(connection, user.Id, newPassEntity.HashPw);
                     if (isSamePassword)
@@ -199,21 +195,11 @@ namespace MsgBoard.Controllers
             _memberService.UpdateUser(connection, user);
 
             // 修改自己的資料完畢之後也要更新Session
-            if (CheckIsMySelf(id).Equals(true))
+            if (SignInUser.User.Id == id)
             {
-                CreateOrUpdateUserSession(user, true);
+                SignInUser.UserLogin(true, user);
             }
             return RedirectToAction(model.BackAction, model.BackController, new { page = model.BackPage });
-        }
-
-        private bool CheckIsMySelf(int userId)
-        {
-            return Session["memberAreaData"] is UserLoginResult currectUser && currectUser.User.Id == userId;
-        }
-
-        private bool CheckIsAdmin()
-        {
-            return _memberService.CheckIsAdmin(Session["memberAreaData"]);
         }
 
         /// <summary>
@@ -229,31 +215,6 @@ namespace MsgBoard.Controllers
             return histroyPasswords.Any(x => x.HashPw == newHashPass);
         }
 
-        /// <summary>
-        /// 更新會員登入Session資料
-        /// </summary>
-        /// <param name="user">會員Entity</param>
-        /// <param name="isAuth">是否登入</param>
-        private void CreateOrUpdateUserSession(User user, bool isAuth)
-        {
-            var loginResult = new UserLoginResult
-            {
-                Auth = isAuth,
-                User = user
-            };
-            CreateOrUpdateUserSession(loginResult);
-        }
-
-        /// <summary>
-        /// 更新會員登入Session資料
-        /// </summary>
-        /// <param name="loginResult">會員登入結果</param>
-        private void CreateOrUpdateUserSession(UserLoginResult loginResult)
-        {
-            Session["auth"] = loginResult.Auth;
-            Session["memberAreaData"] = loginResult;
-        }
-
         public ActionResult ChangeStat(int? id, bool newStat, int page = 1)
         {
             if (id == null)
@@ -261,7 +222,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (CheckIsAdmin().Equals(false))
+            if (SignInUser.User.IsAdmin.Equals(false))
             {
                 return RedirectToAction("Index", "Post");
             }

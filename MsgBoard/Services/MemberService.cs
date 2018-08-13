@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -18,7 +17,7 @@ namespace MsgBoard.Services
 {
     public class MemberService : IMemberService
     {
-        protected readonly HashTool _hashTool = new HashTool();
+        protected readonly HashTool HashTool = new HashTool();
         private IUserRepository _userRepo;
         private IPasswordRepository _passwordRepo;
 
@@ -145,7 +144,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
             return new Password
             {
                 UserId = userId,
-                HashPw = _hashTool.GetMemberHashPw(guid, userPass)
+                HashPw = HashTool.GetMemberHashPw(guid, userPass)
             };
         }
 
@@ -166,7 +165,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
             var password = _passwordRepo.FindPasswordByUserId(connection, user.Id);
             if (password == null) return result;
 
-            var hashPassword = _hashTool.GetMemberHashPw(user.Guid, userPass);
+            var hashPassword = HashTool.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
             result.User = user;
             return result;
@@ -266,20 +265,6 @@ select * from (
 ) r
 where RowId between @start and @end
 ";
-        }
-
-        /// <summary>
-        /// 檢查目前使用者是否為Admin
-        /// </summary>
-        /// <param name="userSession">The user session.</param>
-        /// <returns>True為管理者；False不是</returns>
-        public bool CheckIsAdmin(object userSession)
-        {
-            if (userSession is UserLoginResult currectUser)
-            {
-                return currectUser.User.IsAdmin;
-            }
-            return false;
         }
     }
 }

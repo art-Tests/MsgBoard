@@ -1,5 +1,3 @@
 ﻿@using MsgBoard.Models.Dto
 
-@(!(Session["memberAreaData"] is UserLoginResult model)
-        ? Html.Partial("_MemberAreaNotLogin")
-        : Html.Partial("_MemberAreaIsLogin", model))
+@(SignInUser.Auth ? Html.Partial("_MemberAreaIsLogin") : Html.Partial("_MemberAreaNotLogin"))

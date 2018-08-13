@@ -169,6 +169,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\TagHelper.cs" />
+    <Compile Include="Models\Dto\SignInUser.cs" />
     <Compile Include="Models\Dto\UserLoginResult.cs" />
     <Compile Include="Models\Entity\Password.cs" />
     <Compile Include="Models\Entity\Post.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Services\ConnectionFactory.cs" />
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\PasswordRepository.cs" />
+    <Compile Include="Services\PostService.cs" />
     <Compile Include="Services\UserRepository.cs" />
     <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
@@ -239,6 +241,7 @@
     <Content Include="Views\Shared\_ModelStateError.cshtml" />
     <Content Include="Views\Member\Update.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Post\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />

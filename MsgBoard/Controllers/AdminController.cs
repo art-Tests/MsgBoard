@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using System.Linq;
 using System.Web.Mvc;
 using MsgBoard.Filter;
+using MsgBoard.Models.Dto;
 using MsgBoard.Services;
 using PagedList;
 
@@ -21,7 +21,7 @@ namespace MsgBoard.Controllers
 
         public ActionResult Index(int page = 1, int pageSize = 5)
         {
-            if (CheckIsAdmin().Equals(false))
+            if (SignInUser.User.IsAdmin.Equals(false))
             {
                 return RedirectToAction("Index", "Post");
             }
@@ -32,11 +32,6 @@ namespace MsgBoard.Controllers
                 .GetUserCollection(_connection)
                 .ToPagedList(page, pageSize);
             return View(model);
-        }
-
-        private bool CheckIsAdmin()
-        {
-            return _memberService.CheckIsAdmin(Session["memberAreaData"]);
         }
     }
 }
