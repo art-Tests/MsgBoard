@@ -91,5 +91,21 @@ namespace MsgBoard.Controllers
 
             return View(model);
         }
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var dbPost = _postService.GetPostById(_conn, id.Value);
+            if (dbPost == null)
+            {
+                return HttpNotFound();
+            }
+
+            _postService.Delete(_conn, id.Value);
+            return RedirectToAction("Index", "Post");
+        }
     }
 }

@@ -40,15 +40,19 @@
                     {
                         if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.Author.Id)
                         {
-                            @Html.ActionLink("Edit", "Update", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
+                            <div style="display: inline;">
+                                @Html.ActionLink("Edit", "Update", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
+                            </div>
                         }
-
-                        @Html.ActionLink("Reply", "Reply", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
-
+                        <div style="display: inline;">
+                            @Html.ActionLink("Reply", "Reply", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
+                        </div>
                         if (SignInUser.User.IsAdmin)
                         {
-                            @Html.ActionLink("Delete", "Delete", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })
-
+                            <div style="display: inline;">
+                                <a href="javascript:;" class="btn btn-danger btn-sm delete-link">Delete</a>
+                                <a href="javascript:;" class="btn btn-sm btn-danger delete-confirm" data-id="@item.Id" style="display:none">確認刪除？</a>
+                            </div>
                         }
                     }
                 }
@@ -62,6 +66,11 @@
 <div class="text-center">
     @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
 </div>
+
+@section scripts
+{
+    <script src="~/js/Post/Index.js?@Guid.NewGuid()"></script>
+}
 
 @section memberArea
 {
