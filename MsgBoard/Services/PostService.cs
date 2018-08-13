@@ -45,12 +45,18 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         private string GetPostCollectionSqlCmd()
         {
             return @"
-select ROW_NUMBER() OVER(ORDER BY p.Id) AS RowId, p.*
+select ROW_NUMBER() OVER(ORDER BY CreateTime desc) AS RowId, p.*
 ,u.Id,u.Name,u.Pic
 from [dbo].[Post] (nolock) as p
 left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
 where p.IsDel=0
 ";
+        }
+
+        public Post GetPostById(IDbConnection conn, int id)
+        {
+            var sqlCmd = "select * from [dbo].[Post] (nolock) where Id=@id";
+            return conn.QueryFirstOrDefault<Post>(sqlCmd, new { id });
         }
     }
 }
