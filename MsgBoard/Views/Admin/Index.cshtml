@@ -39,7 +39,7 @@
             </td>
             <td>
                 @(item.IsDel ? Html.ActionLink("Enable", "Enable", "Member", new { id = item.Id }, new { @class = "btn btn-sm btn-default" }) : Html.ActionLink("Disable", "Disable", "Member", new { id = item.Id }, new { @class = "btn btn-sm btn-default" }))
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
+                @Html.ActionLink("Edit", "Update", "Member", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
             </td>
         </tr>
 
