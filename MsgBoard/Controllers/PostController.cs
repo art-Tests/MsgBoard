@@ -37,8 +37,6 @@ namespace MsgBoard.Controllers
         [AuthorizePlus]
         public ActionResult Create()
         {
-            ViewBag.BtnName = "新增";
-
             return View();
         }
 
