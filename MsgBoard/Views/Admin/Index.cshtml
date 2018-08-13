@@ -28,18 +28,17 @@
                     </div>
                     <div class="col-md-10">
                         <span>@Html.DisplayFor(modelItem => item.Name)</span>
-                        @{
-                            Html.CreateTag(item.IsAdmin, "Admin");
-                            Html.CreateTag(item.IsDel, "停權");
-                        }
+
+                        @Html.Raw(Html.CreateTag(item.IsAdmin, "Admin"))
+                        @Html.Raw(Html.CreateTag(item.IsDel, "停權", "danger"))
                         <br />
                         @Html.DisplayFor(modelItem => item.Mail)
                     </div>
                 </div>
             </td>
             <td>
-                @(item.IsDel ? Html.ActionLink("Enable", "Enable", "Member", new { id = item.Id, page = ViewData["nowPage"] }, new { @class = "btn btn-sm btn-default" })
-                                                     : Html.ActionLink("Disable", "Disable", "Member", new { id = item.Id, page = ViewData["nowPage"] }, new { @class = "btn btn-sm btn-default" }))
+                @(item.IsDel ? Html.ActionLink("Enable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = true }, new { @class = "btn btn-sm btn-default" })
+                        : Html.ActionLink("Disable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = false }, new { @class = "btn btn-sm btn-default" }))
                 @Html.ActionLink("Edit", "Update", "Member", new { id = item.Id, page = ViewData["nowPage"] }, new { @class = "btn btn-sm btn-default" })
             </td>
         </tr>

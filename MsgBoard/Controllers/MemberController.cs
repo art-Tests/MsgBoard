@@ -254,7 +254,7 @@ namespace MsgBoard.Controllers
             Session["memberAreaData"] = loginResult;
         }
 
-        public ActionResult Disable(int? id, int page = 1)
+        public ActionResult ChangeStat(int? id, bool newStat, int page = 1)
         {
             if (id == null)
             {
@@ -274,7 +274,7 @@ namespace MsgBoard.Controllers
                 //return RedirectToAction("Index", "Post");
             }
 
-            user.IsDel = true;
+            user.IsDel = !newStat;
             _memberService.UpdateUser(connection, user);
             return RedirectToAction("Index", "Admin", new { page });
         }
