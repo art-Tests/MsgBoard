@@ -236,12 +236,25 @@ select 'false'
             return "select * from [dbo].[Password] (nolock) where UserId = @userId";
         }
 
+        public IQueryable<AdminIndexViewModel> GetUserCollection(IDbConnection connection)
+        {
+            var sqlCmd = GetUserCollectionAllSqlCmd();
+            return connection.Query<AdminIndexViewModel>(sqlCmd).AsQueryable();
+        }
+
         public IEnumerable<AdminIndexViewModel> GetUserCollection(IDbConnection connection, int page, int pageSize)
         {
             var sqlCmd = GetUserCollectionSqlCmd();
             var start = (page - 1) * pageSize + 1;
             var end = page * pageSize;
             return connection.Query<AdminIndexViewModel>(sqlCmd, new { start, end });
+        }
+
+        private string GetUserCollectionAllSqlCmd()
+        {
+            return @"
+	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
+    from [dbo].[user] (nolock)";
         }
 
         private string GetUserCollectionSqlCmd()

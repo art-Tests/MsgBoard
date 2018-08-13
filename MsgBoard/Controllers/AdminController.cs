@@ -1,7 +1,9 @@
 ﻿using System.Data;
+using System.Linq;
 using System.Web.Mvc;
 using MsgBoard.Filter;
 using MsgBoard.Services;
+using PagedList;
 
 namespace MsgBoard.Controllers
 {
@@ -24,7 +26,9 @@ namespace MsgBoard.Controllers
                 return RedirectToAction("Index", "Post");
             }
 
-            var model = _memberService.GetUserCollection(_connection, page, pageSize);
+            var model = _memberService
+                .GetUserCollection(_connection)
+                .ToPagedList(page, pageSize);
             return View(model);
         }
 

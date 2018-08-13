@@ -1,4 +1,6 @@
-﻿namespace HashUtility.Services
+﻿using System.Diagnostics;
+
+namespace HashUtility.Services
 {
     /// <summary>
     /// Hash工具
@@ -21,6 +23,7 @@
         /// 測試用：將Hash Key手動變更
         /// </summary>
         /// <param name="testHashKey">要測試的HashKey</param>
+        [Conditional("DEBUG")]
         public void SetHashKey(string testHashKey)
         {
             _hashKey = testHashKey;

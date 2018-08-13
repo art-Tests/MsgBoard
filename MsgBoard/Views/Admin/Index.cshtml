@@ -1,30 +1,18 @@
-﻿@model IEnumerable<MsgBoard.ViewModel.Admin.AdminIndexViewModel>
+﻿@using PagedList.Mvc;
+@using PagedList;
+@model IEnumerable<MsgBoard.ViewModel.Admin.AdminIndexViewModel>
 
 <h2>使用者列表</h2>
 
 <table class="table">
     <tr>
-        <th>
+        <th class="col-md-1">
             #
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Pic)
+        <th class="col-md-9">
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Mail)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsAdmin)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDel)
-        </th>
-        <th></th>
+        <th class="col-md-2"></th>
     </tr>
-
     @foreach (var item in Model)
     {
         <tr>
@@ -32,26 +20,34 @@
                 @Html.DisplayFor(modelItem => item.RowId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Pic)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Mail)
-            </td>
+                <div>
+                    <div class="col-md-2">
+                        <img src="@Url.Content(item.Pic)" height="30px" />
+                    </div>
+                    <div class="col-md-10">
+                        <span>@Html.DisplayFor(modelItem => item.Name)</span>
+                        @{
+                            if (item.IsAdmin)
+                            {
+                                <label class="label label-warning">Admin</label>
+                            }
 
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAdmin)
+                            if (item.IsDel)
+                            {
+                                <label class="label label-danger">停權</label>
+                            }
+                        }
+                        <br />
+                        @Html.DisplayFor(modelItem => item.Mail)
+                    </div>
+                </div>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsDel)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                @(item.IsDel ? Html.ActionLink("Enable", "Enable", "Member", new { id = item.Id }, new { @class = "btn btn-sm btn-default" }) : Html.ActionLink("Disable", "Disable", "Member", new { id = item.Id }, new { @class = "btn btn-sm btn-default" }))
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
             </td>
         </tr>
+
     }
 </table>
+@Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
