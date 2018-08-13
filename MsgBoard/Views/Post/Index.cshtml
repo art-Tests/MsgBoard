@@ -35,7 +35,7 @@
                         @Html.DisplayFor(modelItem => item.ChineseTime)
                     </div>
                     <div class="col-md-10 text-right">
-                        @Html.ActionLink("Edit", "Edit", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
+                        @Html.ActionLink("Edit", "Update", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
                         @Html.ActionLink("Reply", "Reply", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
                         @Html.ActionLink("Delete", "Delete", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })
                     </div>

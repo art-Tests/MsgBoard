@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Net;
 using System.Web.Mvc;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
@@ -51,6 +52,40 @@ namespace MsgBoard.Controllers
             model.UpdateUserId = SignInUser.User.Id;
             _postService.Create(_conn, model);
             return RedirectToAction("Index", "Post");
+        }
+
+        [HttpGet, AuthorizePlus]
+        public ActionResult Update(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var model = _postService.GetPostById(_conn, id.Value);
+            return View(model);
+        }
+
+        public ActionResult Update(int? id, Post model)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (!ModelState.IsValid) return View(model);
+
+            var dbPost = _postService.GetPostById(_conn, id.Value);
+            if (dbPost == null)
+            {
+                return View(model);
+            }
+
+            dbPost.Content = model.Content;
+            dbPost.UpdateUserId = SignInUser.User.Id;
+            _postService.Update(_conn, dbPost);
+
+            return RedirectToAction("Index","Post");
         }
     }
 }

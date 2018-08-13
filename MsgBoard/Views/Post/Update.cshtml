@@ -1,11 +1,12 @@
 ﻿@model MsgBoard.Models.Entity.Post
 @{
-    ViewBag.Title = "新增文章";
-    ViewBag.BtnName = "新增";
+    ViewBag.Title = "修改文章";
+    ViewBag.BtnName = "修改";
 }
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
 
     @Html.Partial("_PostForm", Model)
 }
