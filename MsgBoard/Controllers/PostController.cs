@@ -66,6 +66,7 @@ namespace MsgBoard.Controllers
             return View(model);
         }
 
+        [HttpPost, AuthorizePlus]
         public ActionResult Update(int? id, Post model)
         {
             if (id == null)
@@ -81,11 +82,16 @@ namespace MsgBoard.Controllers
                 return View(model);
             }
 
-            dbPost.Content = model.Content;
-            dbPost.UpdateUserId = SignInUser.User.Id;
-            _postService.Update(_conn, dbPost);
+            if (SignInUser.User.IsAdmin || SignInUser.User.Id == dbPost.CreateUserId)
+            {
+                dbPost.Content = model.Content;
+                dbPost.UpdateUserId = SignInUser.User.Id;
+                _postService.Update(_conn, dbPost);
 
-            return RedirectToAction("Index","Post");
+                return RedirectToAction("Index", "Post");
+            }
+
+            return View(model);
         }
     }
 }
