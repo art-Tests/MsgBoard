@@ -46,3 +46,8 @@
     }
 </table>
 @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}
