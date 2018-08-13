@@ -3,11 +3,11 @@
     /// <summary>
     /// SHA512雜湊
     /// </summary>
-    public class Sha512HashTool : BaseHashTool
+    public class Sha256HashTool : BaseHashTool
     {
-        public Sha512HashTool()
+        public Sha256HashTool()
         {
-            HashType = "SHA512";
+            HashType = "SHA256";
         }
     }
 }

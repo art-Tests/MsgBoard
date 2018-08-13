@@ -40,9 +40,7 @@ namespace HashUtility.Services
         public string GetMemberHashPw(string guid, string pass)
         {
             var hashStr = $"{pass}{guid}{_hashKey}";
-            var data = Encoding.UTF8.GetBytes(hashStr);
-            var hashByte = _hashType.GetHash(data);
-            return Convert.ToBase64String(hashByte);
+            return _hashType.GetHash(hashStr);
         }
     }
 }

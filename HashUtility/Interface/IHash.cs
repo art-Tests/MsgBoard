@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="data">要雜湊的資料</param>
         /// <returns>雜湊完畢的字串</returns>
-        byte[] GetHash(byte[] data);
+        string GetHash(string data);
     }
 }

@@ -68,7 +68,7 @@ namespace MsgBoard.Services.Tests
             {
                 Id = 1,
                 UserId = 1,
-                HashPw = "YTW05bMV4+AVJ1tFVDY24Td24Qyi1Qd7iE2GUnPYm+pFcDM8gEn8PixvqgeCNlVGzdvG3g30qJcouMIS/D2xUA==",
+                HashPw = "3041DF81726E8B5B3D1CACCF9FD6F5C7D8406B04D567CB00BD3E97711F71A0D9A7E4751A6416E83215F360781DE6DA6D4B6166F917D8668BB33DD0DD0B6554AA",
                 CreateTime = DateTime.Now
             };
             return fakePassword;
@@ -78,7 +78,7 @@ namespace MsgBoard.Services.Tests
         {
             var fakeUser = new User
             {
-                Guid = "94a02d6c-da5d-4a43-a03d-d370db007539",
+                Guid = "b2cba1ae-44fb-41a7-830b-0bb8eeab3dd8",
                 Id = 1,
                 IsAdmin = false,
                 Mail = email,
@@ -111,7 +111,7 @@ namespace MsgBoard.Services.Tests
         {
             var fakeUser = new User
             {
-                Guid = "94a02d6c-da5d-4a43-a03d-d370db007539",
+                Guid = "b2cba1ae-44fb-41a7-830b-0bb8eeab3dd8",
                 Id = 1,
                 IsAdmin = false,
                 Mail = email,
@@ -127,7 +127,7 @@ namespace MsgBoard.Services.Tests
             {
                 Id = 1,
                 UserId = 1,
-                HashPw = "YTW05bMV4+AVJ1tFVDY24Td24Qyi1Qd7iE2GUnPYm+pFcDM8gEn8PixvqgeCNlVGzdvG3g30qJcouMIS/D2xUA==",
+                HashPw = "3041DF81726E8B5B3D1CACCF9FD6F5C7D8406B04D567CB00BD3E97711F71A0D9A7E4751A6416E83215F360781DE6DA6D4B6166F917D8668BB33DD0DD0B6554AA",
                 CreateTime = DateTime.Now
             };
             return fakePassword;
