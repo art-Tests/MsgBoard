@@ -4,6 +4,7 @@ using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Services;
+using PagedList;
 
 namespace MsgBoard.Controllers
 {
@@ -23,15 +24,20 @@ namespace MsgBoard.Controllers
         [Route("Home")]
         [Route("Home/Index")]
         [Route("Post")]
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 5)
         {
-            return View();
+            var model = _postService
+                .GetPostCollection(_conn)
+                .ToPagedList(page, pageSize);
+            return View(model);
         }
 
         [HttpGet]
         [AuthorizePlus]
         public ActionResult Create()
         {
+            ViewBag.BtnName = "新增";
+
             return View();
         }
 
@@ -39,14 +45,12 @@ namespace MsgBoard.Controllers
         [AuthorizePlus]
         public ActionResult Create(Post model)
         {
-            if (ModelState.IsValid)
-            {
-                model.CreateUserId = SignInUser.User.Id;
+            if (!ModelState.IsValid) return View(model);
 
-                _postService.Create(_conn, model);
-                return RedirectToAction("Index", "Post");
-            }
-            return View(model);
+            model.CreateUserId = SignInUser.User.Id;
+            model.UpdateUserId = SignInUser.User.Id;
+            _postService.Create(_conn, model);
+            return RedirectToAction("Index", "Post");
         }
     }
 }

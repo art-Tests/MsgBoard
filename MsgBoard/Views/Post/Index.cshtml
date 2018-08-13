@@ -1,11 +1,56 @@
-﻿@{
-    ViewBag.Title = "Post List";
+﻿@using PagedList.Mvc;
+@using PagedList;
+@model IEnumerable<MsgBoard.ViewModel.Post.PostIndexViewModel>
+
+@{
+    ViewBag.Title = "文章列表";
 }
 
-@Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-primary" })
+<p>
+    @Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            #
+        </th>
+        <th>
+        </th>
+    </tr>
 
-<div id="app">
-</div>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.RowId
+            </td>
+            <td>
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="@Url.Content(item.Author.Pic)" height="100" />
+                        <br />
+                        @Html.DisplayFor(modelItem => item.Author.Name)
+                    </div>
+
+                    <div class="col-md-10">
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        @Html.DisplayFor(modelItem => item.ChineseTime)
+                    </div>
+                    <div class="col-md-10 text-right">
+                        @Html.ActionLink("Edit", "Edit", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
+                        @Html.ActionLink("Reply", "Reply", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
+                        @Html.ActionLink("Delete", "Delete", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
 
 @section memberArea
 {
