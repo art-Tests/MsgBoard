@@ -21,7 +21,6 @@
     form.appendChild(idDom)
 
     document.body.appendChild(form)
-    console.log(form)
     form.submit()
   }
 
