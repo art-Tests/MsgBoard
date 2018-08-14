@@ -2,10 +2,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using MsgBoard.Models.Dto;
 
-namespace MsgBoard.Models.Entity
+namespace MsgBoard.ViewModel.Reply
 {
-    public class Reply
+    public class ReplyIndexViewModel
     {
         [Required]
         public int Id { get; set; }
@@ -20,18 +21,16 @@ namespace MsgBoard.Models.Entity
         public string Content { get; set; }
 
         [Required]
-        public bool IsDel { get; set; }
-
-        [Required]
         public DateTime CreateTime { get; set; }
-
-        [Required]
-        public int CreateUserId { get; set; }
 
         [Required]
         public DateTime UpdateTime { get; set; }
 
-        [Required]
-        public int UpdateUserId { get; set; }
+        public string CreateTimeText => CreateTime.ToString("yyyy-MM-dd HH:mm");
+        public string UpdateTimeText => UpdateTime.ToString("yyyy-MM-dd HH:mm");
+        public Author CreateAuthor { get; set; }
+        public Author UpdateAuthor { get; set; }
+        public bool IsAdmin { get; set; }
+        public int UserId { get; set; }
     }
 }

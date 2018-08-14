@@ -1,6 +1,6 @@
 ﻿using System;
 using MsgBoard.Extension;
-using MsgBoard.Models.Entity;
+using MsgBoard.Models.Dto;
 
 namespace MsgBoard.ViewModel.Post
 {
@@ -12,7 +12,8 @@ namespace MsgBoard.ViewModel.Post
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
         public string ChineseTime => UpdateTime.ConvertToChinese();
-        public User Author { get; set; }
+        public Author CreateAuthor { get; set; }
+        public Author UpdateAuthor { get; set; }
 
         public int ReplyCount { get; set; }
     }

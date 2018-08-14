@@ -1,17 +1,17 @@
 ﻿using System.Configuration;
 using System.Data;
-using System.Web.Mvc;
+using System.Web.Http;
 using MsgBoard.Services;
 
-namespace MsgBoard.Controllers
+namespace MsgBoard.ApiControllers
 {
-    public class BaseController : Controller
+    public class BaseApiController : ApiController
     {
         protected ConnectionFactory ConnFactory;
         protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
         protected IDbConnection Conn;
 
-        public BaseController()
+        public BaseApiController()
         {
             ConnFactory = new ConnectionFactory();
             Conn = ConnFactory.GetConnection();

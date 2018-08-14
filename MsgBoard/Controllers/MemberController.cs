@@ -33,8 +33,7 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var connection = _connFactory.GetConnection();
-            var loginResult = _memberService.CheckUserPassword(connection, model.Account, model.Password);
+            var loginResult = _memberService.CheckUserPassword(Conn, model.Account, model.Password);
             if (loginResult.Auth.Equals(false))
             {
                 ModelState.AddModelError("LoginError", "帳號或密碼錯誤");
@@ -73,7 +72,7 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var isExistSameUser = _memberService.CheckUserExist(_connFactory.GetConnection(), model.Mail);
+            var isExistSameUser = _memberService.CheckUserExist(ConnFactory.GetConnection(), model.Mail);
             if (isExistSameUser)
             {
                 ModelState.AddModelError("SameUser", $"{model.Mail} 已被註冊，若忘記密碼請洽系統管理員。");
@@ -82,7 +81,7 @@ namespace MsgBoard.Controllers
 
             using (var tranScope = new TransactionScope())
             {
-                using (var connection = _connFactory.GetConnection())
+                using (var connection = ConnFactory.GetConnection())
                 {
                     // Table User
                     var fileName = _memberService.SaveMemberPic(model.File, Server.MapPath(FileUploadPath));
@@ -117,7 +116,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var connection = _connFactory.GetConnection();
+            var connection = ConnFactory.GetConnection();
             var user = _memberService.GetUser(connection, id.Value);
             if (user == null)
             {
@@ -153,7 +152,7 @@ namespace MsgBoard.Controllers
         [AuthorizePlus]
         public ActionResult Update(int id, MemberUpdateViewModel model)
         {
-            var connection = _connFactory.GetConnection();
+            var connection = ConnFactory.GetConnection();
             var user = _memberService.GetUser(connection, id);
 
             if (ModelState.IsValid.Equals(false))
@@ -227,7 +226,7 @@ namespace MsgBoard.Controllers
                 return RedirectToAction("Index", "Post");
             }
 
-            var connection = _connFactory.GetConnection();
+            var connection = ConnFactory.GetConnection();
             var user = _memberService.GetUser(connection, id.Value);
             if (user == null)
             {

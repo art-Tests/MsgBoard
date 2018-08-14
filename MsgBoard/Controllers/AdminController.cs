@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Services;
@@ -11,12 +10,10 @@ namespace MsgBoard.Controllers
     public class AdminController : BaseController
     {
         private readonly MemberService _memberService;
-        private readonly IDbConnection _connection;
 
         public AdminController()
         {
             _memberService = new MemberService();
-            _connection = _connFactory.GetConnection();
         }
 
         public ActionResult Index(int page = 1, int pageSize = 5)
@@ -29,7 +26,7 @@ namespace MsgBoard.Controllers
             ViewData["nowPage"] = page;
 
             var model = _memberService
-                .GetUserCollection(_connection)
+                .GetUserCollection(Conn)
                 .ToPagedList(page, pageSize);
             return View(model);
         }

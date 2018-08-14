@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using Dapper;
+using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.ViewModel.Post;
 
@@ -46,19 +47,25 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         public IQueryable<PostIndexViewModel> GetPostCollection(IDbConnection conn)
         {
             var sqlCmd = GetPostCollectionSqlCmd();
-            return conn.Query<PostIndexViewModel, User, PostIndexViewModel>(sqlCmd, (p, u) =>
-            {
-                p.Author = u;
-                return p;
-            }).AsQueryable();
+            return conn.Query<PostIndexViewModel, Author, Author, PostIndexViewModel>(sqlCmd, (p, i, u) =>
+             {
+                 p.CreateAuthor = i;
+                 p.UpdateAuthor = u;
+                 return p;
+             }).AsQueryable();
         }
 
         private string GetPostCollectionSqlCmd()
         {
             return @"
 select ROW_NUMBER() OVER(ORDER BY p.Id desc) AS RowId, p.*
-,u.Id,u.Name,u.Pic
+,(
+	select count(*) from reply where PostId = p.Id and IsDel=0
+) as 'ReplyCount'
+,i.*
+,u.*
 from [dbo].[Post] (nolock) as p
+left join [dbo].[User] (nolock) as i on p.CreateUserId= i.Id
 left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
 where p.IsDel=0
 ";
@@ -72,7 +79,7 @@ where p.IsDel=0
         /// <returns></returns>
         public Post GetPostById(IDbConnection conn, int id)
         {
-            var sqlCmd = "select * from [dbo].[Post] (nolock) where Id=@id";
+            var sqlCmd = "select top 1 * from [dbo].[Post] (nolock) where Id=@id";
             return conn.QueryFirstOrDefault<Post>(sqlCmd, new { id });
         }
 
