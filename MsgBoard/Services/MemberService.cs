@@ -26,7 +26,6 @@ namespace MsgBoard.Services
         public MemberService()
         {
             HashService = new HashService();
-            HashService.SetAlgList("SHA512");
             _userRepo = new UserRepository();
             _passwordRepo = new PasswordRepository();
         }
