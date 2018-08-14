@@ -8,6 +8,7 @@
   ReplyLinkClassName: '.reply-link',
   ReplyCloseClassName: '.reply-close',
   DeletePostAction: '/Post/Delete',
+  DeleteReplyAction: '/Reply/Delete',
   UserIdSelector: '#userId',
   JQueryTemplate: '#tmpl'
 }
@@ -44,6 +45,22 @@ const deletePost = function() {
   document.body.appendChild(form)
   form.submit()
 }
+const deleteReply = function(obj) {
+  let replyId = $(obj).data('id')
+  console.log('delete reply:' + replyId)
+  let form = document.createElement('form')
+  let idDom = document.createElement('input')
+
+  form.method = 'POST'
+  form.action = page.DeleteReplyAction
+
+  idDom.value = replyId
+  idDom.name = 'id'
+  form.appendChild(idDom)
+
+  document.body.appendChild(form)
+  form.submit()
+}
 const GetReplyData = function() {
   let area = $(this)
     .hide()
@@ -51,7 +68,8 @@ const GetReplyData = function() {
     .show()
     .siblings(page.ReplyAreaClassName)
     .show()
-  if (area[0].innerHTML !== '') return
+
+  area[0].innerHTML = ''
 
   let postId = $(this).data('postid')
   let userId = $(page.UserIdSelector).val()
@@ -79,9 +97,7 @@ class App {
     page.ConfirmBtns.forEach(btn =>
       btn.addEventListener('click', ConfirmDelete)
     )
-
     page.DeleteConfirm.forEach(btn => btn.addEventListener('click', deletePost))
-
     page.ReplyLinks.forEach(link =>
       link.addEventListener('click', GetReplyData)
     )
@@ -98,4 +114,7 @@ let delConfirm = function(obj) {
     .hide()
     .siblings(page.DeleteConfirmClassName)
     .show()
+}
+let delReply = function(obj) {
+  deleteReply(obj)
 }

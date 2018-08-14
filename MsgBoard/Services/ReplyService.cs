@@ -62,7 +62,7 @@ select r.*
 from [dbo].[Reply] (nolock) r
 left join [dbo].[User] (nolock) insUser on insUser.Id = r.CreateUserId
 left join [dbo].[User] (nolock) updUser on updUser.Id = r.UpdateUserId
-where r.PostId =@id
+where r.PostId =@id and r.IsDel=0
 order by r.CreateTime
 ";
         }
@@ -88,6 +88,12 @@ UPDATE [dbo].[Reply]
       ,[UpdateUserId] = @UpdateUserId
  WHERE Id=@id
 ";
+        }
+
+        public void Delete(IDbConnection conn, int id)
+        {
+            var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where Id=@id";
+            conn.Execute(sqlCmd, new { id });
         }
     }
 }
