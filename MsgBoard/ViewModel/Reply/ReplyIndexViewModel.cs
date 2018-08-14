@@ -26,6 +26,8 @@ namespace MsgBoard.ViewModel.Reply
         [Required]
         public DateTime UpdateTime { get; set; }
 
+        public string CreateTimeText => CreateTime.ToString("yyyy-MM-dd HH:mm");
+        public string UpdateTimeText => UpdateTime.ToString("yyyy-MM-dd HH:mm");
         public Author CreateAuthor { get; set; }
         public Author UpdateAuthor { get; set; }
     }

@@ -21,9 +21,21 @@ namespace MsgBoard.Helper
 
         public static string CreateReplyLink(this HtmlHelper helper, int replyCount, int postId)
         {
-            return replyCount > 0
-                ? $"<a href=\"javascript:;\" class=\"reply-link\" data-postid=\"{postId}\">查看全部 {replyCount} 則留言</a><div class=\"reply-area\"></div>"
-                : "<span>無回覆訊息</span>";
+            if (replyCount > 0)
+            {
+                return
+                    $@"
+<a href=""javascript:;"" class=""reply-link"" data-postid=""{postId}"">
+    查看全部 {replyCount} 則留言
+</a>
+<a href=""javascript:;"" class=""reply-close"" style=""display:none"">隱藏留言</a>
+<div class=""reply-area""></div>
+";
+            }
+            else
+            {
+                return "<span>無回覆訊息</span>";
+            }
         }
     }
 }

@@ -21,28 +21,25 @@
 {
     <div class="row">
         <div class="col-md-2">
-            <img src="@Url.Content(item.Author.Pic)" height="100" />
+            <img src="@Url.Content(item.CreateAuthor.Pic)" height="100" />
             <br />
-            @Html.DisplayFor(modelItem => item.Author.Name)
+            @Html.DisplayFor(modelItem => item.CreateAuthor.Name)
         </div>
 
         <div class="col-md-10">
             <pre style="white-space: pre-wrap">@item.Content</pre>
-            <div>
-                @Html.Raw(Html.CreateReplyLink(item.ReplyCount, item.Id))
-            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-2">
-            @Html.DisplayFor(modelItem => item.ChineseTime)
+            @*@Html.DisplayFor(modelItem => item.ChineseTime)*@
         </div>
         <div class="col-md-10 text-right">
             <div class="text-muted">
                 @{
                     if (SignInUser.Auth)
                     {
-                        if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.Author.Id)
+                        if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.CreateAuthor.Id)
                         {
                             <div style="display: inline;">
                                 @Html.ActionLink("Edit", "Update", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
@@ -51,7 +48,7 @@
                         <div style="display: inline;">
                             @Html.ActionLink("Reply", "Create", "Reply", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
                         </div>
-                        if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.Author.Id)
+                        if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.CreateAuthor.Id)
                         {
                             <div style="display: inline;">
                                 <a href="javascript:;" class="btn btn-danger btn-sm delete-link">Delete</a>
@@ -61,7 +58,10 @@
                     }
                 }
 
-                Edit By @item.Author.Name @@ @item.UpdateTime.ToString("t")
+                Edit By @item.UpdateAuthor.Name @@ @item.UpdateTime.ToString("yyyy-MM-dd HH:mm")
+            </div>
+            <div class="text-right">
+                @Html.Raw(Html.CreateReplyLink(item.ReplyCount, item.Id))
             </div>
         </div>
     </div>
@@ -73,6 +73,20 @@
 
 @section scripts
 {
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script type="text/x-jquery-tmpl" id="myTempl">
+        <div class="row">
+            <div class="col-md-2">
+                <img src="${CreateAuthor.Pic}" height="100" />
+                <br />
+                ${CreateAuthor.Name}
+            </div>
+            <div class="col-md-10">
+                <pre style="white-space: pre-wrap">${Content}</pre>
+                <div class="text-right">Reply By ${UpdateAuthor.Name} @@ ${UpdateTimeText}</div>
+            </div>
+        </div>
+    </script>
     <script src="~/js/Post/Index.js?@Guid.NewGuid()"></script>
 }
 

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Security.Policy;
+using System.Web.Mvc;
 using Dapper;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
@@ -39,11 +42,13 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         {
             var sqlCmd = GetReplyByPostIdSqlCmd();
             return conn.Query<ReplyIndexViewModel, Author, Author, ReplyIndexViewModel>(sqlCmd, (r, i, u) =>
-               {
-                   r.CreateAuthor = i;
-                   r.UpdateAuthor = u;
-                   return r;
-               }, new { id }, splitOn: "Id");
+            {
+                i.Pic = i.Pic.Replace("~", string.Empty);
+                u.Pic = u.Pic.Replace("~", string.Empty);
+                r.CreateAuthor = i;
+                r.UpdateAuthor = u;
+                return r;
+            }, new { id }, splitOn: "Id");
         }
 
         private string GetReplyByPostIdSqlCmd()
