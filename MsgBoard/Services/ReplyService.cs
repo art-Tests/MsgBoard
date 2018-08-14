@@ -38,7 +38,7 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
 ";
         }
 
-        public IEnumerable<ReplyIndexViewModel> GetReplyByPostId(IDbConnection conn, int id)
+        public IEnumerable<ReplyIndexViewModel> GetReplyByPostId(IDbConnection conn, int id, int userId)
         {
             var sqlCmd = GetReplyByPostIdSqlCmd();
             return conn.Query<ReplyIndexViewModel, Author, Author, ReplyIndexViewModel>(sqlCmd, (r, i, u) =>
@@ -48,21 +48,21 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
                 r.CreateAuthor = i;
                 r.UpdateAuthor = u;
                 return r;
-            }, new { id }, splitOn: "Id");
+            }, new { id, userId }, splitOn: "Id");
         }
 
         private string GetReplyByPostIdSqlCmd()
         {
             return @"
---declare @id int
---set @id=5
 select r.*
+,(select IsAdmin from [dbo].[User] (nolock) where Id=@userId) as IsAdmin
+,(select @userId )as UserId
 ,insUser.*
 ,updUser.*
 from [dbo].[Reply] (nolock) r
 left join [dbo].[User] (nolock) insUser on insUser.Id = r.CreateUserId
 left join [dbo].[User] (nolock) updUser on updUser.Id = r.UpdateUserId
-where r.PostId = @id
+where r.PostId =@id
 order by r.CreateTime
 ";
         }

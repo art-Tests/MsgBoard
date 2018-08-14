@@ -14,6 +14,7 @@
         <div class="text-right">
             @Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-sm btn-primary" })
         </div>
+        <input type="hidden" name="userId" id="userId" value="@(SignInUser.User.Id)" />
     }
 }
 <br />
@@ -60,7 +61,8 @@
 
                 Edit By @item.UpdateAuthor.Name @@ @item.UpdateTime.ToString("yyyy-MM-dd HH:mm")
             </div>
-            <div class="text-right">
+            <div>
+                <input type="hidden" name="createUserId" class="create-user-id" value="@(item.CreateAuthor.Id)" />
                 @Html.Raw(Html.CreateReplyLink(item.ReplyCount, item.Id))
             </div>
         </div>
@@ -74,7 +76,8 @@
 @section scripts
 {
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-    <script type="text/x-jquery-tmpl" id="myTempl">
+
+    <script type="text/x-jquery-tmpl" id="tmpl">
         <div class="row">
             <div class="col-md-2">
                 <img src="${CreateAuthor.Pic}" height="100" />
@@ -83,7 +86,23 @@
             </div>
             <div class="col-md-10">
                 <pre style="white-space: pre-wrap">${Content}</pre>
-                <div class="text-right">Reply By ${UpdateAuthor.Name} @@ ${UpdateTimeText}</div>
+
+                <div class="text-muted">
+
+                    {{if CreateAuthor.Id==UserId || IsAdmin}}
+                    <div style="display: inline;">
+                        <a class="btn btn-sm btn-default btn-edit" href="/Reply/Update/${Id}">Edit</a>
+                    </div>
+                    {{/if}}
+                    {{if CreateAuthor.Id==UserId || IsAdmin}}
+                    <div style="display: inline;">
+                        <a href="javascript:;" class="btn btn-danger btn-sm delete-link">Delete</a>
+                        <a href="javascript:;" class="btn btn-sm btn-danger delete-confirm" data-id="5" style="display: none">確認刪除？</a>
+                    </div>
+                    {{/if}}
+
+                    Reply By ${UpdateAuthor.Name} @@ ${UpdateTimeText}
+                </div>
             </div>
         </div>
     </script>

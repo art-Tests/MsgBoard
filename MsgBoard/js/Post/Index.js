@@ -42,11 +42,12 @@
     if (area[0].innerHTML !== '') return
 
     let postId = $(this).data('postid')
+    let userId = $('#userId').val()
     $.ajax({
       type: 'Get',
-      url: `/API/Reply/${postId}`,
+      url: `/API/Reply/${postId}?user=${userId}`,
       success: function(res) {
-        $('#myTempl')
+        $(`#tmpl`)
           .tmpl(res)
           .appendTo(area)
       }

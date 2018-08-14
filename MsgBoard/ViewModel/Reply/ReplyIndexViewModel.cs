@@ -30,5 +30,7 @@ namespace MsgBoard.ViewModel.Reply
         public string UpdateTimeText => UpdateTime.ToString("yyyy-MM-dd HH:mm");
         public Author CreateAuthor { get; set; }
         public Author UpdateAuthor { get; set; }
+        public bool IsAdmin { get; set; }
+        public int UserId { get; set; }
     }
 }
