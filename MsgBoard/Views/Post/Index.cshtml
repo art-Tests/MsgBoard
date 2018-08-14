@@ -58,8 +58,14 @@
                         }
                     }
                 }
+                <div class="text-muted">Created By @item.CreateAuthor.Name @@ @item.CreateTime.ToString("yyyy-MM-dd HH:mm")</div>
+                @{
+                    if (item.CreateTime != item.UpdateTime)
+                    {
+                        <div class="text-muted">Updated By @item.UpdateAuthor.Name @@ @item.UpdateTime.ToString("yyyy-MM-dd HH:mm")</div>
 
-                Edit By @item.UpdateAuthor.Name @@ @item.UpdateTime.ToString("yyyy-MM-dd HH:mm")
+                    }
+                }
             </div>
             <div>
                 <input type="hidden" name="createUserId" class="create-user-id" value="@(item.CreateAuthor.Id)" />
@@ -87,7 +93,7 @@
             <div class="col-md-10">
                 <pre style="white-space: pre-wrap">${Content}</pre>
 
-                <div class="text-muted">
+                <div>
 
                     {{if CreateAuthor.Id==UserId || IsAdmin}}
                     <div style="display: inline;">
@@ -101,7 +107,10 @@
                     </div>
                     {{/if}}
 
-                    Reply By ${UpdateAuthor.Name} @@ ${UpdateTimeText}
+                    <div class="text-muted">Created By ${CreateAuthor.Name} @@ ${CreateTimeText}</div>
+                    {{if CreateTimeText != UpdateTimeText }}
+                    <div class="text-muted">Updated By ${UpdateAuthor.Name} @@ ${UpdateTimeText}</div>
+                    {{/if}}
                 </div>
             </div>
         </div>
