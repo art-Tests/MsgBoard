@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Net;
+﻿using System.Net;
 using System.Web.Mvc;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
@@ -11,12 +10,10 @@ namespace MsgBoard.Controllers
 {
     public class PostController : BaseController
     {
-        private readonly IDbConnection _conn;
         private readonly PostService _postService;
 
         public PostController()
         {
-            _conn = _connFactory.GetConnection();
             _postService = new PostService();
         }
 
@@ -28,7 +25,7 @@ namespace MsgBoard.Controllers
         public ActionResult Index(int page = 1, int pageSize = 5)
         {
             var model = _postService
-                .GetPostCollection(_conn)
+                .GetPostCollection(Conn)
                 .ToPagedList(page, pageSize);
             return View(model);
         }
@@ -48,7 +45,7 @@ namespace MsgBoard.Controllers
 
             model.CreateUserId = SignInUser.User.Id;
             model.UpdateUserId = SignInUser.User.Id;
-            _postService.Create(_conn, model);
+            _postService.Create(Conn, model);
             return RedirectToAction("Index", "Post");
         }
 
@@ -60,7 +57,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var model = _postService.GetPostById(_conn, id.Value);
+            var model = _postService.GetPostById(Conn, id.Value);
             return View(model);
         }
 
@@ -74,7 +71,7 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var dbPost = _postService.GetPostById(_conn, id.Value);
+            var dbPost = _postService.GetPostById(Conn, id.Value);
             if (dbPost == null)
             {
                 return View(model);
@@ -84,7 +81,7 @@ namespace MsgBoard.Controllers
             {
                 dbPost.Content = model.Content;
                 dbPost.UpdateUserId = SignInUser.User.Id;
-                _postService.Update(_conn, dbPost);
+                _postService.Update(Conn, dbPost);
 
                 return RedirectToAction("Index", "Post");
             }
@@ -98,13 +95,13 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var dbPost = _postService.GetPostById(_conn, id.Value);
+            var dbPost = _postService.GetPostById(Conn, id.Value);
             if (dbPost == null)
             {
                 return HttpNotFound();
             }
 
-            _postService.Delete(_conn, id.Value);
+            _postService.Delete(Conn, id.Value);
             return RedirectToAction("Index", "Post");
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Data;
 using System.Web.Mvc;
 using MsgBoard.Services;
 
@@ -6,12 +7,14 @@ namespace MsgBoard.Controllers
 {
     public class BaseController : Controller
     {
-        protected ConnectionFactory _connFactory;
+        protected ConnectionFactory ConnFactory;
         protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
+        protected IDbConnection Conn;
 
         public BaseController()
         {
-            _connFactory = new ConnectionFactory();
+            ConnFactory = new ConnectionFactory();
+            Conn = ConnFactory.GetConnection();
         }
     }
 }

@@ -48,7 +48,7 @@
                             </div>
                         }
                         <div style="display: inline;">
-                            @Html.ActionLink("Reply", "Reply", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
+                            @Html.ActionLink("Reply", "Create", "Reply", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
                         </div>
                         if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.Author.Id)
                         {

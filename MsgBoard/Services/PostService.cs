@@ -72,7 +72,7 @@ where p.IsDel=0
         /// <returns></returns>
         public Post GetPostById(IDbConnection conn, int id)
         {
-            var sqlCmd = "select * from [dbo].[Post] (nolock) where Id=@id";
+            var sqlCmd = "select top 1 * from [dbo].[Post] (nolock) where Id=@id";
             return conn.QueryFirstOrDefault<Post>(sqlCmd, new { id });
         }
 
