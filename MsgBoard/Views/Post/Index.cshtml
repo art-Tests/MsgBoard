@@ -1,4 +1,5 @@
-﻿@using MsgBoard.Models.Dto
+﻿@using MsgBoard.Helper
+@using MsgBoard.Models.Dto
 @using PagedList.Mvc;
 @using PagedList;
 @model IEnumerable<MsgBoard.ViewModel.Post.PostIndexViewModel>
@@ -28,7 +29,7 @@
         <div class="col-md-10">
             <pre style="white-space: pre-wrap">@item.Content</pre>
             <div>
-                查看全部 @item.ReplyCount 則留言
+                @Html.Raw(Html.CreateReplyLink(item.ReplyCount, item.Id))
             </div>
         </div>
     </div>

@@ -1,0 +1,32 @@
+﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
+using MsgBoard.Models.Dto;
+
+namespace MsgBoard.ViewModel.Reply
+{
+    public class ReplyIndexViewModel
+    {
+        [Required]
+        public int Id { get; set; }
+
+        [Required]
+        public int PostId { get; set; }
+
+        [MaxLength(2000)]
+        [Required]
+        [DisplayName("內容")]
+        [AllowHtml]
+        public string Content { get; set; }
+
+        [Required]
+        public DateTime CreateTime { get; set; }
+
+        [Required]
+        public DateTime UpdateTime { get; set; }
+
+        public Author CreateAuthor { get; set; }
+        public Author UpdateAuthor { get; set; }
+    }
+}

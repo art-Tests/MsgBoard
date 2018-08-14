@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using Dapper;
+using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.ViewModel.Post;
 
@@ -46,11 +47,12 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         public IQueryable<PostIndexViewModel> GetPostCollection(IDbConnection conn)
         {
             var sqlCmd = GetPostCollectionSqlCmd();
-            return conn.Query<PostIndexViewModel, User, PostIndexViewModel>(sqlCmd, (p, u) =>
-            {
-                p.Author = u;
-                return p;
-            }).AsQueryable();
+            return conn.Query<PostIndexViewModel, Author, Author, PostIndexViewModel>(sqlCmd, (p, i, u) =>
+             {
+                 p.CreateAuthor = i;
+                 p.UpdateAuthor = u;
+                 return p;
+             }).AsQueryable();
         }
 
         private string GetPostCollectionSqlCmd()
@@ -60,8 +62,10 @@ select ROW_NUMBER() OVER(ORDER BY p.Id desc) AS RowId, p.*
 ,(
 	select count(*) from reply where PostId = p.Id and IsDel=0
 ) as 'ReplyCount'
-,u.Id,u.Name,u.Pic
+,i.*
+,u.*
 from [dbo].[Post] (nolock) as p
+left join [dbo].[User] (nolock) as i on p.CreateUserId= i.Id
 left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
 where p.IsDel=0
 ";
