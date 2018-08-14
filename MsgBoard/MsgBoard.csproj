@@ -184,6 +184,7 @@
     <Compile Include="Services\MemberService.cs" />
     <Compile Include="Services\PasswordRepository.cs" />
     <Compile Include="Services\PostService.cs" />
+    <Compile Include="Services\ReplyService.cs" />
     <Compile Include="Services\UserRepository.cs" />
     <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
