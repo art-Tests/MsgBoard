@@ -57,6 +57,9 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         {
             return @"
 select ROW_NUMBER() OVER(ORDER BY p.Id desc) AS RowId, p.*
+,(
+	select count(*) from reply where PostId = p.Id and IsDel=0
+) as 'ReplyCount'
 ,u.Id,u.Name,u.Pic
 from [dbo].[Post] (nolock) as p
 left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
