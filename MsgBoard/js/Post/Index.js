@@ -12,81 +12,90 @@
   JQueryTemplate: '#tmpl'
 }
 
+/**
+ * 詢問是否確認刪除文章？
+ * 1. 隱藏刪除按鈕
+ * 2. 顯示確認按鈕
+ */
+const ConfirmDelete = function() {
+  $(this)
+    .hide()
+    .siblings(page.DeleteConfirmClassName)
+    .show()
+}
+
+/**
+ * 確認刪除文章事件處理
+ * 1. 取得文章Id
+ * 2. 透過js建立表單以Post送出刪除請求
+ */
+const deletePost = function() {
+  let postId = $(this).data('id')
+  let form = document.createElement('form')
+  let idDom = document.createElement('input')
+
+  form.method = 'POST'
+  form.action = page.DeletePostAction
+
+  idDom.value = postId
+  idDom.name = 'id'
+  form.appendChild(idDom)
+
+  document.body.appendChild(form)
+  form.submit()
+}
+const GetReplyData = function() {
+  let area = $(this)
+    .hide()
+    .siblings(page.ReplyCloseClassName)
+    .show()
+    .siblings(page.ReplyAreaClassName)
+    .show()
+  if (area[0].innerHTML !== '') return
+
+  let postId = $(this).data('postid')
+  let userId = $(page.UserIdSelector).val()
+  $.ajax({
+    type: 'Get',
+    url: `/API/Reply/${postId}?user=${userId}`,
+    success: function(res) {
+      $(page.JQueryTemplate)
+        .tmpl(res)
+        .appendTo(area)
+    }
+  })
+}
+
+const hideReplyArea = function() {
+  $(this)
+    .hide()
+    .siblings(page.ReplyLinkClassName)
+    .show()
+    .siblings(page.ReplyAreaClassName)
+    .hide()
+}
 class App {
   static Init() {
-    const hideTarget = target => target.hide('fast')
-    const showTarget = target => target.show('fast')
-    const findDom = (target, className) =>
-      className ? target.siblings(className) : target
+    page.ConfirmBtns.forEach(btn =>
+      btn.addEventListener('click', ConfirmDelete)
+    )
 
-    let replyLinks = page.ReplyLinks
-    let replyCloses = page.ReplyCloses
+    page.DeleteConfirm.forEach(btn => btn.addEventListener('click', deletePost))
 
-    /**
-     * 詢問是否確認刪除文章？
-     * 1. 隱藏刪除按鈕
-     * 2. 顯示確認按鈕
-     */
-    const ConfirmDelete = function() {
-      hideTarget($(this))
-      showTarget(findDom($(this), page.DeleteConfirmClassName))
-    }
-
-    /**
-     * 確認刪除文章事件處理
-     * 1. 取得文章Id
-     * 2. 透過js建立表單以Post送出刪除請求
-     */
-    const deletePost = function() {
-      let postId = $(this).data('id')
-      let form = document.createElement('form')
-      let idDom = document.createElement('input')
-
-      form.method = 'POST'
-      form.action = page.DeletePostAction
-
-      idDom.value = postId
-      idDom.name = 'id'
-      form.appendChild(idDom)
-
-      document.body.appendChild(form)
-      form.submit()
-    }
-
-    let confirmBtns = page.ConfirmBtns
-    confirmBtns.forEach(btn => btn.addEventListener('click', ConfirmDelete))
-
-    let delBtns = page.DeleteConfirm
-    delBtns.forEach(btn => btn.addEventListener('click', deletePost))
-
-    const GetReplyData = function() {
-      hideTarget($(this))
-      showTarget(findDom($(this), page.ReplyCloseClassName))
-      let area = showTarget(findDom($(this), page.ReplyAreaClassName))
-      if (area[0].innerHTML !== '') return
-
-      let postId = $(this).data('postid')
-      let userId = $(page.UserIdSelector).val()
-      $.ajax({
-        type: 'Get',
-        url: `/API/Reply/${postId}?user=${userId}`,
-        success: function(res) {
-          $(page.JQueryTemplate)
-            .tmpl(res)
-            .appendTo(area)
-        }
-      })
-    }
-
-    const hideReplyArea = function() {
-      hideTarget($(this))
-      showTarget(findDom($(this), page.ReplyLinkClassName))
-      hideTarget(findDom($(this), page.ReplyAreaClassName))
-    }
-
-    replyLinks.forEach(link => link.addEventListener('click', GetReplyData))
-    replyCloses.forEach(link => link.addEventListener('click', hideReplyArea))
+    page.ReplyLinks.forEach(link =>
+      link.addEventListener('click', GetReplyData)
+    )
+    page.ReplyCloses.forEach(link =>
+      link.addEventListener('click', hideReplyArea)
+    )
   }
 }
 
 App.Init()
+
+let delConfirm = function(obj) {
+  $(obj)
+    .hide()
+    .siblings(page.DeleteConfirmClassName)
+    .show()
+}
