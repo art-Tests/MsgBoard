@@ -72,5 +72,22 @@ order by r.CreateTime
             var sqlCmd = "select top 1 * from [dbo].[Reply] (nolock) where id=@id";
             return conn.QueryFirstOrDefault<Reply>(sqlCmd, new { id });
         }
+
+        public void Update(IDbConnection conn, Reply reply)
+        {
+            var sqlCmd = GetUpdateSqlCmd();
+            conn.Execute(sqlCmd, reply);
+        }
+
+        private string GetUpdateSqlCmd()
+        {
+            return @"
+UPDATE [dbo].[Reply]
+   SET [Content] = @Content
+      ,[UpdateTime] = GetDate()
+      ,[UpdateUserId] = @UpdateUserId
+ WHERE Id=@id
+";
+        }
     }
 }

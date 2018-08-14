@@ -68,5 +68,32 @@ namespace MsgBoard.Controllers
             }
             return View(model);
         }
+
+        public ActionResult Update(int? id, Reply model)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (!ModelState.IsValid) return View(model);
+
+            var reply = _replyService.GetReplyById(Conn, id.Value);
+            if (reply == null)
+            {
+                return View(model);
+            }
+
+            if (SignInUser.User.IsAdmin || SignInUser.User.Id == reply.CreateUserId)
+            {
+                reply.Content = model.Content;
+                reply.UpdateUserId = SignInUser.User.Id;
+                _replyService.Update(Conn, reply);
+
+                return RedirectToAction("Index", "Post");
+            }
+
+            return View(model);
+        }
     }
 }
