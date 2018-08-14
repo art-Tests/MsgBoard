@@ -1,14 +1,14 @@
 ﻿@model MsgBoard.Models.Entity.Reply
 
 @{
-    ViewBag.Title = "新增回覆";
-    ViewBag.BtnName = "新增";
+    ViewBag.Title = "修改回覆";
+    ViewBag.BtnName = "修改";
 }
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    <input type="hidden" name="PostId" id="PostId" value="@ViewBag.postId" />
+    @Html.HiddenFor(model => model.PostId)
     @Html.Partial("_ReplyForm", Model)
 }
 

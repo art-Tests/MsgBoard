@@ -46,5 +46,27 @@ namespace MsgBoard.Controllers
             _replyService.Create(Conn, model);
             return RedirectToAction("Index", "Post");
         }
+
+        [HttpGet, AuthorizePlus]
+        public ActionResult Update(int? id)
+        {
+            //參數錯誤
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //查無文章
+            var model = _replyService.GetReplyById(Conn, id.Value);
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+            //已刪除文章不允許回覆
+            if (model.IsDel)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            return View(model);
+        }
     }
 }

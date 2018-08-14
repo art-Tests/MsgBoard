@@ -66,5 +66,11 @@ where r.PostId =@id
 order by r.CreateTime
 ";
         }
+
+        public Reply GetReplyById(IDbConnection conn, int id)
+        {
+            var sqlCmd = "select top 1 * from [dbo].[Reply] (nolock) where id=@id";
+            return conn.QueryFirstOrDefault<Reply>(sqlCmd, new { id });
+        }
     }
 }

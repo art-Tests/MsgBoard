@@ -265,6 +265,8 @@
     <Content Include="Views\Post\Update.cshtml" />
     <Content Include="Views\Post\_PostForm.cshtml" />
     <Content Include="Views\Reply\Create.cshtml" />
+    <Content Include="Views\Reply\Update.cshtml" />
+    <Content Include="Views\Reply\_ReplyForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />
