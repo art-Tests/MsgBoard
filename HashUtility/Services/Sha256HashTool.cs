@@ -5,9 +5,6 @@
     /// </summary>
     public class Sha256HashTool : BaseHashTool
     {
-        public Sha256HashTool()
-        {
-            HashType = "SHA256";
-        }
+        public override string HashType { get; } = "SHA256";
     }
 }

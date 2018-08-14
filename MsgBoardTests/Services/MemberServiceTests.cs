@@ -1,15 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using ExpectedObjects;
 using HashUtility.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.Interface;
+using MsgBoard.Services;
 using NSubstitute;
 
-namespace MsgBoard.Services.Tests
+namespace MsgBoardTests.Services
 {
     [TestClass()]
     public class MemberServiceTests
@@ -28,7 +29,8 @@ namespace MsgBoard.Services.Tests
 
             var fakeSqlConnection = new SqlConnection();
             var sut = new MemberServiceStub();
-            var hashTool = new HashTool(HashFactory.GetInstance("SHA512"));
+            var hashTool = new HashService();
+            hashTool.SetAlgList("SHA512,SHA256");
             sut.SetHashTool(hashTool);
             var actual = sut.CheckUserPassword(fakeSqlConnection, email, userPass);
             expected.ToExpectedObject().ShouldEqual(actual);
@@ -46,21 +48,22 @@ namespace MsgBoard.Services.Tests
                 User = fakeUser
             };
 
-            var fakeSqlConnection = new SqlConnection();
             var connFactory = Substitute.For<IConnectionFactory>();
-            connFactory.GetConnection().Returns(fakeSqlConnection);
-
+            connFactory.GetConnection().Returns(new SqlConnection());
             var connection = connFactory.GetConnection();
+
+            var sut = new MemberService();
+
             var userRepo = Substitute.For<IUserRepository>();
             userRepo.GetUserByMail(connection, fakeUser.Mail).Returns(fakeUser);
+            sut.SetUserRepository(userRepo);
 
             var passRepo = Substitute.For<IPasswordRepository>();
             passRepo.FindPasswordByUserId(connection, fakeUser.Id).Returns(GetFakePassword());
-
-            var sut = new MemberService();
-            sut.SetUserRepository(userRepo);
             sut.SetPasswordRepository(passRepo);
-            var hashTool = new HashTool(HashFactory.GetInstance("SHA512"));
+
+            var hashTool = new HashService();
+            hashTool.SetAlgList("SHA512,SHA256");
             sut.SetHashTool(hashTool);
 
             var actual = sut.CheckUserPassword(connection, email, userPass);
@@ -73,7 +76,7 @@ namespace MsgBoard.Services.Tests
             {
                 Id = 1,
                 UserId = 1,
-                HashPw = "3041DF81726E8B5B3D1CACCF9FD6F5C7D8406B04D567CB00BD3E97711F71A0D9A7E4751A6416E83215F360781DE6DA6D4B6166F917D8668BB33DD0DD0B6554AA",
+                HashPw = "11E1252247D8CB030F3DDC69BE23C2FE4AFD12C446AC6F229435B078A5451F2B",
                 CreateTime = DateTime.Now
             };
             return fakePassword;
@@ -106,7 +109,7 @@ namespace MsgBoard.Services.Tests
             var password = GetFakePassword();
             if (password == null) return result;
 
-            var hashPassword = HashTool.GetMemberHashPw(user.Guid, userPass);
+            var hashPassword = HashService.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
             result.User = user;
             return result;
@@ -132,7 +135,7 @@ namespace MsgBoard.Services.Tests
             {
                 Id = 1,
                 UserId = 1,
-                HashPw = "3041DF81726E8B5B3D1CACCF9FD6F5C7D8406B04D567CB00BD3E97711F71A0D9A7E4751A6416E83215F360781DE6DA6D4B6166F917D8668BB33DD0DD0B6554AA",
+                HashPw = "11E1252247D8CB030F3DDC69BE23C2FE4AFD12C446AC6F229435B078A5451F2B",
                 CreateTime = DateTime.Now
             };
             return fakePassword;

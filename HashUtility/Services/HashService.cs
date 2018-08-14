@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Text;
-using HashUtility.Interface;
 
 namespace HashUtility.Services
 {
     /// <summary>
     /// Hash工具
     /// </summary>
-    public class HashTool
+    public class HashService
     {
-        public HashTool(IHash hashUtil)
+        public HashService()
         {
-            _hashUtil = hashUtil;
+            var configAlgList = Properties.Settings.Default.algList;
+            _algList = configAlgList.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        /// <summary>
+        /// 測試用：設定Hash演算法
+        /// </summary>
+        /// <param name="algName">指定演算法，例如:SHA512,SHA256</param>
+        [Conditional("DEBUG")]
+        public void SetAlgList(string algName)
+        {
+            _algList = algName.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         /// <summary>
@@ -20,7 +29,7 @@ namespace HashUtility.Services
         /// </summary>
         private string _hashKey = "@ehsn";
 
-        private readonly IHash _hashUtil;
+        private string[] _algList;
 
         /// <summary>
         /// 測試用：將Hash Key手動變更
@@ -41,7 +50,18 @@ namespace HashUtility.Services
         public string GetMemberHashPw(string guid, string pass)
         {
             var hashStr = $"{pass}{guid}{_hashKey}";
-            return _hashUtil.GetHash(hashStr);
+
+            var result = hashStr;
+            foreach (var alg in _algList)
+            {
+                var tmp = HashFactory.GetInstance(alg);
+                if (tmp != null)
+                {
+                    result = tmp.GetHash(result);
+                }
+            }
+
+            return result;
         }
     }
 }

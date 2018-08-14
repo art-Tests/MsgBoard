@@ -5,6 +5,8 @@
     /// </summary>
     public interface IHash
     {
+        string HashType { get; }
+
         /// <summary>
         /// 取得Hash值
         /// </summary>

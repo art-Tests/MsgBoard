@@ -19,20 +19,21 @@ namespace MsgBoard.Services
 {
     public class MemberService : IMemberService
     {
-        protected HashTool HashTool;
+        protected HashService HashService;
         private IUserRepository _userRepo;
         private IPasswordRepository _passwordRepo;
 
         public MemberService()
         {
-            HashTool = new HashTool(HashFactory.GetInstance("SHA512"));
+            HashService = new HashService();
+            HashService.SetAlgList("SHA512");
             _userRepo = new UserRepository();
             _passwordRepo = new PasswordRepository();
         }
 
-        public void SetHashTool(HashTool hashTool)
+        public void SetHashTool(HashService hashService)
         {
-            HashTool = hashTool;
+            HashService = hashService;
         }
 
         /// <summary>
@@ -152,7 +153,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
             return new Password
             {
                 UserId = userId,
-                HashPw = HashTool.GetMemberHashPw(guid, userPass)
+                HashPw = HashService.GetMemberHashPw(guid, userPass)
             };
         }
 
@@ -173,7 +174,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
             var password = _passwordRepo.FindPasswordByUserId(connection, user.Id);
             if (password == null) return result;
 
-            var hashPassword = HashTool.GetMemberHashPw(user.Guid, userPass);
+            var hashPassword = HashService.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
             result.User = user;
             return result;

@@ -5,7 +5,6 @@ namespace HashUtility.Services
 {
     public abstract class BaseHashTool : IHash
     {
-        public string HashType { get; set; }
         public HashAlgorithmFactory AlgorithmFactory { get; set; }
 
         protected BaseHashTool()
@@ -22,6 +21,8 @@ namespace HashUtility.Services
                 hashedInputStringBuilder.Append(b.ToString("X2"));
             return hashedInputStringBuilder.ToString();
         }
+
+        public abstract string HashType { get; }
 
         /// <summary>
         /// 取得雜湊結果

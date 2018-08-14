@@ -5,9 +5,6 @@
     /// </summary>
     public class Sha512HashTool : BaseHashTool
     {
-        public Sha512HashTool()
-        {
-            HashType = "SHA512";
-        }
+        public override string HashType { get; } = "SHA512";
     }
 }

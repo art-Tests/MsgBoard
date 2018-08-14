@@ -6,6 +6,7 @@ namespace HashUtility.Services
     {
         public static IHash GetInstance(string hashType)
         {
+            if (string.IsNullOrEmpty(hashType)) return null;
             switch (hashType.ToUpper())
             {
                 case "SHA256": return new Sha256HashTool();

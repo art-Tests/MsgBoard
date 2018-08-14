@@ -6,6 +6,7 @@ namespace HashUtility.Services
     {
         public HashAlgorithm GetInstance(string hashType)
         {
+            if (string.IsNullOrEmpty(hashType)) return null;
             switch (hashType.ToUpper())
             {
                 case "SHA256": return new SHA256Managed();

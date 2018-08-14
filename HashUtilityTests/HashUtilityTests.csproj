@@ -56,8 +56,11 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="HashToolTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\HashFactoryTests.cs" />
+    <Compile Include="Services\HashServiceTests.cs" />
+    <Compile Include="Services\SHA256HashToolTests.cs" />
+    <Compile Include="Services\SHA512HashToolTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
