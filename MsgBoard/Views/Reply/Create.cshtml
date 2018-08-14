@@ -1,0 +1,36 @@
+﻿@model MsgBoard.Models.Entity.Reply
+
+@{
+    ViewBag.Title = "新增回覆";
+    ViewBag.BtnName = "新增";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="PostId" id="PostId" value="@ViewBag.postId" />
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Content, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Content, 10, 10, new { @class = "form-control", style = "min-width: 100%" })
+                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10 text-right">
+                <input type="submit" value="@ViewBag.BtnName" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}
