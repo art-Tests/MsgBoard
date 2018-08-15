@@ -112,7 +112,8 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
                 IsAdmin = false,
                 Mail = model.Mail,
                 Name = model.Name,
-                Pic = picPath
+                Pic = picPath,
+                IsDel = false
             };
         }
 
