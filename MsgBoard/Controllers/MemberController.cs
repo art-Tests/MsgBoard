@@ -87,10 +87,10 @@ namespace MsgBoard.Controllers
                     // Table User
                     var fileName = _memberService.SaveMemberPic(model.File, Server.MapPath(FileUploadPath));
                     var user = _memberService.ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
-                    var userId = _memberService.CreateUser(connection, user);
+                    user.Id = _memberService.CreateUser(connection, user);
 
                     // Table Password
-                    var password = _memberService.ConvertToPassEntity(userId, user.Guid, model.Password);
+                    var password = _memberService.ConvertToPassEntity(user.Id, user.Guid, model.Password);
                     _memberService.CreatePassword(connection, password);
 
                     // 註冊完直接給他登入
