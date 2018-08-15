@@ -95,5 +95,11 @@ UPDATE [dbo].[Reply]
             var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where Id=@id";
             conn.Execute(sqlCmd, new { id });
         }
+
+        public void DeleteByPostId(IDbConnection conn, int id)
+        {
+            var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where PostId=@id";
+            conn.Execute(sqlCmd, new { id });
+        }
     }
 }

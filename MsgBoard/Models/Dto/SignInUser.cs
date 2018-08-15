@@ -54,7 +54,7 @@ namespace MsgBoard.Models.Dto
         {
             HttpContext.Current.Session["auth"] = isAuth;
             HttpContext.Current.Session["memberAreaData"] = user;
-            HttpContext.Current.Session["memberArticleCount"] = artCnt;
+            SetArticleCount(artCnt);
         }
 
         public static void AdjustPostCnt(int number)
@@ -62,7 +62,7 @@ namespace MsgBoard.Models.Dto
             if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
             {
                 artCnt.PostCount = artCnt.PostCount + number;
-                HttpContext.Current.Session["memberArticleCount"] = artCnt;
+                SetArticleCount(artCnt);
             }
         }
 
@@ -71,8 +71,13 @@ namespace MsgBoard.Models.Dto
             if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
             {
                 artCnt.ReplyCount = artCnt.ReplyCount + number;
-                HttpContext.Current.Session["memberArticleCount"] = artCnt;
+                SetArticleCount(artCnt);
             }
+        }
+
+        public static void SetArticleCount(UserArticleCount artCnt)
+        {
+            HttpContext.Current.Session["memberArticleCount"] = artCnt;
         }
     }
 }

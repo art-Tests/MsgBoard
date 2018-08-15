@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Transactions;
 using System.Web.Mvc;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
@@ -10,12 +11,9 @@ namespace MsgBoard.Controllers
 {
     public class PostController : BaseController
     {
-        private readonly PostService _postService;
-
-        public PostController()
-        {
-            _postService = new PostService();
-        }
+        private readonly PostService _postService = new PostService();
+        private readonly ReplyService _replyService = new ReplyService();
+        private readonly MemberService _memberService = new MemberService();
 
         // GET: Post
         [Route("~/")]
@@ -105,11 +103,21 @@ namespace MsgBoard.Controllers
 
             if (SignInUser.User.IsAdmin || model.CreateUserId == SignInUser.User.Id)
             {
-                _postService.Delete(Conn, id.Value);
-                if (model.CreateUserId == SignInUser.User.Id)
+                using (var transScope = new TransactionScope())
                 {
-                    SignInUser.AdjustPostCnt(-1);
+                    using (var connection = ConnFactory.GetConnection())
+                    {
+                        // Delete Post
+                        _postService.Delete(connection, id.Value);
+                        // Delete Reply
+                        _replyService.DeleteByPostId(connection, id.Value);
+                    }
+                    transScope.Complete();
                 }
+                // 刪除文章、回復，有可能刪除到管理者或是其他人的資料，因此直接重新刷新目前User的文章數量資訊
+                var artCnt = _memberService.GetUserArticleCount(Conn, SignInUser.User.Id);
+                SignInUser.SetArticleCount(artCnt);
+
                 return RedirectToAction("Index", "Post");
             }
             return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
