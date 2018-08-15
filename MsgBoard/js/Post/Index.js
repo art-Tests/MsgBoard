@@ -1,120 +1,114 @@
-﻿let page = {
-  ReplyLinks: document.querySelectorAll('a.reply-link'),
-  ReplyCloses: document.querySelectorAll('a.reply-close'),
-  ConfirmBtns: document.querySelectorAll('a.delete-link'),
-  DeleteConfirm: document.querySelectorAll('.delete-confirm'),
-  DeleteConfirmClassName: '.delete-confirm',
-  ReplyAreaClassName: '.reply-area',
-  ReplyLinkClassName: '.reply-link',
-  ReplyCloseClassName: '.reply-close',
-  DeletePostAction: '/Post/Delete',
-  DeleteReplyAction: '/Reply/Delete',
-  UserIdSelector: '#userId',
-  JQueryTemplate: '#tmpl'
-}
-
-/**
- * 詢問是否確認刪除文章？
- * 1. 隱藏刪除按鈕
- * 2. 顯示確認按鈕
- */
-const ConfirmDelete = function() {
-  $(this)
-    .hide()
-    .siblings(page.DeleteConfirmClassName)
-    .show()
-}
-
-/**
- * 確認刪除文章事件處理
- * 1. 取得文章Id
- * 2. 透過js建立表單以Post送出刪除請求
- */
-const deletePost = function() {
-  let postId = $(this).data('id')
-  let form = document.createElement('form')
-  let idDom = document.createElement('input')
-
-  form.method = 'POST'
-  form.action = page.DeletePostAction
-
-  idDom.value = postId
-  idDom.name = 'id'
-  form.appendChild(idDom)
-
-  document.body.appendChild(form)
-  form.submit()
-}
-const deleteReply = function(obj) {
-  let replyId = $(obj).data('id')
-  console.log('delete reply:' + replyId)
-  let form = document.createElement('form')
-  let idDom = document.createElement('input')
-
-  form.method = 'POST'
-  form.action = page.DeleteReplyAction
-
-  idDom.value = replyId
-  idDom.name = 'id'
-  form.appendChild(idDom)
-
-  document.body.appendChild(form)
-  form.submit()
-}
-const GetReplyData = function() {
-  let area = $(this)
-    .hide()
-    .siblings(page.ReplyCloseClassName)
-    .show()
-    .siblings(page.ReplyAreaClassName)
-    .show()
-
-  area[0].innerHTML = ''
-
-  let postId = $(this).data('postid')
-  let userId = $(page.UserIdSelector).val()
-  $.ajax({
-    type: 'Get',
-    url: `/API/Reply/${postId}?user=${userId}`,
-    success: function(res) {
-      $(page.JQueryTemplate)
-        .tmpl(res)
-        .appendTo(area)
-    }
-  })
-}
-
-const hideReplyArea = function() {
-  $(this)
-    .hide()
-    .siblings(page.ReplyLinkClassName)
-    .show()
-    .siblings(page.ReplyAreaClassName)
-    .hide()
-}
-class App {
-  static Init() {
-    page.ConfirmBtns.forEach(btn =>
-      btn.addEventListener('click', ConfirmDelete)
-    )
-    page.DeleteConfirm.forEach(btn => btn.addEventListener('click', deletePost))
-    page.ReplyLinks.forEach(link =>
-      link.addEventListener('click', GetReplyData)
-    )
-    page.ReplyCloses.forEach(link =>
-      link.addEventListener('click', hideReplyArea)
-    )
+﻿;(function() {
+  let p = {
+    replyBtns: document.querySelectorAll('a.reply-link'),
+    replyHideBtns: document.querySelectorAll('a.reply-close'),
+    delBtns: document.querySelectorAll('a.delete-link'),
+    delCnfmBtns: document.querySelectorAll('.delete-confirm'),
+    tmpDivSelector: 'div[name=tmpl-div]',
+    delLinkSelector: '.delete-link',
+    delCnfmSelector: '.delete-confirm',
+    replyAreaSelector: '.reply-area',
+    replyLinkSelector: '.reply-link',
+    replyCloseSelector: '.reply-close',
+    userIdSelector: '#userId',
+    uriPostDel: '/Post/Delete',
+    uriReplyDel: '/Reply/Delete',
+    templateId: '#tmpl'
   }
-}
 
-App.Init()
+  /**
+   * 確認刪除文章事件處理
+   * 1. 取得文章Id
+   * 2. 透過js建立表單以Post送出刪除請求
+   */
+  const delPostHandler = function() {
+    let postId = $(this).data('id')
+    let form = document.createElement('form')
+    let idDom = document.createElement('input')
 
-let delConfirm = function(obj) {
-  $(obj)
-    .hide()
-    .siblings(page.DeleteConfirmClassName)
-    .show()
-}
-let delReply = function(obj) {
-  deleteReply(obj)
-}
+    form.method = 'POST'
+    form.action = p.uriPostDel
+
+    idDom.value = postId
+    idDom.name = 'id'
+    form.appendChild(idDom)
+
+    document.body.appendChild(form)
+    form.submit()
+  }
+  const delReplyHandler = function() {
+    let replyId = $(this).data('id')
+    let form = document.createElement('form')
+    let idDom = document.createElement('input')
+
+    form.method = 'POST'
+    form.action = p.uriReplyDel
+
+    idDom.value = replyId
+    idDom.name = 'id'
+    form.appendChild(idDom)
+
+    document.body.appendChild(form)
+    form.submit()
+  }
+
+  const delCnfmHandler = function() {
+    $(this)
+      .hide()
+      .siblings(p.delCnfmSelector)
+      .show()
+  }
+
+  const getReplyHandler = function() {
+    let area = $(this)
+      .hide()
+      .siblings(p.ReCloseSelector)
+      .show()
+      .siblings(p.replyAreaSelector)
+      .show()
+
+    area[0].innerHTML = ''
+
+    let postId = $(this).data('postid')
+    let userId = $(p.userIdSelector).val()
+    $.ajax({
+      type: 'Get',
+      url: `/API/Reply/${postId}?user=${userId}`,
+      success: function(res) {
+        $(p.templateId)
+          .tmpl(res)
+          .appendTo(area)
+        $(p.tmpDivSelector).delegate(p.delLinkSelector, 'click', delCnfmHandler)
+        $(p.tmpDivSelector).delegate(
+          p.delCnfmSelector,
+          'click',
+          delReplyHandler
+        )
+      }
+    })
+  }
+
+  const hideReplyArea = function() {
+    $(this)
+      .hide()
+      .siblings(p.replyLinkSelector)
+      .show()
+      .siblings(p.replyAreaSelector)
+      .hide()
+  }
+  class App {
+    static Init() {
+      p.delBtns.forEach(btn => btn.addEventListener('click', delCnfmHandler))
+      p.delCnfmBtns.forEach(btn =>
+        btn.addEventListener('click', delPostHandler)
+      )
+      p.replyBtns.forEach(link =>
+        link.addEventListener('click', getReplyHandler)
+      )
+      p.replyHideBtns.forEach(link =>
+        link.addEventListener('click', hideReplyArea)
+      )
+    }
+  }
+  App.Init()
+})()
