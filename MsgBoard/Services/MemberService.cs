@@ -56,8 +56,8 @@ namespace MsgBoard.Services
         private string GetCreateUserSqlCmd()
         {
             return @"
-INSERT INTO [dbo].[User] ([Name], [Mail], [Pic], [Guid])
-     VALUES (@Name, @Mail, @Pic, @Guid)
+INSERT INTO [dbo].[User] ([Name], [Mail], [Pic], [Guid], [IsDel])
+     VALUES (@Name, @Mail, @Pic, @Guid, 0)
 
 SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
 ";
