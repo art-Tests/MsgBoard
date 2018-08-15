@@ -1,0 +1,122 @@
+﻿@using MsgBoard.Helper
+@using MsgBoard.Models.Dto
+@using PagedList.Mvc;
+@using PagedList;
+@model IEnumerable<MsgBoard.ViewModel.Post.PostIndexViewModel>
+
+@{
+    ViewBag.Title = "文章列表";
+}
+<br />
+@{
+    if (SignInUser.Auth)
+    {
+        <div class="text-right">
+            @Html.ActionLink("New Post", "Create", "Post", null, new { @class = "btn btn-sm btn-primary" })
+        </div>
+        <input type="hidden" name="userId" id="userId" value="@(SignInUser.User.Id)" />
+    }
+}
+<div id="app">
+    @foreach (var item in Model)
+    {
+        <div class="row">
+            <div class="col-md-2">
+                <img src="@Url.Content(item.CreateAuthor.Pic)" height="100" />
+                <br />
+                @Html.DisplayFor(modelItem => item.CreateAuthor.Name)
+            </div>
+
+            <div class="col-md-10">
+                <pre style="white-space: pre-wrap">@item.Content</pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                @*@Html.DisplayFor(modelItem => item.ChineseTime)*@
+            </div>
+            <div class="col-md-10 text-right">
+                <div class="text-muted">
+                    @{
+                        if (SignInUser.Auth)
+                        {
+                            if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.CreateAuthor.Id)
+                            {
+                                <div style="display: inline;">
+                                    @Html.ActionLink("Edit", "Update", "Post", new { id = item.Id }, new { @class = "btn btn-sm btn-default" })
+                                </div>
+                            }
+                            <div style="display: inline;">
+                                @Html.ActionLink("Reply", "Create", "Reply", new { id = item.Id }, new { @class = "btn btn-sm btn-primary" })
+                            </div>
+                            if (SignInUser.User.IsAdmin || SignInUser.User.Id == item.CreateAuthor.Id)
+                            {
+                                <div style="display: inline;">
+                                    <a href="javascript:;" class="btn btn-danger btn-sm delete-link">Delete</a>
+                                    <a href="javascript:;" class="btn btn-sm btn-danger delete-confirm" data-id="@item.Id" style="display:none">確認刪除？</a>
+                                </div>
+                            }
+                        }
+                    }
+                    <div class="text-muted">Created By @item.CreateAuthor.Name @@ @item.CreateTime.ToString("yyyy-MM-dd HH:mm")</div>
+                    @{
+                        if (item.CreateTime != item.UpdateTime)
+                        {
+                            <div class="text-muted">Updated By @item.UpdateAuthor.Name @@ @item.UpdateTime.ToString("yyyy-MM-dd HH:mm")</div>
+
+                        }
+                    }
+                </div>
+                <div>
+                    <input type="hidden" name="createUserId" class="create-user-id" value="@(item.CreateAuthor.Id)" />
+                    @Html.Raw(Html.CreateReplyLink(item.ReplyCount, item.Id))
+                </div>
+            </div>
+        </div>
+        <hr />
+    }
+    <div class="text-center">
+        @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+    </div>
+</div>
+@section scripts
+{
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script type="text/x-jquery-tmpl" id="tmpl">
+        <div class="row">
+            <div class="col-md-2">
+                <img src="${CreateAuthor.Pic}" height="100" />
+                <br />
+                ${CreateAuthor.Name}
+            </div>
+            <div class="col-md-10">
+                <pre style="white-space: pre-wrap">${Content}</pre>
+                <div name="tmpl-div">
+                    {{if CreateAuthor.Id==UserId || IsAdmin}}
+                    <div style="display: inline;">
+                        <a class="btn btn-sm btn-default btn-edit" href="/Reply/Update/${Id}">Edit</a>
+                    </div>
+                    {{/if}}
+
+                    {{if CreateAuthor.Id==UserId || IsAdmin}}
+                    <div style="display: inline;">
+                        <a href="javascript:;" class="btn btn-danger btn-sm delete-link">Delete</a>
+                        <a href="javascript:;" class="btn btn-sm btn-danger delete-confirm" data-id="${Id}" style="display: none">確認刪除？</a>
+                    </div>
+                    {{/if}}
+
+                    <div class="text-muted">Created By ${CreateAuthor.Name} @@ ${CreateTimeText}</div>
+                    {{if CreateTimeText != UpdateTimeText }}
+                    <div class="text-muted">Updated By ${UpdateAuthor.Name} @@ ${UpdateTimeText}</div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </script>
+    <script src="~/dist/PostIndex.js?@Guid.NewGuid()"></script>
+}
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}

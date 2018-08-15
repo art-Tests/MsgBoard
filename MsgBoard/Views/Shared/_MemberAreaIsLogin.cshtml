@@ -1,0 +1,17 @@
+﻿@using MsgBoard.Helper
+@using MsgBoard.Models.Dto
+
+<ul class="nav navbar-nav">
+    <li class="navbar-text"><img height="17" src="@Url.Content(SignInUser.User.Pic)" /></li>
+    <li class="navbar-text">@SignInUser.User.Name</li>
+    <li>@Html.Raw(Html.GetCurUserArticleLink(SignInUser.User.Id, SignInUser.ArticleCount.PostCount, "Post"))</li>
+    <li>@Html.Raw(Html.GetCurUserArticleLink(SignInUser.User.Id, SignInUser.ArticleCount.ReplyCount, "Reply"))</li>
+    <li>@Html.ActionLink("修改", "Update", "Member", new { id = SignInUser.User.Id }, null)</li>
+    <li>@Html.ActionLink("登出", "LogOut", "Member")</li>
+    @{
+        if (SignInUser.User.IsAdmin)
+        {
+            <li>@Html.ActionLink("後台", "Index", "Admin")</li>
+        }
+    }
+</ul>

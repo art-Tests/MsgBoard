@@ -1,0 +1,16 @@
+﻿@model MsgBoard.Models.Entity.Post
+@{
+    ViewBag.Title = "新增文章";
+    ViewBag.BtnName = "新增";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("_PostForm", Model)
+}
+
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}

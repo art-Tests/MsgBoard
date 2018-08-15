@@ -1,0 +1,54 @@
+﻿@using MsgBoard.Helper
+@using PagedList.Mvc;
+@using PagedList;
+
+@model IEnumerable<MsgBoard.ViewModel.Admin.AdminIndexViewModel>
+
+<h2>使用者列表</h2>
+
+<table class="table">
+    <tr>
+        <th class="col-md-1">
+            #
+        </th>
+        <th class="col-md-9">
+        </th>
+        <th class="col-md-2"></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RowId)
+            </td>
+            <td>
+                <div>
+                    <div class="col-md-2">
+                        <img src="@Url.Content(item.Pic)" height="30px" />
+                    </div>
+                    <div class="col-md-10">
+                        <span>@Html.DisplayFor(modelItem => item.Name)</span>
+
+                        @Html.Raw(Html.CreateTag(item.IsAdmin, "Admin"))
+                        @Html.Raw(Html.CreateTag(item.IsDel, "停權", "danger"))
+                        <br />
+                        @Html.DisplayFor(modelItem => item.Mail)
+                    </div>
+                </div>
+            </td>
+            <td>
+                @(item.IsDel ? Html.ActionLink("Enable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = true }, new { @class = "btn btn-sm btn-default" })
+                                : Html.ActionLink("Disable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = false }, new { @class = "btn btn-sm btn-default" }))
+                @Html.ActionLink("Edit", "Update", "Member", new { id = item.Id, page = ViewData["nowPage"] }, new { @class = "btn btn-sm btn-default" })
+            </td>
+        </tr>
+
+    }
+</table>
+<div class="text-center">
+    @Html.PagedListPager((IPagedList)Model, x => Url.Action("Index", new { page = x }))
+</div>
+@section memberArea
+{
+    @Html.Partial("_MemberArea")
+}

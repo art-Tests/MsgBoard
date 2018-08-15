@@ -1,0 +1,3 @@
+﻿@using MsgBoard.Models.Dto
+
+@(SignInUser.Auth ? Html.Partial("_MemberAreaIsLogin") : Html.Partial("_MemberAreaNotLogin"))
