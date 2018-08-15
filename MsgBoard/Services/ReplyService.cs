@@ -12,6 +12,12 @@ namespace MsgBoard.Services
 {
     public class ReplyService
     {
+        /// <summary>
+        /// 新增回覆
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="model">回覆entity</param>
+        /// <returns></returns>
         public int Create(IDbConnection conn, Reply model)
         {
             var sqlCmd = GetCreateSqlCmd();
@@ -38,6 +44,13 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
 ";
         }
 
+        /// <summary>
+        /// 取得文章的所有回覆
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">文章Id</param>
+        /// <param name="userId">使用者Id</param>
+        /// <returns></returns>
         public IEnumerable<ReplyIndexViewModel> GetReplyByPostId(IDbConnection conn, int id, int userId)
         {
             var sqlCmd = GetReplyByPostIdSqlCmd();
@@ -67,12 +80,23 @@ order by r.CreateTime
 ";
         }
 
+        /// <summary>
+        /// 依據回覆Id取得Entity
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">回覆Id</param>
+        /// <returns></returns>
         public Reply GetReplyById(IDbConnection conn, int id)
         {
             var sqlCmd = "select top 1 * from [dbo].[Reply] (nolock) where id=@id";
             return conn.QueryFirstOrDefault<Reply>(sqlCmd, new { id });
         }
 
+        /// <summary>
+        /// 更新回覆Entity
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="reply">回覆Entity</param>
         public void Update(IDbConnection conn, Reply reply)
         {
             var sqlCmd = GetUpdateSqlCmd();
@@ -90,12 +114,22 @@ UPDATE [dbo].[Reply]
 ";
         }
 
+        /// <summary>
+        /// 刪除某筆回覆
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">回覆Id</param>
         public void Delete(IDbConnection conn, int id)
         {
             var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where Id=@id";
             conn.Execute(sqlCmd, new { id });
         }
 
+        /// <summary>
+        /// 刪除某文章的所有回覆
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">文章Id</param>
         public void DeleteByPostId(IDbConnection conn, int id)
         {
             var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where PostId=@id";

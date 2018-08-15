@@ -82,7 +82,6 @@
 @section scripts
 {
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-
     <script type="text/x-jquery-tmpl" id="tmpl">
         <div class="row">
             <div class="col-md-2">
@@ -92,14 +91,13 @@
             </div>
             <div class="col-md-10">
                 <pre style="white-space: pre-wrap">${Content}</pre>
-
                 <div>
-
                     {{if CreateAuthor.Id==UserId || IsAdmin}}
                     <div style="display: inline;">
                         <a class="btn btn-sm btn-default btn-edit" href="/Reply/Update/${Id}">Edit</a>
                     </div>
                     {{/if}}
+
                     {{if CreateAuthor.Id==UserId || IsAdmin}}
                     <div style="display: inline;">
                         <a href="javascript:;" onclick="delConfirm(this)" class="btn btn-danger btn-sm delete-link">Delete</a>

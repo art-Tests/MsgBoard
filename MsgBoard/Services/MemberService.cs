@@ -235,6 +235,12 @@ select 'false'
             _userRepo.Update(connection, user);
         }
 
+        /// <summary>
+        /// 取得歷史密碼資料
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="userId">會員Id</param>
+        /// <returns></returns>
         public IEnumerable<Password> GetHistroyPasswords(IDbConnection connection, int userId)
         {
             var sqlCmd = GetHistroyPasswordsSqlCmd();
@@ -246,19 +252,24 @@ select 'false'
             return "select * from [dbo].[Password] (nolock) where UserId = @userId";
         }
 
+        /// <summary>
+        /// 取得所有會員資料
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <returns></returns>
         public IQueryable<AdminIndexViewModel> GetUserCollection(IDbConnection connection)
         {
             var sqlCmd = GetUserCollectionAllSqlCmd();
             return connection.Query<AdminIndexViewModel>(sqlCmd).AsQueryable();
         }
 
-        public IEnumerable<AdminIndexViewModel> GetUserCollection(IDbConnection connection, int page, int pageSize)
-        {
-            var sqlCmd = GetUserCollectionSqlCmd();
-            var start = (page - 1) * pageSize + 1;
-            var end = page * pageSize;
-            return connection.Query<AdminIndexViewModel>(sqlCmd, new { start, end });
-        }
+        //public IEnumerable<AdminIndexViewModel> GetUserCollection(IDbConnection connection, int page, int pageSize)
+        //{
+        //    var sqlCmd = GetUserCollectionSqlCmd();
+        //    var start = (page - 1) * pageSize + 1;
+        //    var end = page * pageSize;
+        //    return connection.Query<AdminIndexViewModel>(sqlCmd, new { start, end });
+        //}
 
         private string GetUserCollectionAllSqlCmd()
         {
@@ -267,16 +278,16 @@ select 'false'
     from [dbo].[user] (nolock)";
         }
 
-        private string GetUserCollectionSqlCmd()
-        {
-            return @"
-select * from (
-	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
-    from [dbo].[user] (nolock)
-) r
-where RowId between @start and @end
-";
-        }
+        //        private string GetUserCollectionSqlCmd()
+        //        {
+        //            return @"
+        //select * from (
+        //	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
+        //    from [dbo].[user] (nolock)
+        //) r
+        //where RowId between @start and @end
+        //";
+        //        }
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)

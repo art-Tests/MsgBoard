@@ -16,14 +16,10 @@ namespace MsgBoard.Controllers
         private readonly MemberService _memberService = new MemberService();
 
         // GET: Post
-        [Route("~/")]
-        [Route("Home")]
-        [Route("Home/Index")]
-        [Route("Post")]
-        public ActionResult Index(int page = 1, int pageSize = 5)
+        public ActionResult Index(int? id, string queryItem = "", int page = 1, int pageSize = 5)
         {
             var model = _postService
-                .GetPostCollection(Conn)
+                .GetPostCollection(Conn, id, queryItem)
                 .ToPagedList(page, pageSize);
             return View(model);
         }

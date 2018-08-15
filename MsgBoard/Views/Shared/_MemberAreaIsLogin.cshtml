@@ -1,10 +1,11 @@
-﻿@using MsgBoard.Models.Dto
+﻿@using MsgBoard.Helper
+@using MsgBoard.Models.Dto
 
 <ul class="nav navbar-nav">
     <li class="navbar-text"><img height="17" src="@Url.Content(SignInUser.User.Pic)" /></li>
     <li class="navbar-text">@SignInUser.User.Name</li>
-    <li class="navbar-text">已發布：@SignInUser.ArticleCount.PostCount</li>
-    <li class="navbar-text">已回覆：@SignInUser.ArticleCount.ReplyCount</li>
+    <li>@Html.Raw(Html.GetCurUserArticleLink(SignInUser.User.Id, SignInUser.ArticleCount.PostCount, "Post"))</li>
+    <li>@Html.Raw(Html.GetCurUserArticleLink(SignInUser.User.Id, SignInUser.ArticleCount.ReplyCount, "Reply"))</li>
     <li>@Html.ActionLink("修改", "Update", "Member", new { id = SignInUser.User.Id }, null)</li>
     <li>@Html.ActionLink("登出", "LogOut", "Member")</li>
     @{
