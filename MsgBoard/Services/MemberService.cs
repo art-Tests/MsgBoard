@@ -175,7 +175,7 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
             if (password == null) return result;
 
             var hashPassword = HashService.GetMemberHashPw(user.Guid, userPass);
-            result.Auth = password.HashPw == hashPassword;
+            result.Auth = password.HashPw == hashPassword && user.IsDel.Equals(false);
             if (result.Auth)
             {
                 result.User = user;
