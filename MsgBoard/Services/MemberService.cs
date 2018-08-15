@@ -175,7 +175,10 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
 
             var hashPassword = HashService.GetMemberHashPw(user.Guid, userPass);
             result.Auth = password.HashPw == hashPassword;
-            result.User = user;
+            if (result.Auth)
+            {
+                result.User = user;
+            }
             return result;
         }
 
@@ -272,6 +275,29 @@ select * from (
     from [dbo].[user] (nolock)
 ) r
 where RowId between @start and @end
+";
+        }
+
+        /// <summary>
+        /// 取得會員文章、回復數量 (未刪除)
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">會員Id</param>
+        /// <returns></returns>
+        public UserArticleCount GetUserArticleCount(IDbConnection conn, int id)
+        {
+            var sqlCmd = GetUserArticleCountSqlCmd();
+            return conn.QueryFirstOrDefault<UserArticleCount>(sqlCmd, new { id });
+        }
+
+        private string GetUserArticleCountSqlCmd()
+        {
+            return @"
+--declare @id int
+--set @id=18
+select
+(select count(*) from [dbo].[Post] (nolock) where CreateUserId = @Id and IsDel=0) as [PostCount],
+(select count(*) from [dbo].[Reply] (nolock) where CreateUserId = @Id and IsDel=0) as [ReplyCount]
 ";
         }
     }

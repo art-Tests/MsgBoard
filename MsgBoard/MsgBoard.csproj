@@ -186,6 +186,7 @@
     <Compile Include="Helper\RazorHtmlHelper.cs" />
     <Compile Include="Models\Dto\Author.cs" />
     <Compile Include="Models\Dto\SignInUser.cs" />
+    <Compile Include="Models\Dto\UserArticleCount.cs" />
     <Compile Include="Models\Dto\UserLoginResult.cs" />
     <Compile Include="Models\Entity\Password.cs" />
     <Compile Include="Models\Entity\Post.cs" />

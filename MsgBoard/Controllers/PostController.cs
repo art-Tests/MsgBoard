@@ -46,6 +46,8 @@ namespace MsgBoard.Controllers
             model.CreateUserId = SignInUser.User.Id;
             model.UpdateUserId = SignInUser.User.Id;
             _postService.Create(Conn, model);
+
+            SignInUser.AdjustPostCnt(1);
             return RedirectToAction("Index", "Post");
         }
 
@@ -95,14 +97,22 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var dbPost = _postService.GetPostById(Conn, id.Value);
-            if (dbPost == null)
+            var model = _postService.GetPostById(Conn, id.Value);
+            if (model == null)
             {
                 return HttpNotFound();
             }
 
-            _postService.Delete(Conn, id.Value);
-            return RedirectToAction("Index", "Post");
+            if (SignInUser.User.IsAdmin || model.CreateUserId == SignInUser.User.Id)
+            {
+                _postService.Delete(Conn, id.Value);
+                if (model.CreateUserId == SignInUser.User.Id)
+                {
+                    SignInUser.AdjustPostCnt(-1);
+                }
+                return RedirectToAction("Index", "Post");
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
         }
     }
 }

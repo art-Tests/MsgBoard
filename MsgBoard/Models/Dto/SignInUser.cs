@@ -8,6 +8,18 @@ namespace MsgBoard.Models.Dto
     /// </summary>
     public static class SignInUser
     {
+        public static UserArticleCount ArticleCount
+        {
+            get
+            {
+                if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
+                {
+                    return artCnt;
+                }
+                return default(UserArticleCount);
+            }
+        }
+
         /// <summary>
         /// 目前登入使用者資訊
         /// </summary>
@@ -38,10 +50,29 @@ namespace MsgBoard.Models.Dto
             }
         }
 
-        public static void UserLogin(bool isAuth, User user)
+        public static void UserLogin(bool isAuth, User user, UserArticleCount artCnt)
         {
             HttpContext.Current.Session["auth"] = isAuth;
             HttpContext.Current.Session["memberAreaData"] = user;
+            HttpContext.Current.Session["memberArticleCount"] = artCnt;
+        }
+
+        public static void AdjustPostCnt(int number)
+        {
+            if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
+            {
+                artCnt.PostCount = artCnt.PostCount + number;
+                HttpContext.Current.Session["memberArticleCount"] = artCnt;
+            }
+        }
+
+        public static void AdjustReplyCnt(int number)
+        {
+            if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
+            {
+                artCnt.ReplyCount = artCnt.ReplyCount + number;
+                HttpContext.Current.Session["memberArticleCount"] = artCnt;
+            }
         }
     }
 }

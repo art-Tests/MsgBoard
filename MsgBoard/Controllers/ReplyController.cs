@@ -44,6 +44,7 @@ namespace MsgBoard.Controllers
             model.CreateUserId = SignInUser.User.Id;
             model.UpdateUserId = SignInUser.User.Id;
             _replyService.Create(Conn, model);
+            SignInUser.AdjustReplyCnt(1);
             return RedirectToAction("Index", "Post");
         }
 
@@ -107,9 +108,17 @@ namespace MsgBoard.Controllers
             {
                 return HttpNotFound();
             }
+            if (SignInUser.User.IsAdmin || model.CreateUserId == SignInUser.User.Id)
+            {
+                _replyService.Delete(Conn, id.Value);
+                if (model.CreateUserId == SignInUser.User.Id)
+                {
+                    SignInUser.AdjustReplyCnt(-1);
+                }
 
-            _replyService.Delete(Conn, id.Value);
-            return RedirectToAction("Index", "Post");
+                return RedirectToAction("Index", "Post");
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
         }
     }
 }

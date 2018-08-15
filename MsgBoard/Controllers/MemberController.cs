@@ -40,7 +40,8 @@ namespace MsgBoard.Controllers
                 return View(model);
             }
 
-            SignInUser.UserLogin(true, loginResult.User);
+            var artCnt = _memberService.GetUserArticleCount(Conn, loginResult.User.Id);
+            SignInUser.UserLogin(true, loginResult.User, artCnt);
             return RedirectToAction("Index", "Post");
         }
 
@@ -93,7 +94,8 @@ namespace MsgBoard.Controllers
                     _memberService.CreatePassword(connection, password);
 
                     // 註冊完直接給他登入
-                    SignInUser.UserLogin(true, user);
+                    var artCnt = _memberService.GetUserArticleCount(Conn, user.Id);
+                    SignInUser.UserLogin(true, user, artCnt);
                 }
 
                 tranScope.Complete();
@@ -196,7 +198,8 @@ namespace MsgBoard.Controllers
             // 修改自己的資料完畢之後也要更新Session
             if (SignInUser.User.Id == id)
             {
-                SignInUser.UserLogin(true, user);
+                var artCnt = _memberService.GetUserArticleCount(Conn, user.Id);
+                SignInUser.UserLogin(true, user, artCnt);
             }
             return RedirectToAction(model.BackAction, model.BackController, new { page = model.BackPage });
         }
