@@ -5,10 +5,8 @@ using HashUtility.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
-using MsgBoard.Models.Interface;
 using MsgBoard.Services;
 using MsgBoard.Services.Interface;
-using MsgBoard.Services.Repository;
 using NSubstitute;
 
 namespace MsgBoardTests.Services
@@ -28,18 +26,18 @@ namespace MsgBoardTests.Services
                 User = fakeUser
             };
 
+            var fakeConn = new SqlConnection();
             var connFactory = Substitute.For<IConnectionFactory>();
-            connFactory.GetConnection().Returns(new SqlConnection());
-            var connection = connFactory.GetConnection();
+            connFactory.GetConnection().Returns(fakeConn);
 
-            var sut = new MemberService();
+            var sut = new MemberService(connFactory);
 
             var userRepo = Substitute.For<IUserRepository>();
-            userRepo.GetUserByMail(connection, fakeUser.Mail).Returns(fakeUser);
+            userRepo.GetUserByMail(fakeConn, fakeUser.Mail).Returns(fakeUser);
             sut.SetUserRepository(userRepo);
 
             var passRepo = Substitute.For<IPasswordRepository>();
-            passRepo.FindPasswordByUserId(connection, fakeUser.Id).Returns(GetFakePassword());
+            passRepo.FindPasswordByUserId(fakeConn, fakeUser.Id).Returns(GetFakePassword());
             sut.SetPasswordRepository(passRepo);
 
             var hashTool = new HashService();

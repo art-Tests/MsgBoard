@@ -2,10 +2,10 @@
 using System.Transactions;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
+using MsgBoard.Models.ViewModel.Post;
 using MsgBoard.Services.Common;
 using MsgBoard.Services.Interface;
 using MsgBoard.Services.Repository;
-using MsgBoard.ViewModel.Post;
 
 namespace MsgBoard.Services
 {

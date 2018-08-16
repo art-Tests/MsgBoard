@@ -189,27 +189,28 @@
     <Compile Include="Models\Entity\Post.cs" />
     <Compile Include="Models\Entity\Reply.cs" />
     <Compile Include="Models\Entity\User.cs" />
-    <Compile Include="Models\Interface\IConnectionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Common\BaseService.cs" />
-    <Compile Include="Services\ConnectionFactory.cs" />
+    <Compile Include="Services\Factory\ConnectionFactory.cs" />
+    <Compile Include="Services\Interface\IConnectionFactory.cs" />
     <Compile Include="Services\Interface\IMemberService.cs" />
+    <Compile Include="Services\Interface\IPasswordRepository.cs" />
     <Compile Include="Services\Interface\IPostRepository.cs" />
     <Compile Include="Services\Interface\IReplyRepository.cs" />
     <Compile Include="Services\Interface\IUserRepository.cs" />
     <Compile Include="Services\MemberService.cs" />
-    <Compile Include="Services\PasswordRepository.cs" />
+    <Compile Include="Services\Repository\PasswordRepository.cs" />
     <Compile Include="Services\PostService.cs" />
     <Compile Include="Services\ReplyService.cs" />
     <Compile Include="Services\Repository\PostRepository.cs" />
     <Compile Include="Services\Repository\ReplyRepository.cs" />
     <Compile Include="Services\Repository\UserRepository.cs" />
-    <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
-    <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
-    <Compile Include="ViewModel\Member\MemberLoginViewModel.cs" />
-    <Compile Include="ViewModel\Member\MemberUpdateViewModel.cs" />
-    <Compile Include="ViewModel\Post\PostIndexViewModel.cs" />
-    <Compile Include="ViewModel\Reply\ReplyIndexViewModel.cs" />
+    <Compile Include="Models\ViewModel\Admin\AdminIndexViewModel.cs" />
+    <Compile Include="Models\ViewModel\Member\MemberCreateViewModel.cs" />
+    <Compile Include="Models\ViewModel\Member\MemberLoginViewModel.cs" />
+    <Compile Include="Models\ViewModel\Member\MemberUpdateViewModel.cs" />
+    <Compile Include="Models\ViewModel\Post\PostIndexViewModel.cs" />
+    <Compile Include="Models\ViewModel\Reply\ReplyIndexViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Msg.mdf" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
+using MsgBoard.Models.ViewModel.Reply;
 using MsgBoard.Services;
-using MsgBoard.ViewModel.Reply;
 
 namespace MsgBoard.ApiControllers
 {

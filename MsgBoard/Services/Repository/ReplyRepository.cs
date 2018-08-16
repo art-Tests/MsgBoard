@@ -3,8 +3,8 @@ using System.Data;
 using Dapper;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
+using MsgBoard.Models.ViewModel.Reply;
 using MsgBoard.Services.Interface;
-using MsgBoard.ViewModel.Reply;
 
 namespace MsgBoard.Services.Repository
 {

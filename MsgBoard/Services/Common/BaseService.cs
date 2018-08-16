@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Data;
+using MsgBoard.Services.Factory;
 
 namespace MsgBoard.Services.Common
 {

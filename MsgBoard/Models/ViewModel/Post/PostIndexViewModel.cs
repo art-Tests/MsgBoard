@@ -2,7 +2,7 @@
 using MsgBoard.Extension;
 using MsgBoard.Models.Dto;
 
-namespace MsgBoard.ViewModel.Post
+namespace MsgBoard.Models.ViewModel.Post
 {
     public class PostIndexViewModel
     {

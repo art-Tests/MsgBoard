@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
+using MsgBoard.Models.ViewModel.Reply;
 using MsgBoard.Services.Common;
 using MsgBoard.Services.Interface;
 using MsgBoard.Services.Repository;
-using MsgBoard.ViewModel.Reply;
 
 namespace MsgBoard.Services
 {

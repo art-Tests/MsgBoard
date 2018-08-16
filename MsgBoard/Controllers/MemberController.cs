@@ -2,9 +2,9 @@
 using System.Net;
 using System.Web.Mvc;
 using MsgBoard.Services;
-using MsgBoard.ViewModel.Member;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
+using MsgBoard.Models.ViewModel.Member;
 
 namespace MsgBoard.Controllers
 {

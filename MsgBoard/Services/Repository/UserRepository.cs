@@ -2,8 +2,8 @@
 using System.Linq;
 using Dapper;
 using MsgBoard.Models.Entity;
+using MsgBoard.Models.ViewModel.Admin;
 using MsgBoard.Services.Interface;
-using MsgBoard.ViewModel.Admin;
 
 namespace MsgBoard.Services.Repository
 {

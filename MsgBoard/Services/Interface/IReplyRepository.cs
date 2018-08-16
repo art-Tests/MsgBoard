@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using MsgBoard.Models.Entity;
-using MsgBoard.ViewModel.Reply;
+using MsgBoard.Models.ViewModel.Reply;
 
 namespace MsgBoard.Services.Interface
 {

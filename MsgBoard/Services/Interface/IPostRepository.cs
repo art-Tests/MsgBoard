@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using MsgBoard.Models.Entity;
-using MsgBoard.ViewModel.Post;
+using MsgBoard.Models.ViewModel.Post;
 
 namespace MsgBoard.Services.Interface
 {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,22 +9,38 @@ using System.Web;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
-using MsgBoard.Services.Common;
+using MsgBoard.Models.ViewModel.Admin;
+using MsgBoard.Models.ViewModel.Member;
+using MsgBoard.Services.Factory;
 using MsgBoard.Services.Interface;
 using MsgBoard.Services.Repository;
-using MsgBoard.ViewModel.Admin;
-using MsgBoard.ViewModel.Member;
 
 namespace MsgBoard.Services
 {
-    public class MemberService : BaseService, IMemberService
+    public class MemberService : IMemberService
     {
+        protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
+
         protected HashService HashService = new HashService();
         private IUserRepository _userRepo = new UserRepository();
         private IPasswordRepository _passwordRepo = new PasswordRepository();
 
         private readonly IPostRepository _postRepo = new PostRepository();
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
+        private IConnectionFactory _connFactory;
+        public IDbConnection Conn { get; set; }
+
+        public MemberService()
+        {
+            _connFactory = new ConnectionFactory();
+            Conn = _connFactory.GetConnection();
+        }
+
+        public MemberService(IConnectionFactory factory)
+        {
+            _connFactory = factory;
+            Conn = _connFactory.GetConnection();
+        }
 
         [Conditional("DEBUG")]
         public void SetHashTool(HashService hashService)
@@ -202,7 +220,7 @@ namespace MsgBoard.Services
         {
             using (var tranScope = new TransactionScope())
             {
-                using (var connection = ConnFactory.GetConnection())
+                using (var connection = _connFactory.GetConnection())
                 {
                     // Table User
                     var fileName = SaveMemberPic(model.File, path);
