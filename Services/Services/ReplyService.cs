@@ -4,17 +4,22 @@ using Dapper;
 using DataAccess.Interface;
 using DataAccess.Repository;
 using DataAccess.Repository.Interface;
+using DataAccess.Services;
 using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Reply;
 
-namespace Services
+namespace MsgBoard.BL.Services
 {
     public class ReplyService
     {
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
-        private readonly IPostRepository _postRepo = new PostRepository();
         private readonly IDbConnection _conn;
+
+        public ReplyService()
+        {
+            _conn = new ConnectionFactory().GetConnection();
+        }
 
         public ReplyService(IConnectionFactory factory)
         {
@@ -26,13 +31,46 @@ namespace Services
         /// </summary>
         /// <param name="model">回覆entity</param>
         /// <returns></returns>
-        public int CreateReply(Reply model)
+        public int CreateReply(ReplyViewModel model)
         {
-            model.CreateUserId = SignInUser.User.Id;
-            model.UpdateUserId = SignInUser.User.Id;
-            var id = _replyRepo.Create(_conn, model);
+            var entity = ConvertToEntity(model);
+            entity.CreateUserId = SignInUser.User.Id;
+            entity.UpdateUserId = SignInUser.User.Id;
+            var id = _replyRepo.Create(_conn, entity);
             SignInUser.AdjustReplyCnt(1);
             return id;
+        }
+
+        private Reply ConvertToEntity(ReplyViewModel model)
+        {
+            if (model == null) return null;
+            return new Reply
+            {
+                Id = model.Id,
+                PostId = model.PostId,
+                Content = model.Content,
+                CreateTime = model.CreateTime,
+                CreateUserId = model.CreateUserId,
+                UpdateTime = model.UpdateTime,
+                UpdateUserId = model.UpdateUserId,
+                IsDel = model.IsDel
+            };
+        }
+
+        private ReplyViewModel ConvertToViewModel(Reply model)
+        {
+            if (model == null) return null;
+            return new ReplyViewModel
+            {
+                Id = model.Id,
+                PostId = model.PostId,
+                Content = model.Content,
+                CreateTime = model.CreateTime,
+                CreateUserId = model.CreateUserId,
+                UpdateTime = model.UpdateTime,
+                UpdateUserId = model.UpdateUserId,
+                IsDel = model.IsDel
+            };
         }
 
         /// <summary>
@@ -83,17 +121,21 @@ order by r.CreateTime
         }
 
         /// <summary>
-        /// 依據回覆Id取得Entity
+        /// 依據回覆Id取得ViewModel
         /// </summary>
         /// <param name="id">回覆Id</param>
         /// <returns></returns>
-        public Reply GetReplyById(int id) => _replyRepo.GetReplyById(_conn, id);
+        public ReplyViewModel GetReplyById(int id)
+        {
+            var entity = _replyRepo.GetReplyById(_conn, id);
+            return ConvertToViewModel(entity);
+        }
 
         /// <summary>
         /// 刪除某筆回覆
         /// </summary>
         /// <param name="model">要刪除的回覆entity</param>
-        public void DeleteReply(Reply model)
+        public void DeleteReply(ReplyViewModel model)
         {
             _replyRepo.Delete(_conn, model.Id);
             if (model.CreateUserId == SignInUser.User.Id)
@@ -106,19 +148,12 @@ order by r.CreateTime
         /// 更新文章
         /// </summary>
         /// <param name="model">The model.</param>
-        /// <param name="reply">The reply.</param>
-        public void UpdateReply(Reply model, Reply reply)
+        public void UpdateReply(ReplyViewModel model)
         {
-            reply.Content = model.Content;
-            reply.UpdateUserId = SignInUser.User.Id;
-            _replyRepo.Update(_conn, reply);
+            var entity = ConvertToEntity(model);
+            entity.Content = model.Content;
+            entity.UpdateUserId = SignInUser.User.Id;
+            _replyRepo.Update(_conn, entity);
         }
-
-        /// <summary>
-        /// 取得文章
-        /// </summary>
-        /// <param name="id">文章編號</param>
-        /// <returns></returns>
-        public Post GetPostById(int id) => _postRepo.GetPostById(_conn, id);
     }
 }

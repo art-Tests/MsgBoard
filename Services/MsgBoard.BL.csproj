@@ -12,8 +12,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Services</RootNamespace>
-    <AssemblyName>Services</AssemblyName>
+    <RootNamespace>MsgBoard.BL</RootNamespace>
+    <AssemblyName>MsgBoard.BL</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
@@ -75,12 +75,12 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdminService.cs" />
+    <Compile Include="Services\AdminService.cs" />
     <Compile Include="Interface\IMemberService.cs" />
-    <Compile Include="MemberService.cs" />
-    <Compile Include="PostService.cs" />
+    <Compile Include="Services\MemberService.cs" />
+    <Compile Include="Services\PostService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReplyService.cs" />
+    <Compile Include="Services\ReplyService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -101,7 +101,7 @@
       <Name>DataModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\HashUtility\HashUtility.csproj">
-      <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
+      <Project>{bda209d3-a955-4318-bd4e-9aa74d9db785}</Project>
       <Name>HashUtility</Name>
     </ProjectReference>
     <ProjectReference Include="..\MsgBoard.DataModel\MsgBoard.DataModel.csproj">

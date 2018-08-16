@@ -1,23 +1,16 @@
 ﻿using System.Net;
 using System.Web.Mvc;
-using DataAccess.Interface;
-using DataAccess.Services;
-using DataModel.Entity;
+using MsgBoard.BL.Services;
 using MsgBoard.DataModel.Dto;
+using MsgBoard.DataModel.ViewModel.Reply;
 using MsgBoard.Filter;
-using Services;
 
 namespace MsgBoard.Controllers
 {
     public class ReplyController : Controller
     {
-        private readonly ReplyService _replyService;
-        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
-
-        public ReplyController()
-        {
-            _replyService = new ReplyService(_connFactory);
-        }
+        private readonly ReplyService _replyService = new ReplyService();
+        private readonly PostService _postService = new PostService();
 
         [HttpGet, AuthorizePlus]
         public ActionResult Create(int? id)
@@ -28,7 +21,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             //查無文章
-            var dbPost = _replyService.GetPostById(id.Value);
+            var dbPost = _postService.GetPostById(id.Value);
             if (dbPost == null)
             {
                 return HttpNotFound();
@@ -44,7 +37,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost, AuthorizePlus]
-        public ActionResult Create(Reply model)
+        public ActionResult Create(ReplyViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
             _replyService.CreateReply(model);
@@ -73,7 +66,7 @@ namespace MsgBoard.Controllers
             return View(model);
         }
 
-        public ActionResult Update(int? id, Reply model)
+        public ActionResult Update(int? id, ReplyViewModel model)
         {
             if (id == null)
             {
@@ -90,7 +83,7 @@ namespace MsgBoard.Controllers
 
             if (SignInUser.User.IsAdmin || SignInUser.User.Id == dbReply.CreateUserId)
             {
-                _replyService.UpdateReply(model, dbReply);
+                _replyService.UpdateReply(model);
                 return RedirectToAction("Index", "Post");
             }
 

@@ -5,11 +5,12 @@ using Dapper;
 using DataAccess.Interface;
 using DataAccess.Repository;
 using DataAccess.Repository.Interface;
+using DataAccess.Services;
 using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Post;
 
-namespace Services
+namespace MsgBoard.BL.Services
 {
     public class PostService
     {
@@ -18,6 +19,11 @@ namespace Services
 
         private readonly IConnectionFactory _connFactory;
         private readonly IDbConnection _conn;
+
+        public PostService()
+        {
+            _conn = new ConnectionFactory().GetConnection();
+        }
 
         public PostService(IConnectionFactory factory)
         {
@@ -30,9 +36,10 @@ namespace Services
         /// </summary>
         /// <param name="id">文章Id</param>
         /// <returns></returns>
-        public Post GetPostById(int id)
+        public PostViewModel GetPostById(int id)
         {
-            return _postRepo.GetPostById(_conn, id);
+            var entity = _postRepo.GetPostById(_conn, id);
+            return ConvertToViewModel(entity);
         }
 
         /// <summary>
@@ -66,25 +73,65 @@ namespace Services
         /// 新增文章
         /// </summary>
         /// <param name="model">The model.</param>
-        public void CreatePost(Post model)
+        public void CreatePost(PostViewModel model)
         {
-            model.CreateUserId = SignInUser.User.Id;
-            model.UpdateUserId = SignInUser.User.Id;
-            _postRepo.Create(_conn, model);
+            var entity = ConvertToEntity(model);
+            entity.CreateUserId = SignInUser.User.Id;
+            entity.UpdateUserId = SignInUser.User.Id;
+            _postRepo.Create(_conn, entity);
 
             SignInUser.AdjustPostCnt(1);
+        }
+
+        /// <summary>
+        /// 將ViewModel轉換為Entity
+        /// </summary>
+        /// <param name="model">viewModel</param>
+        /// <returns></returns>
+        private Post ConvertToEntity(PostViewModel model)
+        {
+            if (model == null) return null;
+            return new Post
+            {
+                Id = model.Id,
+                Content = model.Content,
+                CreateTime = model.CreateTime,
+                CreateUserId = model.CreateUserId,
+                UpdateTime = model.UpdateTime,
+                UpdateUserId = model.UpdateUserId,
+                IsDel = model.IsDel
+            };
+        }
+
+        /// <summary>
+        /// 將Entity轉換為ViewModel
+        /// </summary>
+        /// <param name="model">entity</param>
+        /// <returns></returns>
+        private PostViewModel ConvertToViewModel(Post model)
+        {
+            if (model == null) return null;
+            return new PostViewModel
+            {
+                Id = model.Id,
+                Content = model.Content,
+                CreateTime = model.CreateTime,
+                CreateUserId = model.CreateUserId,
+                UpdateTime = model.UpdateTime,
+                UpdateUserId = model.UpdateUserId,
+                IsDel = model.IsDel
+            };
         }
 
         /// <summary>
         /// 更新文章
         /// </summary>
         /// <param name="model">The model.</param>
-        /// <param name="dbPost">The database post.</param>
-        public void UpdatePost(Post model, Post dbPost)
+        public void UpdatePost(PostViewModel model)
         {
-            dbPost.Content = model.Content;
-            dbPost.UpdateUserId = SignInUser.User.Id;
-            _postRepo.Update(_conn, dbPost);
+            model.UpdateUserId = SignInUser.User.Id;
+            var entity = ConvertToEntity(model);
+            _postRepo.Update(_conn, entity);
         }
 
         /// <summary>

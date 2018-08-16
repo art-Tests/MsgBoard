@@ -1,5 +1,4 @@
 ﻿using System.Web;
-using DataModel.Entity;
 
 namespace MsgBoard.DataModel.Dto
 {
@@ -26,11 +25,11 @@ namespace MsgBoard.DataModel.Dto
         /// <summary>
         /// 目前登入使用者資訊
         /// </summary>
-        public static User User
+        public static UserViewModel User
         {
             get
             {
-                if (HttpContext.Current.Session["memberAreaData"] is User user)
+                if (HttpContext.Current.Session["memberAreaData"] is UserViewModel user)
                 {
                     return user;
                 }
@@ -59,7 +58,7 @@ namespace MsgBoard.DataModel.Dto
         /// <param name="isAuth">設定登入狀態</param>
         /// <param name="user">設定登入會員資料</param>
         /// <param name="artCnt">設定登入會員文章數量</param>
-        public static void UserLogin(bool isAuth, User user, UserArticleCount artCnt)
+        public static void UserLogin(bool isAuth, UserViewModel user, UserArticleCount artCnt)
         {
             HttpContext.Current.Session["auth"] = isAuth;
             HttpContext.Current.Session["memberAreaData"] = user;
