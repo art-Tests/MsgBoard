@@ -1,6 +1,4 @@
-﻿using DataModel.Entity;
-
-namespace MsgBoard.DataModel.Dto
+﻿namespace MsgBoard.DataModel.Dto
 {
     /// <summary>
     ///  會員登入結果

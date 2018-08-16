@@ -261,10 +261,6 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HashUtility\HashUtility.csproj">
-      <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
-      <Name>HashUtility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MsgBoard.DataModel\MsgBoard.DataModel.csproj">
       <Project>{0c8e213a-2a20-4664-bdff-9b5c46e0baae}</Project>
       <Name>MsgBoard.DataModel</Name>
