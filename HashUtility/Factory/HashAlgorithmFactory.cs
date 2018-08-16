@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 
-namespace HashUtility.Services
+namespace HashUtility.Factory
 {
     public class HashAlgorithmFactory
     {
-        public HashAlgorithm GetInstance(string hashType)
+        public static HashAlgorithm GetInstance(string hashType)
         {
             if (string.IsNullOrEmpty(hashType)) return null;
             switch (hashType.ToUpper())

@@ -190,8 +190,6 @@
     <Compile Include="Models\Entity\Reply.cs" />
     <Compile Include="Models\Entity\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Factory\ConnectionFactory.cs" />
-    <Compile Include="Services\Interface\IConnectionFactory.cs" />
     <Compile Include="Services\Interface\IMemberService.cs" />
     <Compile Include="Services\Interface\IPasswordRepository.cs" />
     <Compile Include="Services\Interface\IPostRepository.cs" />
@@ -273,7 +271,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />
-    <Folder Include="Services\Common\" />
     <Folder Include="Views\Base\" />
     <Folder Include="Views\Upload\" />
   </ItemGroup>
@@ -291,6 +288,10 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{090f7fa9-5e48-48a7-8d2b-195ecd3bbe57}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HashUtility\HashUtility.csproj">
       <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
       <Name>HashUtility</Name>

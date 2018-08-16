@@ -1,4 +1,5 @@
-﻿using HashUtility.Services;
+﻿using HashUtility.Factory;
+using HashUtility.Services.Hash;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace HashUtilityTests.Services

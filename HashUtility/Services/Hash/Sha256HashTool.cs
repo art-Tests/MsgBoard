@@ -1,4 +1,4 @@
-﻿namespace HashUtility.Services
+﻿namespace HashUtility.Services.Hash
 {
     /// <summary>
     /// SHA512雜湊

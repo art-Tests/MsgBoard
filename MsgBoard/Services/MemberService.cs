@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Transactions;
 using System.Web;
+using DataAccess.Interface;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;

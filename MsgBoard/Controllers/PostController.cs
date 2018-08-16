@@ -1,11 +1,11 @@
 ﻿using System.Net;
 using System.Web.Mvc;
+using DataAccess.Interface;
+using DataAccess.Services;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Services;
-using MsgBoard.Services.Factory;
-using MsgBoard.Services.Interface;
 using PagedList;
 
 namespace MsgBoard.Controllers

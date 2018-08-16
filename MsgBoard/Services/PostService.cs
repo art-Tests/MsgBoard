@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using System.Transactions;
+using DataAccess.Interface;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.ViewModel.Post;

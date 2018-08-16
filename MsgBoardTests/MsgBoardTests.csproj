@@ -79,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{090f7fa9-5e48-48a7-8d2b-195ecd3bbe57}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HashUtility\HashUtility.csproj">
       <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
       <Name>HashUtility</Name>

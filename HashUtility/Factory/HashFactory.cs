@@ -1,6 +1,7 @@
 ﻿using HashUtility.Interface;
+using HashUtility.Services.Hash;
 
-namespace HashUtility.Services
+namespace HashUtility.Factory
 {
     public class HashFactory
     {

@@ -1,12 +1,12 @@
 ﻿using System.Configuration;
 using System.Net;
 using System.Web.Mvc;
+using DataAccess.Interface;
+using DataAccess.Services;
 using MsgBoard.Services;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.ViewModel.Member;
-using MsgBoard.Services.Factory;
-using MsgBoard.Services.Interface;
 
 namespace MsgBoard.Controllers
 {

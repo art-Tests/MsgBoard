@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
+using DataAccess.Interface;
+using DataAccess.Services;
 using MsgBoard.Models.ViewModel.Reply;
 using MsgBoard.Services;
-using MsgBoard.Services.Factory;
-using MsgBoard.Services.Interface;
 
 namespace MsgBoard.ApiControllers
 {

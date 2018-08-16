@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace MsgBoard.Services.Interface
+namespace DataAccess.Interface
 {
     public interface IConnectionFactory
     {

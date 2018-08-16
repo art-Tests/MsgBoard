@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using DataAccess.Interface;
 using ExpectedObjects;
 using HashUtility.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,6 +43,7 @@ namespace MsgBoardTests.Services
 
             var hashTool = new HashService();
             hashTool.SetAlgList("SHA512,SHA256");
+            hashTool.SetHashKey("i_am_security_key");
             sut.SetHashTool(hashTool);
 
             var actual = sut.CheckUserPassword(email, userPass);
@@ -54,7 +56,7 @@ namespace MsgBoardTests.Services
             {
                 Id = 1,
                 UserId = 1,
-                HashPw = "11E1252247D8CB030F3DDC69BE23C2FE4AFD12C446AC6F229435B078A5451F2B",
+                HashPw = "6D567DAFBA3768A740DE3C2B5F8F745BFD71BFD36234E4F1A9A6BED17A903EFF",
                 CreateTime = DateTime.Now
             };
             return fakePassword;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using DataAccess.Interface;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.ViewModel.Reply;

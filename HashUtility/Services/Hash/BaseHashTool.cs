@@ -1,16 +1,12 @@
 ﻿using System.Text;
+using HashUtility.Factory;
 using HashUtility.Interface;
 
-namespace HashUtility.Services
+namespace HashUtility.Services.Hash
 {
     public abstract class BaseHashTool : IHash
     {
-        public HashAlgorithmFactory AlgorithmFactory { get; set; }
-
-        protected BaseHashTool()
-        {
-            AlgorithmFactory = new HashAlgorithmFactory();
-        }
+        public abstract string HashType { get; }
 
         protected static string ConvertToText(byte[] hashedInputBytes)
         {
@@ -22,8 +18,6 @@ namespace HashUtility.Services
             return hashedInputStringBuilder.ToString();
         }
 
-        public abstract string HashType { get; }
-
         /// <summary>
         /// 取得雜湊結果
         /// </summary>
@@ -31,7 +25,7 @@ namespace HashUtility.Services
         /// <returns>雜湊完畢的字串</returns>
         public string GetHash(string data)
         {
-            using (var shaM = AlgorithmFactory.GetInstance(HashType))
+            using (var shaM = HashAlgorithmFactory.GetInstance(HashType))
             {
                 var byteData = Encoding.UTF8.GetBytes(data);
                 return ConvertToText(shaM.ComputeHash(byteData));
