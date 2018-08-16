@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MsgBoard.ViewModel.Member
+namespace MsgBoard.Models.ViewModel.Member
 {
     /// <summary>
     /// 會員登入ViewModel

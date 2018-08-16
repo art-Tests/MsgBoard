@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace MsgBoard.ViewModel.Admin
+﻿namespace MsgBoard.Models.ViewModel.Admin
 {
     public class AdminIndexViewModel
     {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 using MsgBoard.Models.Dto;
 
-namespace MsgBoard.ViewModel.Reply
+namespace MsgBoard.Models.ViewModel.Reply
 {
     public class ReplyIndexViewModel
     {

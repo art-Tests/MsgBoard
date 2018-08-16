@@ -1,22 +1,24 @@
-﻿using System.Data;
-using System.Linq;
+﻿using System.Configuration;
 using System.Net;
 using System.Web.Mvc;
 using MsgBoard.Services;
-using MsgBoard.ViewModel.Member;
-using System.Transactions;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
+using MsgBoard.Models.ViewModel.Member;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 
 namespace MsgBoard.Controllers
 {
-    public class MemberController : BaseController
+    public class MemberController : Controller
     {
+        protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
         private readonly MemberService _memberService;
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
 
         public MemberController()
         {
-            _memberService = new MemberService();
+            _memberService = new MemberService(_connFactory);
         }
 
         [HttpGet]
@@ -33,14 +35,14 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var loginResult = _memberService.CheckUserPassword(Conn, model.Account, model.Password);
+            var loginResult = _memberService.CheckUserPassword(model.Account, model.Password);
             if (loginResult.Auth.Equals(false))
             {
                 ModelState.AddModelError("LoginError", "帳號或密碼錯誤");
                 return View(model);
             }
 
-            var artCnt = _memberService.GetUserArticleCount(Conn, loginResult.User.Id);
+            var artCnt = _memberService.GetUserArticleCount(loginResult.User.Id);
             SignInUser.UserLogin(true, loginResult.User, artCnt);
             return RedirectToAction("Index", "Post");
         }
@@ -73,33 +75,14 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var isExistSameUser = _memberService.CheckUserExist(ConnFactory.GetConnection(), model.Mail);
+            var isExistSameUser = _memberService.CheckUserExist(model.Mail);
             if (isExistSameUser)
             {
                 ModelState.AddModelError("SameUser", $"{model.Mail} 已被註冊，若忘記密碼請洽系統管理員。");
                 return View(model);
             }
-
-            using (var tranScope = new TransactionScope())
-            {
-                using (var connection = ConnFactory.GetConnection())
-                {
-                    // Table User
-                    var fileName = _memberService.SaveMemberPic(model.File, Server.MapPath(FileUploadPath));
-                    var user = _memberService.ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
-                    user.Id = _memberService.CreateUser(connection, user);
-
-                    // Table Password
-                    var password = _memberService.ConvertToPassEntity(user.Id, user.Guid, model.Password);
-                    _memberService.CreatePassword(connection, password);
-
-                    // 註冊完直接給他登入
-                    var artCnt = _memberService.GetUserArticleCount(Conn, user.Id);
-                    SignInUser.UserLogin(true, user, artCnt);
-                }
-
-                tranScope.Complete();
-            }
+            var picPath = Server.MapPath(FileUploadPath);
+            _memberService.CreateUser(model, picPath);
 
             return RedirectToAction("Index", "Post");
         }
@@ -118,16 +101,13 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var connection = ConnFactory.GetConnection();
-            var user = _memberService.GetUser(connection, id.Value);
+            var user = _memberService.GetUser(id.Value);
             if (user == null)
             {
-                //return HttpNotFound("Member Not Found");
                 return RedirectToAction(backAction, backController);
             }
 
-            var isAllowEdit = CheckAllowEditMember(id);
-            if (isAllowEdit.Equals(false))
+            if ((SignInUser.User.IsAdmin || SignInUser.User.Id == id).Equals(false))
             {
                 return RedirectToAction(backAction, backController);
             }
@@ -145,17 +125,11 @@ namespace MsgBoard.Controllers
             return View(model);
         }
 
-        private bool CheckAllowEditMember(int? id)
-        {
-            return SignInUser.User.IsAdmin || SignInUser.User.Id == id;
-        }
-
         [HttpPost]
         [AuthorizePlus]
         public ActionResult Update(int id, MemberUpdateViewModel model)
         {
-            var connection = ConnFactory.GetConnection();
-            var user = _memberService.GetUser(connection, id);
+            var user = _memberService.GetUser(id);
 
             if (ModelState.IsValid.Equals(false))
             {
@@ -172,7 +146,7 @@ namespace MsgBoard.Controllers
                 // 管理者可以強制變更密碼
                 if (SignInUser.User.IsAdmin.Equals(false))
                 {
-                    var isSamePassword = CheckIsHistroyPassword(connection, user.Id, newPassEntity.HashPw);
+                    var isSamePassword = _memberService.CheckIsHistroyPassword(user.Id, newPassEntity.HashPw);
                     if (isSamePassword)
                     {
                         ModelState.AddModelError("HistroyPassword", "新密碼不可跟使用過的舊密碼相同。");
@@ -181,7 +155,7 @@ namespace MsgBoard.Controllers
                     }
                 }
 
-                _memberService.CreatePassword(connection, newPassEntity);
+                _memberService.CreatePassword(newPassEntity);
             }
 
             // 大頭照
@@ -193,28 +167,15 @@ namespace MsgBoard.Controllers
 
             // Update Table User
             user.Name = model.Name;
-            _memberService.UpdateUser(connection, user);
+            _memberService.UpdateUser(user);
 
             // 修改自己的資料完畢之後也要更新Session
             if (SignInUser.User.Id == id)
             {
-                var artCnt = _memberService.GetUserArticleCount(Conn, user.Id);
+                var artCnt = _memberService.GetUserArticleCount(user.Id);
                 SignInUser.UserLogin(true, user, artCnt);
             }
             return RedirectToAction(model.BackAction, model.BackController, new { page = model.BackPage });
-        }
-
-        /// <summary>
-        /// 檢查歷史密碼中是否存在相同的密碼
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <param name="userId">會員Id</param>
-        /// <param name="newHashPass">要檢查的hash密碼</param>
-        /// <returns>True表示歷史紀錄有相同密碼</returns>
-        private bool CheckIsHistroyPassword(IDbConnection connection, int userId, string newHashPass)
-        {
-            var histroyPasswords = _memberService.GetHistroyPasswords(connection, userId);
-            return histroyPasswords.Any(x => x.HashPw == newHashPass);
         }
 
         public ActionResult ChangeStat(int? id, bool newStat, int page = 1)
@@ -229,16 +190,14 @@ namespace MsgBoard.Controllers
                 return RedirectToAction("Index", "Post");
             }
 
-            var connection = ConnFactory.GetConnection();
-            var user = _memberService.GetUser(connection, id.Value);
+            var user = _memberService.GetUser(id.Value);
             if (user == null)
             {
                 return HttpNotFound("Member Not Found");
-                //return RedirectToAction("Index", "Post");
             }
 
             user.IsDel = !newStat;
-            _memberService.UpdateUser(connection, user);
+            _memberService.UpdateUser(user);
             return RedirectToAction("Index", "Admin", new { page });
         }
     }

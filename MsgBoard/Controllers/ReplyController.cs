@@ -4,13 +4,20 @@ using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Services;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 
 namespace MsgBoard.Controllers
 {
-    public class ReplyController : BaseController
+    public class ReplyController : Controller
     {
-        private readonly PostService _postService = new PostService();
-        private readonly ReplyService _replyService = new ReplyService();
+        private readonly ReplyService _replyService;
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
+
+        public ReplyController()
+        {
+            _replyService = new ReplyService(_connFactory);
+        }
 
         [HttpGet, AuthorizePlus]
         public ActionResult Create(int? id)
@@ -21,7 +28,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             //查無文章
-            var dbPost = _postService.GetPostById(Conn, id.Value);
+            var dbPost = _replyService.GetPostById(id.Value);
             if (dbPost == null)
             {
                 return HttpNotFound();
@@ -40,11 +47,7 @@ namespace MsgBoard.Controllers
         public ActionResult Create(Reply model)
         {
             if (!ModelState.IsValid) return View(model);
-
-            model.CreateUserId = SignInUser.User.Id;
-            model.UpdateUserId = SignInUser.User.Id;
-            _replyService.Create(Conn, model);
-            SignInUser.AdjustReplyCnt(1);
+            _replyService.CreateReply(model);
             return RedirectToAction("Index", "Post");
         }
 
@@ -57,7 +60,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             //查無文章
-            var model = _replyService.GetReplyById(Conn, id.Value);
+            var model = _replyService.GetReplyById(id.Value);
             if (model == null)
             {
                 return HttpNotFound();
@@ -79,18 +82,15 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var reply = _replyService.GetReplyById(Conn, id.Value);
-            if (reply == null)
+            var dbReply = _replyService.GetReplyById(id.Value);
+            if (dbReply == null)
             {
                 return View(model);
             }
 
-            if (SignInUser.User.IsAdmin || SignInUser.User.Id == reply.CreateUserId)
+            if (SignInUser.User.IsAdmin || SignInUser.User.Id == dbReply.CreateUserId)
             {
-                reply.Content = model.Content;
-                reply.UpdateUserId = SignInUser.User.Id;
-                _replyService.Update(Conn, reply);
-
+                _replyService.UpdateReply(model, dbReply);
                 return RedirectToAction("Index", "Post");
             }
 
@@ -103,19 +103,14 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var model = _replyService.GetReplyById(Conn, id.Value);
+            var model = _replyService.GetReplyById(id.Value);
             if (model == null)
             {
                 return HttpNotFound();
             }
             if (SignInUser.User.IsAdmin || model.CreateUserId == SignInUser.User.Id)
             {
-                _replyService.Delete(Conn, id.Value);
-                if (model.CreateUserId == SignInUser.User.Id)
-                {
-                    SignInUser.AdjustReplyCnt(-1);
-                }
-
+                _replyService.DeleteReply(model);
                 return RedirectToAction("Index", "Post");
             }
             return new HttpStatusCodeResult(HttpStatusCode.Forbidden);

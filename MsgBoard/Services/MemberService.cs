@@ -1,66 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Transactions;
 using System.Web;
-using Dapper;
-using HashUtility.Interface;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
-using MsgBoard.Models.Interface;
-using MsgBoard.ViewModel.Admin;
-using MsgBoard.ViewModel.Member;
+using MsgBoard.Models.ViewModel.Admin;
+using MsgBoard.Models.ViewModel.Member;
+using MsgBoard.Services.Interface;
+using MsgBoard.Services.Repository;
 
 namespace MsgBoard.Services
 {
     public class MemberService : IMemberService
     {
-        protected HashService HashService;
-        private IUserRepository _userRepo;
-        private IPasswordRepository _passwordRepo;
+        protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
 
-        public MemberService()
+        protected HashService HashService = new HashService();
+        private IUserRepository _userRepo = new UserRepository();
+        private IPasswordRepository _passwordRepo = new PasswordRepository();
+
+        private readonly IPostRepository _postRepo = new PostRepository();
+        private readonly IReplyRepository _replyRepo = new ReplyRepository();
+        private readonly IConnectionFactory _connFactory;
+        private readonly IDbConnection _conn;
+
+        public MemberService(IConnectionFactory factory)
         {
-            HashService = new HashService();
-            _userRepo = new UserRepository();
-            _passwordRepo = new PasswordRepository();
+            _connFactory = factory;
+            _conn = _connFactory.GetConnection();
         }
 
+        /// <summary>
+        /// 設定HashTool，單元測試用
+        /// </summary>
+        /// <param name="hashService">The hash service.</param>
+        [Conditional("DEBUG")]
         public void SetHashTool(HashService hashService)
         {
             HashService = hashService;
-        }
-
-        /// <summary>
-        /// 新增會員資料
-        /// </summary>
-        /// <param name="conn">Connection</param>
-        /// <param name="entity">會員Entity</param>
-        /// <returns>
-        /// 回傳該筆會員的Id
-        /// </returns>
-        public int CreateUser(IDbConnection conn, User entity)
-        {
-            var sqlCmd = GetCreateUserSqlCmd();
-            return conn.QueryFirstOrDefault<int>(sqlCmd, entity);
-        }
-
-        /// <summary>
-        /// 新增User的SQL
-        /// </summary>
-        /// <returns>Sql語句</returns>
-        private string GetCreateUserSqlCmd()
-        {
-            return @"
-INSERT INTO [dbo].[User] ([Name], [Mail], [Pic], [Guid], [IsDel])
-     VALUES (@Name, @Mail, @Pic, @Guid, 0)
-
-SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
-";
         }
 
         /// <summary>
@@ -117,29 +99,19 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
             };
         }
 
-        public bool CreatePassword(IDbConnection conn, Password entity)
-        {
-            var sqlCmd = GetCreatePasswordSqlCmd();
-            return conn.Execute(sqlCmd, entity) == 1;
-        }
-
-        private string GetCreatePasswordSqlCmd()
-        {
-            return @"
-INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
-     VALUES (@HashPw ,@UserId)";
-        }
+        /// <summary>
+        /// 新增密碼
+        /// </summary>
+        /// <param name="entity">密碼entity</param>
+        /// <returns></returns>
+        public bool CreatePassword(Password entity) => _passwordRepo.Create(_conn, entity);
 
         /// <summary>
         /// 取得會員Entity
         /// </summary>
-        /// <param name="connection">The connection.</param>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        internal User GetUser(IDbConnection connection, int id)
-        {
-            return _userRepo.GetUserById(connection, id);
-        }
+        internal User GetUser(int id) => _userRepo.GetUserById(_conn, id);
 
         /// <summary>
         /// 取得會員密碼Entity
@@ -157,21 +129,21 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
             };
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// 登入帳密檢查
         /// </summary>
-        /// <param name="connection">The connection.</param>
         /// <param name="email">會員帳號(email)</param>
         /// <param name="userPass">會員密碼</param>
         /// <returns>返回會員登入結果</returns>
-        public virtual UserLoginResult CheckUserPassword(IDbConnection connection, string email, string userPass)
+        public virtual UserLoginResult CheckUserPassword(string email, string userPass)
         {
             var result = new UserLoginResult();
 
-            var user = _userRepo.GetUserByMail(connection, email);
+            var user = _userRepo.GetUserByMail(_conn, email);
             if (user == null) return result;
 
-            var password = _passwordRepo.FindPasswordByUserId(connection, user.Id);
+            var password = _passwordRepo.FindPasswordByUserId(_conn, user.Id);
             if (password == null) return result;
 
             var hashPassword = HashService.GetMemberHashPw(user.Guid, userPass);
@@ -186,25 +158,9 @@ INSERT INTO [dbo].[Password] ([HashPw] ,[UserId])
         /// <summary>
         /// 檢查系統是否已經存在相同使用者帳號
         /// </summary>
-        /// <param name="connection">The Connection</param>
         /// <param name="email">會員Email</param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public bool CheckUserExist(IDbConnection connection, string email)
-        {
-            var sqlCmd = GetCheckUserExistSqlCmd();
-            return connection.QueryFirstOrDefault<bool>(sqlCmd, new { email });
-        }
-
-        private string GetCheckUserExistSqlCmd()
-        {
-            return @"
-if exists(select top 1 * from [dbo].[User] (nolock) where Mail = @email)
-select 'true'
-else
-select 'false'
-";
-        }
+        public bool CheckUserExist(string email) => _userRepo.CheckUserExist(_conn, email);
 
         /// <summary>
         /// 測試注入用的方法，用來設定UserRepository
@@ -229,88 +185,67 @@ select 'false'
         /// <summary>
         /// 會員資料修改
         /// </summary>
-        /// <param name="connection">The connection.</param>
         /// <param name="user">會員資料entity</param>
-        public void UpdateUser(IDbConnection connection, User user)
-        {
-            _userRepo.Update(connection, user);
-        }
-
-        /// <summary>
-        /// 取得歷史密碼資料
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        /// <param name="userId">會員Id</param>
-        /// <returns></returns>
-        public IEnumerable<Password> GetHistroyPasswords(IDbConnection connection, int userId)
-        {
-            var sqlCmd = GetHistroyPasswordsSqlCmd();
-            return connection.Query<Password>(sqlCmd, new { userId });
-        }
-
-        private string GetHistroyPasswordsSqlCmd()
-        {
-            return "select * from [dbo].[Password] (nolock) where UserId = @userId";
-        }
+        public void UpdateUser(User user) => _userRepo.Update(_conn, user);
 
         /// <summary>
         /// 取得所有會員資料
         /// </summary>
-        /// <param name="connection">The connection.</param>
         /// <returns></returns>
-        public IQueryable<AdminIndexViewModel> GetUserCollection(IDbConnection connection)
-        {
-            var sqlCmd = GetUserCollectionAllSqlCmd();
-            return connection.Query<AdminIndexViewModel>(sqlCmd).AsQueryable();
-        }
-
-        //public IEnumerable<AdminIndexViewModel> GetUserCollection(IDbConnection connection, int page, int pageSize)
-        //{
-        //    var sqlCmd = GetUserCollectionSqlCmd();
-        //    var start = (page - 1) * pageSize + 1;
-        //    var end = page * pageSize;
-        //    return connection.Query<AdminIndexViewModel>(sqlCmd, new { start, end });
-        //}
-
-        private string GetUserCollectionAllSqlCmd()
-        {
-            return @"
-	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
-    from [dbo].[user] (nolock)";
-        }
-
-        //        private string GetUserCollectionSqlCmd()
-        //        {
-        //            return @"
-        //select * from (
-        //	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
-        //    from [dbo].[user] (nolock)
-        //) r
-        //where RowId between @start and @end
-        //";
-        //        }
+        public IQueryable<AdminIndexViewModel> GetUserCollection() => _userRepo.GetUserCollection(_conn);
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)
         /// </summary>
-        /// <param name="conn">The connection.</param>
         /// <param name="id">會員Id</param>
         /// <returns></returns>
-        public UserArticleCount GetUserArticleCount(IDbConnection conn, int id)
+        public UserArticleCount GetUserArticleCount(int id)
         {
-            var sqlCmd = GetUserArticleCountSqlCmd();
-            return conn.QueryFirstOrDefault<UserArticleCount>(sqlCmd, new { id });
+            return new UserArticleCount()
+            {
+                PostCount = _postRepo.GetPostCountByUserId(_conn, id),
+                ReplyCount = _replyRepo.GetReplyCountByUserId(_conn, id)
+            };
         }
 
-        private string GetUserArticleCountSqlCmd()
+        /// <summary>
+        /// 新增網站會員
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="path">存放大頭照的實體路徑</param>
+        public void CreateUser(MemberCreateViewModel model, string path)
         {
-            return @"
---declare @id int
---set @id=18
-select
-(select count(*) from [dbo].[Post] (nolock) where CreateUserId = @Id and IsDel=0) as [PostCount],
-(select count(*) from [dbo].[Reply] (nolock) where CreateUserId = @Id and IsDel=0) as [ReplyCount]
-";
+            using (var tranScope = new TransactionScope())
+            {
+                using (var connection = _connFactory.GetConnection())
+                {
+                    // Table User
+                    var fileName = SaveMemberPic(model.File, path);
+                    var user = ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
+                    user.Id = _userRepo.Create(connection, user);
+
+                    // Table Password
+                    var password = ConvertToPassEntity(user.Id, user.Guid, model.Password);
+                    _passwordRepo.Create(_conn, password);
+
+                    // 註冊完直接給他登入-因為是新會員，所以文章count直接給預設0即可
+                    SignInUser.UserLogin(true, user, new UserArticleCount());
+                }
+
+                tranScope.Complete();
+            }
+        }
+
+        /// <summary>
+        /// 檢查歷史密碼中是否存在相同的密碼
+        /// </summary>
+        /// <param name="userId">會員Id</param>
+        /// <param name="newHashPass">要檢查的hash密碼</param>
+        /// <returns>True表示歷史紀錄有相同密碼</returns>
+        public bool CheckIsHistroyPassword(int userId, string newHashPass)
+        {
+            var histroyPasswords = _passwordRepo.GetUserHistroyPasswords(_conn, userId);
+            return histroyPasswords.Any(x => x.HashPw == newHashPass);
         }
     }
 }

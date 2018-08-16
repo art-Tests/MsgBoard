@@ -1,17 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.Web.Http;
+using MsgBoard.Models.ViewModel.Reply;
 using MsgBoard.Services;
-using MsgBoard.ViewModel.Reply;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 
 namespace MsgBoard.ApiControllers
 {
-    public class ReplyController : BaseApiController
+    public class ReplyController : ApiController
     {
-        private readonly ReplyService _replyService = new ReplyService();
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
+
+        private readonly ReplyService _replyService;
+
+        public ReplyController()
+        {
+            _replyService = new ReplyService(_connFactory);
+        }
 
         // GET: api/Reply/18
         public IEnumerable<ReplyIndexViewModel> Get(int id, int user = 0)
         {
-            return _replyService.GetReplyByPostId(Conn, id, user);
+            return _replyService.GetReplyByPostId(id, user);
         }
     }
 }

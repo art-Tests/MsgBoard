@@ -2,18 +2,21 @@
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Services;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 using PagedList;
 
 namespace MsgBoard.Controllers
 {
     [AuthorizePlus]
-    public class AdminController : BaseController
+    public class AdminController : Controller
     {
         private readonly MemberService _memberService;
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
 
         public AdminController()
         {
-            _memberService = new MemberService();
+            _memberService = new MemberService(_connFactory);
         }
 
         public ActionResult Index(int page = 1, int pageSize = 5)
@@ -26,7 +29,7 @@ namespace MsgBoard.Controllers
             ViewData["nowPage"] = page;
 
             var model = _memberService
-                .GetUserCollection(Conn)
+                .GetUserCollection()
                 .ToPagedList(page, pageSize);
             return View(model);
         }

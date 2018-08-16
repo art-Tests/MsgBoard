@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 
-namespace MsgBoard.ViewModel.Member
+namespace MsgBoard.Models.ViewModel.Member
 {
     /// <summary>
     /// 新增會員表單ViewModel
