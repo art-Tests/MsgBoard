@@ -30,9 +30,10 @@ namespace Services
         /// </summary>
         /// <param name="id">文章Id</param>
         /// <returns></returns>
-        public Post GetPostById(int id)
+        public PostViewModel GetPostById(int id)
         {
-            return _postRepo.GetPostById(_conn, id);
+            var entity = _postRepo.GetPostById(_conn, id);
+            return ConvertToViewModel(entity);
         }
 
         /// <summary>
@@ -66,7 +67,7 @@ namespace Services
         /// 新增文章
         /// </summary>
         /// <param name="model">The model.</param>
-        public void CreatePost(PostCreateViewModel model)
+        public void CreatePost(PostViewModel model)
         {
             var entity = ConvertToEntity(model);
             entity.CreateUserId = SignInUser.User.Id;
@@ -81,9 +82,30 @@ namespace Services
         /// </summary>
         /// <param name="model">viewModel</param>
         /// <returns></returns>
-        private Post ConvertToEntity(PostCreateViewModel model)
+        private Post ConvertToEntity(PostViewModel model)
         {
-            return new Post()
+            if (model == null) return null;
+            return new Post
+            {
+                Id = model.Id,
+                Content = model.Content,
+                CreateTime = model.CreateTime,
+                CreateUserId = model.CreateUserId,
+                UpdateTime = model.UpdateTime,
+                UpdateUserId = model.UpdateUserId,
+                IsDel = model.IsDel
+            };
+        }
+
+        /// <summary>
+        /// 將Entity轉換為ViewModel
+        /// </summary>
+        /// <param name="model">entity</param>
+        /// <returns></returns>
+        private PostViewModel ConvertToViewModel(Post model)
+        {
+            if (model == null) return null;
+            return new PostViewModel
             {
                 Id = model.Id,
                 Content = model.Content,
@@ -99,12 +121,11 @@ namespace Services
         /// 更新文章
         /// </summary>
         /// <param name="model">The model.</param>
-        /// <param name="dbPost">The database post.</param>
-        public void UpdatePost(Post model, Post dbPost)
+        public void UpdatePost(PostViewModel model)
         {
-            dbPost.Content = model.Content;
-            dbPost.UpdateUserId = SignInUser.User.Id;
-            _postRepo.Update(_conn, dbPost);
+            model.UpdateUserId = SignInUser.User.Id;
+            var entity = ConvertToEntity(model);
+            _postRepo.Update(_conn, entity);
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 namespace MsgBoard.DataModel.ViewModel.Post
 {
-    public class PostCreateViewModel
+    public class PostViewModel
     {
         [Required]
         public int Id { get; set; }

@@ -102,7 +102,7 @@
     <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberLoginViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberUpdateViewModel.cs" />
-    <Compile Include="ViewModel\Post\PostCreateViewModel.cs" />
+    <Compile Include="ViewModel\Post\PostViewModel.cs" />
     <Compile Include="ViewModel\Post\PostIndexViewModel.cs" />
     <Compile Include="ViewModel\Reply\ReplyIndexViewModel.cs" />
   </ItemGroup>

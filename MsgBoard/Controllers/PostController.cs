@@ -2,7 +2,6 @@
 using System.Web.Mvc;
 using DataAccess.Interface;
 using DataAccess.Services;
-using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Post;
 using MsgBoard.Filter;
@@ -39,7 +38,7 @@ namespace MsgBoard.Controllers
 
         [HttpPost]
         [AuthorizePlus]
-        public ActionResult Create(PostCreateViewModel model)
+        public ActionResult Create(PostViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
             _postService.CreatePost(model);
@@ -59,7 +58,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost, AuthorizePlus]
-        public ActionResult Update(int? id, Post model)
+        public ActionResult Update(int? id, PostViewModel model)
         {
             if (id == null)
             {
@@ -76,7 +75,7 @@ namespace MsgBoard.Controllers
 
             if (SignInUser.User.IsAdmin || SignInUser.User.Id == dbPost.CreateUserId)
             {
-                _postService.UpdatePost(model, dbPost);
+                _postService.UpdatePost(model);
                 return RedirectToAction("Index", "Post");
             }
 
