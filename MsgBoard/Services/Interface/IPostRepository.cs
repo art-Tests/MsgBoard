@@ -45,5 +45,13 @@ namespace MsgBoard.Services.Interface
         /// <param name="queryItem">The query item.</param>
         /// <returns></returns>
         IQueryable<PostIndexViewModel> GetPostCollection(IDbConnection conn, int? id, string queryItem);
+
+        /// <summary>
+        /// 取得會員發文數量
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">會員編號</param>
+        /// <returns></returns>
+        int GetPostCountByUserId(IDbConnection conn, int id);
     }
 }

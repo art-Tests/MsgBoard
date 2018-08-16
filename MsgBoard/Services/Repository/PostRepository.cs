@@ -10,12 +10,24 @@ namespace MsgBoard.Services.Repository
 {
     public class PostRepository : IPostRepository
     {
+        /// <summary>
+        /// 新增文章
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="entity">文章entity</param>
+        /// <returns>回傳文章編號</returns>
         public int Create(IDbConnection conn, Post entity)
         {
             var sqlCmd = GetCreateSqlCmd();
             return conn.QueryFirstOrDefault<int>(sqlCmd, entity);
         }
 
+        /// <summary>
+        /// 取得文章
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">文章Id</param>
+        /// <returns></returns>
         public Post GetPostById(IDbConnection conn, int id)
         {
             var sqlCmd = "select top 1 * from [dbo].[Post] (nolock) where Id=@id";
@@ -65,6 +77,19 @@ namespace MsgBoard.Services.Repository
                 p.UpdateAuthor = u;
                 return p;
             }, new { id }).AsQueryable();
+        }
+
+        /// <summary>
+        /// 取得會員發文數量
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">會員編號</param>
+        /// <returns></returns>
+        public int GetPostCountByUserId(IDbConnection conn, int id)
+        {
+            var sqlCmd =
+                "select count(*) as [PostCount] from [dbo].[Post] (nolock) where CreateUserId = @Id and IsDel=0";
+            return conn.QueryFirstOrDefault<int>(sqlCmd, new { id });
         }
 
         /// <summary>

@@ -11,10 +11,8 @@ namespace MsgBoard.Services
 {
     public class PostService : BaseService
     {
-        private readonly ReplyService _replyService = new ReplyService();
-        private readonly MemberService _memberService = new MemberService();
-
         private readonly IPostRepository _postRepo = new PostRepository();
+        private readonly IReplyRepository _replyRepo = new ReplyRepository();
 
         /// <summary>
         /// 取得文章
@@ -39,13 +37,17 @@ namespace MsgBoard.Services
                     // Delete Post
                     _postRepo.Delete(connection, id);
                     // Delete Reply
-                    _replyService.DeleteByPostId(connection, id);
+                    _replyRepo.DeleteByPostId(connection, id);
                 }
                 transScope.Complete();
             }
 
             // 刪除文章、回復，有可能刪除到管理者或是其他人的資料，因此直接重新刷新目前User的文章數量資訊
-            var artCnt = _memberService.GetUserArticleCount(Conn, SignInUser.User.Id);
+            var artCnt = new UserArticleCount()
+            {
+                PostCount = _postRepo.GetPostCountByUserId(Conn, SignInUser.User.Id),
+                ReplyCount = _replyRepo.GetReplyCountByUserId(Conn, SignInUser.User.Id)
+            };
             SignInUser.SetArticleCount(artCnt);
         }
 
@@ -74,6 +76,12 @@ namespace MsgBoard.Services
             _postRepo.Update(Conn, dbPost);
         }
 
+        /// <summary>
+        /// 取得文章列表資料
+        /// </summary>
+        /// <param name="id">會員編號，有傳入表示查詢該會員的文章</param>
+        /// <param name="queryItem">The query item.</param>
+        /// <returns></returns>
         public IQueryable<PostIndexViewModel> GetPostCollection(int? id, string queryItem)
         {
             return _postRepo.GetPostCollection(Conn, id, queryItem);

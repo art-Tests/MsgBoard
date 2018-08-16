@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
 using Dapper;
-using HashUtility.Interface;
 using HashUtility.Services;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.Interface;
+using MsgBoard.Services.Interface;
+using MsgBoard.Services.Repository;
 using MsgBoard.ViewModel.Admin;
 using MsgBoard.ViewModel.Member;
 
@@ -19,16 +19,12 @@ namespace MsgBoard.Services
 {
     public class MemberService : IMemberService
     {
-        protected HashService HashService;
-        private IUserRepository _userRepo;
-        private IPasswordRepository _passwordRepo;
+        protected HashService HashService = new HashService();
+        private IUserRepository _userRepo = new UserRepository();
+        private IPasswordRepository _passwordRepo = new PasswordRepository();
 
-        public MemberService()
-        {
-            HashService = new HashService();
-            _userRepo = new UserRepository();
-            _passwordRepo = new PasswordRepository();
-        }
+        private readonly IPostRepository _postRepo = new PostRepository();
+        private readonly IReplyRepository _replyRepo = new ReplyRepository();
 
         public void SetHashTool(HashService hashService)
         {
@@ -264,31 +260,12 @@ select 'false'
             return connection.Query<AdminIndexViewModel>(sqlCmd).AsQueryable();
         }
 
-        //public IEnumerable<AdminIndexViewModel> GetUserCollection(IDbConnection connection, int page, int pageSize)
-        //{
-        //    var sqlCmd = GetUserCollectionSqlCmd();
-        //    var start = (page - 1) * pageSize + 1;
-        //    var end = page * pageSize;
-        //    return connection.Query<AdminIndexViewModel>(sqlCmd, new { start, end });
-        //}
-
         private string GetUserCollectionAllSqlCmd()
         {
             return @"
 	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
     from [dbo].[user] (nolock)";
         }
-
-        //        private string GetUserCollectionSqlCmd()
-        //        {
-        //            return @"
-        //select * from (
-        //	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
-        //    from [dbo].[user] (nolock)
-        //) r
-        //where RowId between @start and @end
-        //";
-        //        }
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)
@@ -298,19 +275,11 @@ select 'false'
         /// <returns></returns>
         public UserArticleCount GetUserArticleCount(IDbConnection conn, int id)
         {
-            var sqlCmd = GetUserArticleCountSqlCmd();
-            return conn.QueryFirstOrDefault<UserArticleCount>(sqlCmd, new { id });
-        }
-
-        private string GetUserArticleCountSqlCmd()
-        {
-            return @"
---declare @id int
---set @id=18
-select
-(select count(*) from [dbo].[Post] (nolock) where CreateUserId = @Id and IsDel=0) as [PostCount],
-(select count(*) from [dbo].[Reply] (nolock) where CreateUserId = @Id and IsDel=0) as [ReplyCount]
-";
+            return new UserArticleCount()
+            {
+                PostCount = _postRepo.GetPostCountByUserId(conn, SignInUser.User.Id),
+                ReplyCount = _replyRepo.GetReplyCountByUserId(conn, SignInUser.User.Id)
+            };
         }
     }
 }

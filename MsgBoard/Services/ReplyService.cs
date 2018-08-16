@@ -124,16 +124,5 @@ UPDATE [dbo].[Reply]
             var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where Id=@id";
             conn.Execute(sqlCmd, new { id });
         }
-
-        /// <summary>
-        /// 刪除某文章的所有回覆
-        /// </summary>
-        /// <param name="conn">The connection.</param>
-        /// <param name="id">文章Id</param>
-        public void DeleteByPostId(IDbConnection conn, int id)
-        {
-            var sqlCmd = "Update [dbo].[Reply] set IsDel=1 where PostId=@id";
-            conn.Execute(sqlCmd, new { id });
-        }
     }
 }
