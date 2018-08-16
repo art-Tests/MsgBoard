@@ -98,6 +98,7 @@
     <Compile Include="Dto\UserLoginResult.cs" />
     <Compile Include="Extension\MyDateTimeExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberLoginViewModel.cs" />
     <Compile Include="ViewModel\Member\MemberUpdateViewModel.cs" />

@@ -109,10 +109,6 @@
       <Project>{e427e9a5-f44c-4b9d-8817-6c1493585f0d}</Project>
       <Name>DataModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MsgBoard.DataModel\MsgBoard.DataModel.csproj">
-      <Project>{0c8e213a-2a20-4664-bdff-9b5c46e0baae}</Project>
-      <Name>MsgBoard.DataModel</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

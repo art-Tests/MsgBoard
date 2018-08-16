@@ -265,10 +265,6 @@
       <Project>{090f7fa9-5e48-48a7-8d2b-195ecd3bbe57}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataModel\DataModel.csproj">
-      <Project>{e427e9a5-f44c-4b9d-8817-6c1493585f0d}</Project>
-      <Name>DataModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\HashUtility\HashUtility.csproj">
       <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
       <Name>HashUtility</Name>

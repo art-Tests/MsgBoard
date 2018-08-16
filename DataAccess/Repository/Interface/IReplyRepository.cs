@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using DataModel.Entity;
-using MsgBoard.DataModel.ViewModel.Reply;
 
 namespace DataAccess.Repository.Interface
 {
@@ -51,14 +49,5 @@ namespace DataAccess.Repository.Interface
         /// <param name="conn">The connection.</param>
         /// <param name="id">回覆Id</param>
         void Delete(IDbConnection conn, int id);
-
-        /// <summary>
-        /// 取得文章的所有回覆
-        /// </summary>
-        /// <param name="conn">The connection.</param>
-        /// <param name="id">文章Id</param>
-        /// <param name="userId">使用者Id</param>
-        /// <returns></returns>
-        IEnumerable<ReplyIndexViewModel> GetReplyByPostId(IDbConnection conn, int id, int userId);
     }
 }

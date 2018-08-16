@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using Dapper;
 using DataAccess.Repository.Interface;
 using DataModel.Entity;
@@ -44,17 +43,6 @@ namespace DataAccess.Repository
         }
 
         /// <summary>
-        /// 取得所有會員資料
-        /// </summary>
-        /// <param name="conn">The connection.</param>
-        /// <returns></returns>
-        public IEnumerable<User> GetAllUser(IDbConnection conn)
-        {
-            var sqlCmd = GetAllUserSqlCmd();
-            return conn.Query<User>(sqlCmd);
-        }
-
-        /// <summary>
         /// 檢查系統是否已經存在相同使用者帳號
         /// </summary>
         /// <param name="conn">The connection.</param>
@@ -94,13 +82,6 @@ select 'true'
 else
 select 'false'
 ";
-        }
-
-        private string GetAllUserSqlCmd()
-        {
-            return @"
-	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
-    from [dbo].[user] (nolock)";
         }
 
         private string GetUpdateSqlCmd()

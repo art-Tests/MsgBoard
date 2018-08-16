@@ -1,7 +1,5 @@
 ﻿using System.Data;
-using System.Linq;
 using DataModel.Entity;
-using MsgBoard.DataModel.ViewModel.Post;
 
 namespace DataAccess.Repository.Interface
 {
@@ -36,15 +34,6 @@ namespace DataAccess.Repository.Interface
         /// <param name="conn">The connection.</param>
         /// <param name="post">文章entity</param>
         void Update(IDbConnection conn, Post post);
-
-        /// <summary>
-        /// 取得文章列表資料
-        /// </summary>
-        /// <param name="conn">The connection.</param>
-        /// <param name="id">會員編號，有傳入表示查詢該會員的文章</param>
-        /// <param name="queryItem">The query item.</param>
-        /// <returns></returns>
-        IQueryable<PostIndexViewModel> GetPostCollection(IDbConnection conn, int? id, string queryItem);
 
         /// <summary>
         /// 取得會員發文數量

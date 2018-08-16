@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using Dapper;
 using DataAccess.Interface;
 using DataAccess.Repository;
 using DataAccess.Repository.Interface;
@@ -42,7 +43,43 @@ namespace Services
         /// <returns></returns>
         public IEnumerable<ReplyIndexViewModel> GetReplyByPostId(int id, int userId)
         {
-            return _replyRepo.GetReplyByPostId(_conn, id, userId);
+            return GetReplyByPostId(_conn, id, userId);
+        }
+
+        /// <summary>
+        /// 取得文章的所有回覆
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">文章Id</param>
+        /// <param name="userId">使用者Id</param>
+        /// <returns></returns>
+        public IEnumerable<ReplyIndexViewModel> GetReplyByPostId(IDbConnection conn, int id, int userId)
+        {
+            var sqlCmd = GetReplyByPostIdSqlCmd();
+            return conn.Query<ReplyIndexViewModel, Author, Author, ReplyIndexViewModel>(sqlCmd, (r, i, u) =>
+            {
+                i.Pic = i.Pic.Replace("~", string.Empty);
+                u.Pic = u.Pic.Replace("~", string.Empty);
+                r.CreateAuthor = i;
+                r.UpdateAuthor = u;
+                return r;
+            }, new { id, userId });
+        }
+
+        private string GetReplyByPostIdSqlCmd()
+        {
+            return @"
+select r.*
+,(select IsAdmin from [dbo].[User] (nolock) where Id=@userId) as IsAdmin
+,(select @userId )as UserId
+,insUser.*
+,updUser.*
+from [dbo].[Reply] (nolock) r
+left join [dbo].[User] (nolock) insUser on insUser.Id = r.CreateUserId
+left join [dbo].[User] (nolock) updUser on updUser.Id = r.UpdateUserId
+where r.PostId =@id and r.IsDel=0
+order by r.CreateTime
+";
         }
 
         /// <summary>

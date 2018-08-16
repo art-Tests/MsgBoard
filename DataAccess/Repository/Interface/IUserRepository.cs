@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using DataModel.Entity;
 
 namespace DataAccess.Repository.Interface
@@ -30,13 +29,6 @@ namespace DataAccess.Repository.Interface
         void Update(IDbConnection connection, User user);
 
         /// <summary>
-        /// 取得所有會員資料
-        /// </summary>
-        /// <param name="conn">The connection.</param>
-        /// <returns></returns>
-        IEnumerable<User> GetAllUser(IDbConnection conn);
-
-        /// <summary>
         /// 檢查系統是否已經存在相同使用者帳號
         /// </summary>
         /// <param name="conn">The connection.</param>
@@ -44,6 +36,12 @@ namespace DataAccess.Repository.Interface
         /// <returns></returns>
         bool CheckUserExist(IDbConnection conn, string email);
 
+        /// <summary>
+        /// 新增會員
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="entity">會員entity</param>
+        /// <returns></returns>
         int Create(IDbConnection conn, User entity);
     }
 }

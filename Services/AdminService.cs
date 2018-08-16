@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using Dapper;
 using DataAccess.Interface;
-using DataAccess.Repository;
-using DataAccess.Repository.Interface;
-using DataModel.Entity;
+using MsgBoard.DataModel.ViewModel.Admin;
 
 namespace Services
 {
     public class AdminService
     {
-        private readonly IUserRepository _userRepo = new UserRepository();
-
         private readonly IDbConnection _conn;
 
         public AdminService(IConnectionFactory factory)
@@ -22,9 +19,17 @@ namespace Services
         /// 取得所有會員資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<User> GetUserCollection()
+        public IEnumerable<AdminIndexViewModel> GetUserCollection()
         {
-            return _userRepo.GetAllUser(_conn);
+            var sqlCmd = GetAllUserSqlCmd();
+            return _conn.Query<AdminIndexViewModel>(sqlCmd);
+        }
+
+        private string GetAllUserSqlCmd()
+        {
+            return @"
+	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel
+    from [dbo].[user] (nolock)";
         }
     }
 }

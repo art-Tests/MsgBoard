@@ -8,6 +8,9 @@ namespace MsgBoard.DataModel.Dto
     /// </summary>
     public static class SignInUser
     {
+        /// <summary>
+        /// 目前使用者文章數量
+        /// </summary>
         public static UserArticleCount ArticleCount
         {
             get
@@ -50,6 +53,12 @@ namespace MsgBoard.DataModel.Dto
             }
         }
 
+        /// <summary>
+        /// 會員登入設定Session
+        /// </summary>
+        /// <param name="isAuth">設定登入狀態</param>
+        /// <param name="user">設定登入會員資料</param>
+        /// <param name="artCnt">設定登入會員文章數量</param>
         public static void UserLogin(bool isAuth, User user, UserArticleCount artCnt)
         {
             HttpContext.Current.Session["auth"] = isAuth;
@@ -57,6 +66,10 @@ namespace MsgBoard.DataModel.Dto
             SetArticleCount(artCnt);
         }
 
+        /// <summary>
+        /// 調整session的發文數量
+        /// </summary>
+        /// <param name="number">修正值(整數，允許負值)</param>
         public static void AdjustPostCnt(int number)
         {
             if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
@@ -66,6 +79,10 @@ namespace MsgBoard.DataModel.Dto
             }
         }
 
+        /// <summary>
+        /// 調整session的回覆數量
+        /// </summary>
+        /// <param name="number">修正值(整數，允許負值)</param>
         public static void AdjustReplyCnt(int number)
         {
             if (HttpContext.Current.Session["memberArticleCount"] is UserArticleCount artCnt)
@@ -75,6 +92,10 @@ namespace MsgBoard.DataModel.Dto
             }
         }
 
+        /// <summary>
+        /// 設定會員文章數量Session
+        /// </summary>
+        /// <param name="artCnt">文章數量entity</param>
         public static void SetArticleCount(UserArticleCount artCnt)
         {
             HttpContext.Current.Session["memberArticleCount"] = artCnt;

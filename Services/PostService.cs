@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using System.Transactions;
+using Dapper;
 using DataAccess.Interface;
 using DataAccess.Repository;
 using DataAccess.Repository.Interface;
@@ -94,7 +95,92 @@ namespace Services
         /// <returns></returns>
         public IQueryable<PostIndexViewModel> GetPostCollection(int? id, string queryItem)
         {
-            return _postRepo.GetPostCollection(_conn, id, queryItem);
+            return GetPostCollection(_conn, id, queryItem);
+        }
+
+        /// <summary>
+        /// 取得文章列表資料
+        /// </summary>
+        /// <param name="conn">The connection.</param>
+        /// <param name="id">會員編號，有傳入表示查詢該會員的文章</param>
+        /// <param name="queryItem">The query item.</param>
+        /// <returns></returns>
+        private IQueryable<PostIndexViewModel> GetPostCollection(IDbConnection conn, int? id, string queryItem)
+        {
+            var sqlCmd = id == null
+                ? GetPostCollectionSqlCmd()
+                : queryItem.ToUpper() == "POST"
+                    ? GetPostCollectionByUserSqlCmd()
+                    : GetReplyCollectionByUserSqlCmd();
+
+            return conn.Query<PostIndexViewModel, Author, Author, PostIndexViewModel>(sqlCmd, (p, i, u) =>
+            {
+                p.CreateAuthor = i;
+                p.UpdateAuthor = u;
+                return p;
+            }, new { id }).AsQueryable();
+        }
+
+        /// <summary>
+        /// 取得使用者已回覆的文章SQL (包含管理者修改他人之文章)
+        /// </summary>
+        /// <returns></returns>
+        private string GetReplyCollectionByUserSqlCmd()
+        {
+            return @"
+select ROW_NUMBER() OVER(ORDER BY p.Id desc) AS RowId, p.*
+,(
+	select count(*) from reply where PostId = p.Id and IsDel=0
+) as 'ReplyCount'
+,i.*
+,u.*
+from [dbo].[Post] (nolock) as p
+left join [dbo].[User] (nolock) as i on p.CreateUserId= i.Id
+left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
+where p.IsDel=0
+and p.Id in (select PostId from [dbo].[Reply] r where ( r.CreateUserId = @id or r.UpdateUserId = @id) and r.IsDel=0)
+";
+        }
+
+        /// <summary>
+        /// 取得使用者發佈的文章SQL
+        /// </summary>
+        /// <returns></returns>
+        private string GetPostCollectionByUserSqlCmd()
+        {
+            return @"
+select ROW_NUMBER() OVER(ORDER BY p.Id desc) AS RowId, p.*
+,(
+	select count(*) from reply where PostId = p.Id and IsDel=0
+) as 'ReplyCount'
+,i.*
+,u.*
+from [dbo].[Post] (nolock) as p
+left join [dbo].[User] (nolock) as i on p.CreateUserId= i.Id
+left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
+where p.IsDel=0
+and p.CreateUserId=@id
+";
+        }
+
+        /// <summary>
+        /// 取得所有文章SQL
+        /// </summary>
+        /// <returns></returns>
+        private string GetPostCollectionSqlCmd()
+        {
+            return @"
+select ROW_NUMBER() OVER(ORDER BY p.Id desc) AS RowId, p.*
+,(
+	select count(*) from reply where PostId = p.Id and IsDel=0
+) as 'ReplyCount'
+,i.*
+,u.*
+from [dbo].[Post] (nolock) as p
+left join [dbo].[User] (nolock) as i on p.CreateUserId= i.Id
+left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
+where p.IsDel=0
+";
         }
     }
 }
