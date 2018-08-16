@@ -4,12 +4,20 @@ using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Services;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 
 namespace MsgBoard.Controllers
 {
     public class ReplyController : Controller
     {
-        private readonly ReplyService _replyService = new ReplyService();
+        private readonly ReplyService _replyService;
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
+
+        public ReplyController()
+        {
+            _replyService = new ReplyService(_connFactory);
+        }
 
         [HttpGet, AuthorizePlus]
         public ActionResult Create(int? id)

@@ -1,17 +1,25 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.ViewModel.Reply;
-using MsgBoard.Services.Common;
 using MsgBoard.Services.Interface;
 using MsgBoard.Services.Repository;
 
 namespace MsgBoard.Services
 {
-    public class ReplyService : BaseService
+    public class ReplyService
     {
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
         private readonly IPostRepository _postRepo = new PostRepository();
+        private readonly IConnectionFactory _connFactory;
+        private readonly IDbConnection _conn;
+
+        public ReplyService(IConnectionFactory factory)
+        {
+            _connFactory = factory;
+            _conn = _connFactory.GetConnection();
+        }
 
         /// <summary>
         /// 新增回覆
@@ -22,7 +30,7 @@ namespace MsgBoard.Services
         {
             model.CreateUserId = SignInUser.User.Id;
             model.UpdateUserId = SignInUser.User.Id;
-            var id = _replyRepo.Create(Conn, model);
+            var id = _replyRepo.Create(_conn, model);
             SignInUser.AdjustReplyCnt(1);
             return id;
         }
@@ -35,7 +43,7 @@ namespace MsgBoard.Services
         /// <returns></returns>
         public IEnumerable<ReplyIndexViewModel> GetReplyByPostId(int id, int userId)
         {
-            return _replyRepo.GetReplyByPostId(Conn, id, userId);
+            return _replyRepo.GetReplyByPostId(_conn, id, userId);
         }
 
         /// <summary>
@@ -43,7 +51,7 @@ namespace MsgBoard.Services
         /// </summary>
         /// <param name="id">回覆Id</param>
         /// <returns></returns>
-        public Reply GetReplyById(int id) => _replyRepo.GetReplyById(Conn, id);
+        public Reply GetReplyById(int id) => _replyRepo.GetReplyById(_conn, id);
 
         /// <summary>
         /// 刪除某筆回覆
@@ -51,7 +59,7 @@ namespace MsgBoard.Services
         /// <param name="model">要刪除的回覆entity</param>
         public void DeleteReply(Reply model)
         {
-            _replyRepo.Delete(Conn, model.Id);
+            _replyRepo.Delete(_conn, model.Id);
             if (model.CreateUserId == SignInUser.User.Id)
             {
                 SignInUser.AdjustReplyCnt(-1);
@@ -67,7 +75,7 @@ namespace MsgBoard.Services
         {
             reply.Content = model.Content;
             reply.UpdateUserId = SignInUser.User.Id;
-            _replyRepo.Update(Conn, reply);
+            _replyRepo.Update(_conn, reply);
         }
 
         /// <summary>
@@ -75,6 +83,6 @@ namespace MsgBoard.Services
         /// </summary>
         /// <param name="id">文章編號</param>
         /// <returns></returns>
-        public Post GetPostById(int id) => _postRepo.GetPostById(Conn, id);
+        public Post GetPostById(int id) => _postRepo.GetPostById(_conn, id);
     }
 }

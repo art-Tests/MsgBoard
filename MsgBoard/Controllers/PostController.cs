@@ -4,13 +4,21 @@ using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Services;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 using PagedList;
 
 namespace MsgBoard.Controllers
 {
     public class PostController : Controller
     {
-        private readonly PostService _postService = new PostService();
+        private readonly PostService _postService;
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
+
+        public PostController()
+        {
+            _postService = new PostService(_connFactory);
+        }
 
         // GET: Post
         public ActionResult Index(int? id, string queryItem = "", int page = 1, int pageSize = 5)

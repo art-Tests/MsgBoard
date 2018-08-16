@@ -1,18 +1,27 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Linq;
 using System.Transactions;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.ViewModel.Post;
-using MsgBoard.Services.Common;
 using MsgBoard.Services.Interface;
 using MsgBoard.Services.Repository;
 
 namespace MsgBoard.Services
 {
-    public class PostService : BaseService
+    public class PostService
     {
         private readonly IPostRepository _postRepo = new PostRepository();
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
+
+        private readonly IConnectionFactory _connFactory;
+        private readonly IDbConnection _conn;
+
+        public PostService(IConnectionFactory factory)
+        {
+            _connFactory = factory;
+            _conn = _connFactory.GetConnection();
+        }
 
         /// <summary>
         /// 取得文章
@@ -21,7 +30,7 @@ namespace MsgBoard.Services
         /// <returns></returns>
         public Post GetPostById(int id)
         {
-            return _postRepo.GetPostById(Conn, id);
+            return _postRepo.GetPostById(_conn, id);
         }
 
         /// <summary>
@@ -32,7 +41,7 @@ namespace MsgBoard.Services
         {
             using (var transScope = new TransactionScope())
             {
-                using (var connection = ConnFactory.GetConnection())
+                using (var connection = _connFactory.GetConnection())
                 {
                     // Delete Post
                     _postRepo.Delete(connection, id);
@@ -45,8 +54,8 @@ namespace MsgBoard.Services
             // 刪除文章、回復，有可能刪除到管理者或是其他人的資料，因此直接重新刷新目前User的文章數量資訊
             var artCnt = new UserArticleCount()
             {
-                PostCount = _postRepo.GetPostCountByUserId(Conn, SignInUser.User.Id),
-                ReplyCount = _replyRepo.GetReplyCountByUserId(Conn, SignInUser.User.Id)
+                PostCount = _postRepo.GetPostCountByUserId(_conn, SignInUser.User.Id),
+                ReplyCount = _replyRepo.GetReplyCountByUserId(_conn, SignInUser.User.Id)
             };
             SignInUser.SetArticleCount(artCnt);
         }
@@ -59,7 +68,7 @@ namespace MsgBoard.Services
         {
             model.CreateUserId = SignInUser.User.Id;
             model.UpdateUserId = SignInUser.User.Id;
-            _postRepo.Create(Conn, model);
+            _postRepo.Create(_conn, model);
 
             SignInUser.AdjustPostCnt(1);
         }
@@ -73,7 +82,7 @@ namespace MsgBoard.Services
         {
             dbPost.Content = model.Content;
             dbPost.UpdateUserId = SignInUser.User.Id;
-            _postRepo.Update(Conn, dbPost);
+            _postRepo.Update(_conn, dbPost);
         }
 
         /// <summary>
@@ -84,7 +93,7 @@ namespace MsgBoard.Services
         /// <returns></returns>
         public IQueryable<PostIndexViewModel> GetPostCollection(int? id, string queryItem)
         {
-            return _postRepo.GetPostCollection(Conn, id, queryItem);
+            return _postRepo.GetPostCollection(_conn, id, queryItem);
         }
     }
 }

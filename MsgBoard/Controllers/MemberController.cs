@@ -5,6 +5,8 @@ using MsgBoard.Services;
 using MsgBoard.Filter;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.ViewModel.Member;
+using MsgBoard.Services.Factory;
+using MsgBoard.Services.Interface;
 
 namespace MsgBoard.Controllers
 {
@@ -12,10 +14,11 @@ namespace MsgBoard.Controllers
     {
         protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
         private readonly MemberService _memberService;
+        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
 
         public MemberController()
         {
-            _memberService = new MemberService();
+            _memberService = new MemberService(_connFactory);
         }
 
         [HttpGet]

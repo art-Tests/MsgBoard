@@ -11,7 +11,6 @@ using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.ViewModel.Admin;
 using MsgBoard.Models.ViewModel.Member;
-using MsgBoard.Services.Factory;
 using MsgBoard.Services.Interface;
 using MsgBoard.Services.Repository;
 
@@ -27,21 +26,19 @@ namespace MsgBoard.Services
 
         private readonly IPostRepository _postRepo = new PostRepository();
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
-        private IConnectionFactory _connFactory;
-        public IDbConnection Conn { get; set; }
-
-        public MemberService()
-        {
-            _connFactory = new ConnectionFactory();
-            Conn = _connFactory.GetConnection();
-        }
+        private readonly IConnectionFactory _connFactory;
+        private readonly IDbConnection _conn;
 
         public MemberService(IConnectionFactory factory)
         {
             _connFactory = factory;
-            Conn = _connFactory.GetConnection();
+            _conn = _connFactory.GetConnection();
         }
 
+        /// <summary>
+        /// 設定HashTool，單元測試用
+        /// </summary>
+        /// <param name="hashService">The hash service.</param>
         [Conditional("DEBUG")]
         public void SetHashTool(HashService hashService)
         {
@@ -107,14 +104,14 @@ namespace MsgBoard.Services
         /// </summary>
         /// <param name="entity">密碼entity</param>
         /// <returns></returns>
-        public bool CreatePassword(Password entity) => _passwordRepo.Create(Conn, entity);
+        public bool CreatePassword(Password entity) => _passwordRepo.Create(_conn, entity);
 
         /// <summary>
         /// 取得會員Entity
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        internal User GetUser(int id) => _userRepo.GetUserById(Conn, id);
+        internal User GetUser(int id) => _userRepo.GetUserById(_conn, id);
 
         /// <summary>
         /// 取得會員密碼Entity
@@ -143,10 +140,10 @@ namespace MsgBoard.Services
         {
             var result = new UserLoginResult();
 
-            var user = _userRepo.GetUserByMail(Conn, email);
+            var user = _userRepo.GetUserByMail(_conn, email);
             if (user == null) return result;
 
-            var password = _passwordRepo.FindPasswordByUserId(Conn, user.Id);
+            var password = _passwordRepo.FindPasswordByUserId(_conn, user.Id);
             if (password == null) return result;
 
             var hashPassword = HashService.GetMemberHashPw(user.Guid, userPass);
@@ -163,7 +160,7 @@ namespace MsgBoard.Services
         /// </summary>
         /// <param name="email">會員Email</param>
         /// <returns></returns>
-        public bool CheckUserExist(string email) => _userRepo.CheckUserExist(Conn, email);
+        public bool CheckUserExist(string email) => _userRepo.CheckUserExist(_conn, email);
 
         /// <summary>
         /// 測試注入用的方法，用來設定UserRepository
@@ -189,13 +186,13 @@ namespace MsgBoard.Services
         /// 會員資料修改
         /// </summary>
         /// <param name="user">會員資料entity</param>
-        public void UpdateUser(User user) => _userRepo.Update(Conn, user);
+        public void UpdateUser(User user) => _userRepo.Update(_conn, user);
 
         /// <summary>
         /// 取得所有會員資料
         /// </summary>
         /// <returns></returns>
-        public IQueryable<AdminIndexViewModel> GetUserCollection() => _userRepo.GetUserCollection(Conn);
+        public IQueryable<AdminIndexViewModel> GetUserCollection() => _userRepo.GetUserCollection(_conn);
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)
@@ -206,8 +203,8 @@ namespace MsgBoard.Services
         {
             return new UserArticleCount()
             {
-                PostCount = _postRepo.GetPostCountByUserId(Conn, id),
-                ReplyCount = _replyRepo.GetReplyCountByUserId(Conn, id)
+                PostCount = _postRepo.GetPostCountByUserId(_conn, id),
+                ReplyCount = _replyRepo.GetReplyCountByUserId(_conn, id)
             };
         }
 
@@ -229,7 +226,7 @@ namespace MsgBoard.Services
 
                     // Table Password
                     var password = ConvertToPassEntity(user.Id, user.Guid, model.Password);
-                    _passwordRepo.Create(Conn, password);
+                    _passwordRepo.Create(_conn, password);
 
                     // 註冊完直接給他登入-因為是新會員，所以文章count直接給預設0即可
                     SignInUser.UserLogin(true, user, new UserArticleCount());
@@ -247,7 +244,7 @@ namespace MsgBoard.Services
         /// <returns>True表示歷史紀錄有相同密碼</returns>
         public bool CheckIsHistroyPassword(int userId, string newHashPass)
         {
-            var histroyPasswords = _passwordRepo.GetUserHistroyPasswords(Conn, userId);
+            var histroyPasswords = _passwordRepo.GetUserHistroyPasswords(_conn, userId);
             return histroyPasswords.Any(x => x.HashPw == newHashPass);
         }
     }
