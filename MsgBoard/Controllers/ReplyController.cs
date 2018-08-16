@@ -21,7 +21,7 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             //查無文章
-            var dbPost = _postService.GetPostById(Conn, id.Value);
+            var dbPost = _postService.GetPostById(id.Value);
             if (dbPost == null)
             {
                 return HttpNotFound();
