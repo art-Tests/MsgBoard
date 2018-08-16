@@ -7,7 +7,7 @@ using MsgBoard.Services;
 
 namespace MsgBoard.Controllers
 {
-    public class ReplyController : BaseController
+    public class ReplyController : Controller
     {
         private readonly ReplyService _replyService = new ReplyService();
 

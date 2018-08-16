@@ -7,7 +7,7 @@ using PagedList;
 namespace MsgBoard.Controllers
 {
     [AuthorizePlus]
-    public class AdminController : BaseController
+    public class AdminController : Controller
     {
         private readonly MemberService _memberService;
 
@@ -26,7 +26,7 @@ namespace MsgBoard.Controllers
             ViewData["nowPage"] = page;
 
             var model = _memberService
-                .GetUserCollection(Conn)
+                .GetUserCollection()
                 .ToPagedList(page, pageSize);
             return View(model);
         }

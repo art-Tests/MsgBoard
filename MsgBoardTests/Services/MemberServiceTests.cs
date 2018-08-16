@@ -7,6 +7,8 @@ using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
 using MsgBoard.Models.Interface;
 using MsgBoard.Services;
+using MsgBoard.Services.Interface;
+using MsgBoard.Services.Repository;
 using NSubstitute;
 
 namespace MsgBoardTests.Services
@@ -44,7 +46,7 @@ namespace MsgBoardTests.Services
             hashTool.SetAlgList("SHA512,SHA256");
             sut.SetHashTool(hashTool);
 
-            var actual = sut.CheckUserPassword(connection, email, userPass);
+            var actual = sut.CheckUserPassword(email, userPass);
             expected.ToExpectedObject().ShouldEqual(actual);
         }
 
