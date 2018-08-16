@@ -66,13 +66,33 @@ namespace Services
         /// 新增文章
         /// </summary>
         /// <param name="model">The model.</param>
-        public void CreatePost(Post model)
+        public void CreatePost(PostCreateViewModel model)
         {
-            model.CreateUserId = SignInUser.User.Id;
-            model.UpdateUserId = SignInUser.User.Id;
-            _postRepo.Create(_conn, model);
+            var entity = ConvertToEntity(model);
+            entity.CreateUserId = SignInUser.User.Id;
+            entity.UpdateUserId = SignInUser.User.Id;
+            _postRepo.Create(_conn, entity);
 
             SignInUser.AdjustPostCnt(1);
+        }
+
+        /// <summary>
+        /// 將ViewModel轉換為Entity
+        /// </summary>
+        /// <param name="model">viewModel</param>
+        /// <returns></returns>
+        private Post ConvertToEntity(PostCreateViewModel model)
+        {
+            return new Post()
+            {
+                Id = model.Id,
+                Content = model.Content,
+                CreateTime = model.CreateTime,
+                CreateUserId = model.CreateUserId,
+                UpdateTime = model.UpdateTime,
+                UpdateUserId = model.UpdateUserId,
+                IsDel = model.IsDel
+            };
         }
 
         /// <summary>

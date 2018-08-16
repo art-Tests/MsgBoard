@@ -4,6 +4,7 @@ using DataAccess.Interface;
 using DataAccess.Services;
 using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
+using MsgBoard.DataModel.ViewModel.Post;
 using MsgBoard.Filter;
 using PagedList;
 using Services;
@@ -38,7 +39,7 @@ namespace MsgBoard.Controllers
 
         [HttpPost]
         [AuthorizePlus]
-        public ActionResult Create(Post model)
+        public ActionResult Create(PostCreateViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
             _postService.CreatePost(model);
