@@ -1,14 +1,19 @@
 ﻿using System.Data;
 using System.Linq;
+using System.Transactions;
 using Dapper;
 using MsgBoard.Models.Dto;
 using MsgBoard.Models.Entity;
+using MsgBoard.Services.Common;
 using MsgBoard.ViewModel.Post;
 
 namespace MsgBoard.Services
 {
-    public class PostService
+    public class PostService : BaseService
     {
+        private readonly ReplyService _replyService = new ReplyService();
+        private readonly MemberService _memberService = new MemberService();
+
         /// <summary>
         /// 新增文章
         /// </summary>
@@ -42,10 +47,10 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
         /// <summary>
         /// 取得文章列表資料
         /// </summary>
-        /// <param name="conn">The connection.</param>
         /// <param name="id">會員編號，有傳入表示查詢該會員的文章</param>
+        /// <param name="queryItem">The query item.</param>
         /// <returns></returns>
-        public IQueryable<PostIndexViewModel> GetPostCollection(IDbConnection conn, int? id, string queryItem)
+        public IQueryable<PostIndexViewModel> GetPostCollection(int? id, string queryItem)
         {
             var sqlCmd = id == null
                 ? GetPostCollectionSqlCmd()
@@ -53,7 +58,7 @@ SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY]
                     ? GetPostCollectionByUserSqlCmd()
                     : GetReplyCollectionByUserSqlCmd();
 
-            return conn.Query<PostIndexViewModel, Author, Author, PostIndexViewModel>(sqlCmd, (p, i, u) =>
+            return Conn.Query<PostIndexViewModel, Author, Author, PostIndexViewModel>(sqlCmd, (p, i, u) =>
              {
                  p.CreateAuthor = i;
                  p.UpdateAuthor = u;
@@ -126,13 +131,12 @@ where p.IsDel=0
         /// <summary>
         /// 取得文章
         /// </summary>
-        /// <param name="conn">The connection.</param>
         /// <param name="id">文章Id</param>
         /// <returns></returns>
-        public Post GetPostById(IDbConnection conn, int id)
+        public Post GetPostById(int id)
         {
             var sqlCmd = "select top 1 * from [dbo].[Post] (nolock) where Id=@id";
-            return conn.QueryFirstOrDefault<Post>(sqlCmd, new { id });
+            return Conn.QueryFirstOrDefault<Post>(sqlCmd, new { id });
         }
 
         /// <summary>
@@ -166,6 +170,54 @@ UPDATE [dbo].[Post]
         {
             var sqlCmd = "update [dbo].[Post] set [IsDel] = 1 where Id=@id";
             conn.Execute(sqlCmd, new { id });
+        }
+
+        /// <summary>
+        /// 刪除文章及回覆
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        public void DeletePostAndReply(int id)
+        {
+            using (var transScope = new TransactionScope())
+            {
+                using (var connection = ConnFactory.GetConnection())
+                {
+                    // Delete Post
+                    Delete(connection, id);
+                    // Delete Reply
+                    _replyService.DeleteByPostId(connection, id);
+                }
+                transScope.Complete();
+            }
+
+            // 刪除文章、回復，有可能刪除到管理者或是其他人的資料，因此直接重新刷新目前User的文章數量資訊
+            var artCnt = _memberService.GetUserArticleCount(Conn, SignInUser.User.Id);
+            SignInUser.SetArticleCount(artCnt);
+        }
+
+        /// <summary>
+        /// 新增文章
+        /// </summary>
+        /// <param name="model">The model.</param>
+        public void CreatePost(Post model)
+        {
+            model.CreateUserId = SignInUser.User.Id;
+            model.UpdateUserId = SignInUser.User.Id;
+            Create(Conn, model);
+
+            SignInUser.AdjustPostCnt(1);
+        }
+
+        /// <summary>
+        /// 更新文章
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="dbPost">The database post.</param>
+        public void UpdatePost(Post model, Post dbPost)
+        {
+            dbPost.Content = model.Content;
+            dbPost.UpdateUserId = SignInUser.User.Id;
+            Update(Conn, dbPost);
         }
     }
 }
