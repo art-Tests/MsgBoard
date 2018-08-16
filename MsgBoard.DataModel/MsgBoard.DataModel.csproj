@@ -93,9 +93,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dto\Author.cs" />
+    <Compile Include="Dto\PasswordViewModel.cs" />
     <Compile Include="Dto\SignInUser.cs" />
     <Compile Include="Dto\UserArticleCount.cs" />
     <Compile Include="Dto\UserLoginResult.cs" />
+    <Compile Include="Dto\UserViewModel.cs" />
     <Compile Include="Extension\MyDateTimeExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
@@ -105,6 +107,7 @@
     <Compile Include="ViewModel\Post\PostViewModel.cs" />
     <Compile Include="ViewModel\Post\PostIndexViewModel.cs" />
     <Compile Include="ViewModel\Reply\ReplyIndexViewModel.cs" />
+    <Compile Include="ViewModel\Reply\ReplyViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

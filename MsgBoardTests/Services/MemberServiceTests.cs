@@ -6,9 +6,9 @@ using DataModel.Entity;
 using ExpectedObjects;
 using HashUtility.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MsgBoard.BL.Services;
 using MsgBoard.DataModel.Dto;
 using NSubstitute;
-using Services;
 
 namespace MsgBoardTests.Services
 {
@@ -20,11 +20,12 @@ namespace MsgBoardTests.Services
         {
             var email = "art.huang@ehsn.com.tw";
             var userPass = "1234";
-            var fakeUser = GetFakeUser(email);
+            var fakeUserVm = GetFakeUser(email);
+            var fakeUser = GetFakeUserViewModel(email);
             var expected = new UserLoginResult()
             {
                 Auth = true,
-                User = fakeUser
+                User = fakeUserVm
             };
 
             var fakeConn = new SqlConnection();
@@ -34,11 +35,11 @@ namespace MsgBoardTests.Services
             var sut = new MemberService(connFactory);
 
             var userRepo = Substitute.For<IUserRepository>();
-            userRepo.GetUserByMail(fakeConn, fakeUser.Mail).Returns(fakeUser);
+            userRepo.GetUserByMail(fakeConn, fakeUserVm.Mail).Returns(fakeUser);
             sut.SetUserRepository(userRepo);
 
             var passRepo = Substitute.For<IPasswordRepository>();
-            passRepo.FindPasswordByUserId(fakeConn, fakeUser.Id).Returns(GetFakePassword());
+            passRepo.FindPasswordByUserId(fakeConn, fakeUserVm.Id).Returns(GetFakePassword());
             sut.SetPasswordRepository(passRepo);
 
             var hashTool = new HashService();
@@ -48,6 +49,19 @@ namespace MsgBoardTests.Services
 
             var actual = sut.CheckUserPassword(email, userPass);
             expected.ToExpectedObject().ShouldEqual(actual);
+        }
+
+        private User GetFakeUserViewModel(string email)
+        {
+            return new User
+            {
+                Guid = "b2cba1ae-44fb-41a7-830b-0bb8eeab3dd8",
+                Id = 1,
+                IsAdmin = false,
+                Mail = email,
+                Name = "art",
+                Pic = string.Empty
+            };
         }
 
         private static Password GetFakePassword()
@@ -62,9 +76,9 @@ namespace MsgBoardTests.Services
             return fakePassword;
         }
 
-        private static User GetFakeUser(string email)
+        private static UserViewModel GetFakeUser(string email)
         {
-            var fakeUser = new User
+            var fakeUser = new UserViewModel
             {
                 Guid = "b2cba1ae-44fb-41a7-830b-0bb8eeab3dd8",
                 Id = 1,

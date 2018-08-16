@@ -1,25 +1,17 @@
 ﻿using System.Configuration;
 using System.Net;
 using System.Web.Mvc;
-using DataAccess.Interface;
-using DataAccess.Services;
+using MsgBoard.BL.Services;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Member;
 using MsgBoard.Filter;
-using Services;
 
 namespace MsgBoard.Controllers
 {
     public class MemberController : Controller
     {
         protected string FileUploadPath = ConfigurationManager.AppSettings["uploadPath"];
-        private readonly MemberService _memberService;
-        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
-
-        public MemberController()
-        {
-            _memberService = new MemberService(_connFactory);
-        }
+        private readonly MemberService _memberService = new MemberService();
 
         [HttpGet]
         public ActionResult Login()
@@ -130,7 +122,6 @@ namespace MsgBoard.Controllers
         public ActionResult Update(int id, MemberUpdateViewModel model)
         {
             var user = _memberService.GetUser(id);
-
             if (ModelState.IsValid.Equals(false))
             {
                 model.Pic = user.Pic;

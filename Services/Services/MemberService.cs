@@ -1,5 +1,4 @@
-﻿using Services.Interface;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -10,12 +9,14 @@ using System.Web;
 using DataAccess.Interface;
 using DataAccess.Repository;
 using DataAccess.Repository.Interface;
+using DataAccess.Services;
 using DataModel.Entity;
 using HashUtility.Services;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Member;
+using MsgBoard.Services.Interface;
 
-namespace Services
+namespace MsgBoard.BL.Services
 {
     public class MemberService : IMemberService
     {
@@ -29,6 +30,11 @@ namespace Services
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
         private readonly IConnectionFactory _connFactory;
         private readonly IDbConnection _conn;
+
+        public MemberService()
+        {
+            _conn = new ConnectionFactory().GetConnection();
+        }
 
         public MemberService(IConnectionFactory factory)
         {
@@ -103,16 +109,36 @@ namespace Services
         /// <summary>
         /// 新增密碼
         /// </summary>
-        /// <param name="entity">密碼entity</param>
+        /// <param name="model">The model.</param>
         /// <returns></returns>
-        public bool CreatePassword(Password entity) => _passwordRepo.Create(_conn, entity);
+        public bool CreatePassword(PasswordViewModel model)
+        {
+            var entity = ConvertToPasswordEntity(model);
+            return _passwordRepo.Create(_conn, entity);
+        }
+
+        private Password ConvertToPasswordEntity(PasswordViewModel model)
+        {
+            if (model == null) return null;
+            return new Password
+            {
+                Id = model.Id,
+                UserId = model.UserId,
+                CreateTime = model.CreateTime,
+                HashPw = model.HashPw
+            };
+        }
 
         /// <summary>
         /// 取得會員Entity
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        public User GetUser(int id) => _userRepo.GetUserById(_conn, id);
+        public UserViewModel GetUser(int id)
+        {
+            var entity = _userRepo.GetUserById(_conn, id);
+            return ConvertToUserViewModel(entity);
+        }
 
         /// <summary>
         /// 取得會員密碼Entity
@@ -121,9 +147,9 @@ namespace Services
         /// <param name="guid">會員Guid</param>
         /// <param name="userPass">會員密碼</param>
         /// <returns></returns>
-        public Password ConvertToPassEntity(int userId, string guid, string userPass)
+        public PasswordViewModel ConvertToPassEntity(int userId, string guid, string userPass)
         {
-            return new Password
+            return new PasswordViewModel
             {
                 UserId = userId,
                 HashPw = HashService.GetMemberHashPw(guid, userPass)
@@ -151,7 +177,7 @@ namespace Services
             result.Auth = password.HashPw == hashPassword && user.IsDel.Equals(false);
             if (result.Auth)
             {
-                result.User = user;
+                result.User = ConvertToUserViewModel(user);
             }
             return result;
         }
@@ -187,7 +213,26 @@ namespace Services
         /// 會員資料修改
         /// </summary>
         /// <param name="user">會員資料entity</param>
-        public void UpdateUser(User user) => _userRepo.Update(_conn, user);
+        public void UpdateUser(UserViewModel user)
+        {
+            var entity = ConvertVmToUserEntity(user);
+            _userRepo.Update(_conn, entity);
+        }
+
+        private User ConvertVmToUserEntity(UserViewModel user)
+        {
+            if (user == null) return null;
+            return new User
+            {
+                Id = user.Id,
+                Guid = user.Guid,
+                Name = user.Name,
+                IsAdmin = user.IsAdmin,
+                IsDel = user.IsDel,
+                Mail = user.Mail,
+                Pic = user.Pic
+            };
+        }
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)
@@ -218,17 +263,31 @@ namespace Services
                     var fileName = SaveMemberPic(model.File, path);
                     var user = ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
                     user.Id = _userRepo.Create(connection, user);
-
+                    var userVm = ConvertToUserViewModel(user);
                     // Table Password
                     var password = ConvertToPassEntity(user.Id, user.Guid, model.Password);
-                    _passwordRepo.Create(_conn, password);
+                    CreatePassword(password);
 
                     // 註冊完直接給他登入-因為是新會員，所以文章count直接給預設0即可
-                    SignInUser.UserLogin(true, user, new UserArticleCount());
+                    SignInUser.UserLogin(true, userVm, new UserArticleCount());
                 }
 
                 tranScope.Complete();
             }
+        }
+
+        private UserViewModel ConvertToUserViewModel(User user)
+        {
+            return new UserViewModel
+            {
+                Id = user.Id,
+                Mail = user.Mail,
+                Name = user.Name,
+                Pic = user.Pic,
+                IsAdmin = user.IsAdmin,
+                IsDel = user.IsDel,
+                Guid = user.Guid
+            };
         }
 
         /// <summary>

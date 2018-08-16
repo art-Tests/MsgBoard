@@ -1,24 +1,16 @@
 ﻿using System.Net;
 using System.Web.Mvc;
-using DataAccess.Interface;
-using DataAccess.Services;
+using MsgBoard.BL.Services;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Post;
 using MsgBoard.Filter;
 using PagedList;
-using Services;
 
 namespace MsgBoard.Controllers
 {
     public class PostController : Controller
     {
-        private readonly PostService _postService;
-        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
-
-        public PostController()
-        {
-            _postService = new PostService(_connFactory);
-        }
+        private readonly PostService _postService = new PostService();
 
         // GET: Post
         public ActionResult Index(int? id, string queryItem = "", int page = 1, int pageSize = 5)

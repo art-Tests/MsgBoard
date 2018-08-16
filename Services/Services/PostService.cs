@@ -5,11 +5,12 @@ using Dapper;
 using DataAccess.Interface;
 using DataAccess.Repository;
 using DataAccess.Repository.Interface;
+using DataAccess.Services;
 using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Post;
 
-namespace Services
+namespace MsgBoard.BL.Services
 {
     public class PostService
     {
@@ -18,6 +19,11 @@ namespace Services
 
         private readonly IConnectionFactory _connFactory;
         private readonly IDbConnection _conn;
+
+        public PostService()
+        {
+            _conn = new ConnectionFactory().GetConnection();
+        }
 
         public PostService(IConnectionFactory factory)
         {

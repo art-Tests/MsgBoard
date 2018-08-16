@@ -15,6 +15,6 @@ namespace MsgBoard.DataModel.Dto
         /// <summary>
         /// 會員資料
         /// </summary>
-        public User User { get; set; } = null;
+        public UserViewModel User { get; set; } = null;
     }
 }

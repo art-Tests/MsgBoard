@@ -2,13 +2,19 @@
 using System.Data;
 using Dapper;
 using DataAccess.Interface;
+using DataAccess.Services;
 using MsgBoard.DataModel.ViewModel.Admin;
 
-namespace Services
+namespace MsgBoard.BL.Services
 {
     public class AdminService
     {
         private readonly IDbConnection _conn;
+
+        public AdminService()
+        {
+            _conn = new ConnectionFactory().GetConnection();
+        }
 
         public AdminService(IConnectionFactory factory)
         {

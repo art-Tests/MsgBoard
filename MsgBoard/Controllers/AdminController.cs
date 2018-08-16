@@ -1,24 +1,16 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
-using DataAccess.Interface;
-using DataAccess.Services;
+using MsgBoard.BL.Services;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.Filter;
 using PagedList;
-using Services;
 
 namespace MsgBoard.Controllers
 {
     [AuthorizePlus]
     public class AdminController : Controller
     {
-        private readonly AdminService _adminService;
-        private readonly IConnectionFactory _connFactory = new ConnectionFactory();
-
-        public AdminController()
-        {
-            _adminService = new AdminService(_connFactory);
-        }
+        private readonly AdminService _adminService = new AdminService();
 
         public ActionResult Index(int page = 1, int pageSize = 5)
         {

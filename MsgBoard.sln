@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataModel", "DataModel\Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsgBoard.DataModel", "MsgBoard.DataModel\MsgBoard.DataModel.csproj", "{0C8E213A-2A20-4664-BDFF-9B5C46E0BAAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsgBoard.Service", "Services\MsgBoard.Service.csproj", "{926EDCBA-6748-4445-996E-263EC50C76EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsgBoard.BL", "Services\MsgBoard.BL.csproj", "{926EDCBA-6748-4445-996E-263EC50C76EF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{5B3769EA-89AE-4CD1-ADAD-78DA6BD9464A}"
 EndProject
