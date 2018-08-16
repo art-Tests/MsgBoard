@@ -4,6 +4,8 @@ namespace DataModel.Entity
 {
     public class User
     {
+        public int RowId { get; set; }
+
         [Required]
         public int Id { get; set; }
 

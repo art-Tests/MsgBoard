@@ -1,5 +1,5 @@
-﻿using System.Data;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Data;
 using Dapper;
 using DataAccess.Repository.Interface;
 using DataModel.Entity;
@@ -48,10 +48,10 @@ namespace DataAccess.Repository
         /// </summary>
         /// <param name="conn">The connection.</param>
         /// <returns></returns>
-        public IQueryable<User> GetUserCollection(IDbConnection conn)
+        public IEnumerable<User> GetAllUser(IDbConnection conn)
         {
-            var sqlCmd = GetUserCollectionAllSqlCmd();
-            return conn.Query<User>(sqlCmd).AsQueryable();
+            var sqlCmd = GetAllUserSqlCmd();
+            return conn.Query<User>(sqlCmd);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ select 'false'
 ";
         }
 
-        private string GetUserCollectionAllSqlCmd()
+        private string GetAllUserSqlCmd()
         {
             return @"
 	select ROW_NUMBER() OVER(ORDER BY Id) AS RowId, Id, Pic, Name, Mail, IsAdmin, IsDel

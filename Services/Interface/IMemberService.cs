@@ -1,6 +1,6 @@
 ﻿using MsgBoard.DataModel.Dto;
 
-namespace MsgBoard.Services.Interface
+namespace Services.Interface
 {
     public interface IMemberService
     {

@@ -7,8 +7,8 @@ using ExpectedObjects;
 using HashUtility.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MsgBoard.DataModel.Dto;
-using MsgBoard.Services;
 using NSubstitute;
+using Services;
 
 namespace MsgBoardTests.Services
 {

@@ -8,7 +8,7 @@ using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Post;
 
-namespace MsgBoard.Services
+namespace Services
 {
     public class PostService
     {

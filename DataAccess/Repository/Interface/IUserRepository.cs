@@ -1,5 +1,5 @@
-﻿using System.Data;
-using System.Linq;
+﻿using System.Collections.Generic;
+using System.Data;
 using DataModel.Entity;
 
 namespace DataAccess.Repository.Interface
@@ -34,7 +34,7 @@ namespace DataAccess.Repository.Interface
         /// </summary>
         /// <param name="conn">The connection.</param>
         /// <returns></returns>
-        IQueryable<User> GetUserCollection(IDbConnection conn);
+        IEnumerable<User> GetAllUser(IDbConnection conn);
 
         /// <summary>
         /// 檢查系統是否已經存在相同使用者帳號

@@ -5,8 +5,8 @@ using DataAccess.Services;
 using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.Filter;
-using MsgBoard.Services;
 using PagedList;
+using Services;
 
 namespace MsgBoard.Controllers
 {

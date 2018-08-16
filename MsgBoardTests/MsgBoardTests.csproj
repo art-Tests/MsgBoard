@@ -99,6 +99,10 @@
       <Project>{CDA18C62-903F-4832-83C0-2C2662073727}</Project>
       <Name>MsgBoard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{926EDCBA-6748-4445-996E-263EC50C76EF}</Project>
+      <Name>Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

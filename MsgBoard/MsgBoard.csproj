@@ -181,10 +181,6 @@
     </Compile>
     <Compile Include="Helper\RazorHtmlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Interface\IMemberService.cs" />
-    <Compile Include="Services\MemberService.cs" />
-    <Compile Include="Services\PostService.cs" />
-    <Compile Include="Services\ReplyService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Msg.mdf" />
@@ -280,6 +276,10 @@
     <ProjectReference Include="..\MsgBoard.DataModel\MsgBoard.DataModel.csproj">
       <Project>{0c8e213a-2a20-4664-bdff-9b5c46e0baae}</Project>
       <Name>MsgBoard.DataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\Services.csproj">
+      <Project>{926edcba-6748-4445-996e-263ec50c76ef}</Project>
+      <Name>Services</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

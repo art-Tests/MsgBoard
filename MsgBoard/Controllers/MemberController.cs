@@ -5,8 +5,8 @@ using DataAccess.Interface;
 using DataAccess.Services;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Member;
-using MsgBoard.Services;
 using MsgBoard.Filter;
+using Services;
 
 namespace MsgBoard.Controllers
 {

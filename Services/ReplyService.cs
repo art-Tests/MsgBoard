@@ -7,7 +7,7 @@ using DataModel.Entity;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Reply;
 
-namespace MsgBoard.Services
+namespace Services
 {
     public class ReplyService
     {

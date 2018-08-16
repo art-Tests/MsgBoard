@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Services.Interface;
+using System;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -13,9 +14,8 @@ using DataModel.Entity;
 using HashUtility.Services;
 using MsgBoard.DataModel.Dto;
 using MsgBoard.DataModel.ViewModel.Member;
-using MsgBoard.Services.Interface;
 
-namespace MsgBoard.Services
+namespace Services
 {
     public class MemberService : IMemberService
     {
@@ -52,7 +52,7 @@ namespace MsgBoard.Services
         /// <param name="file">上傳之圖片檔案</param>
         /// <param name="path">圖片上傳實體路徑</param>
         /// <returns>大頭照實際儲存完整路徑</returns>
-        internal string SaveMemberPic(HttpPostedFileBase file, string path)
+        public string SaveMemberPic(HttpPostedFileBase file, string path)
         {
             if (file == null) return string.Empty;
             if (file.ContentLength <= 0) return string.Empty;
@@ -112,7 +112,7 @@ namespace MsgBoard.Services
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        internal User GetUser(int id) => _userRepo.GetUserById(_conn, id);
+        public User GetUser(int id) => _userRepo.GetUserById(_conn, id);
 
         /// <summary>
         /// 取得會員密碼Entity
@@ -188,12 +188,6 @@ namespace MsgBoard.Services
         /// </summary>
         /// <param name="user">會員資料entity</param>
         public void UpdateUser(User user) => _userRepo.Update(_conn, user);
-
-        /// <summary>
-        /// 取得所有會員資料
-        /// </summary>
-        /// <returns></returns>
-        public IQueryable<User> GetUserCollection() => _userRepo.GetUserCollection(_conn);
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)
