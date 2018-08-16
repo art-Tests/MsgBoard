@@ -3,10 +3,10 @@ using System.Net;
 using System.Web.Mvc;
 using DataAccess.Interface;
 using DataAccess.Services;
+using MsgBoard.DataModel.Dto;
+using MsgBoard.DataModel.ViewModel.Member;
 using MsgBoard.Services;
 using MsgBoard.Filter;
-using MsgBoard.Models.Dto;
-using MsgBoard.Models.ViewModel.Member;
 
 namespace MsgBoard.Controllers
 {

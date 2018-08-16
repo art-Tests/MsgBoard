@@ -1,4 +1,4 @@
-﻿using MsgBoard.Models.Dto;
+﻿using MsgBoard.DataModel.Dto;
 
 namespace MsgBoard.Services.Interface
 {

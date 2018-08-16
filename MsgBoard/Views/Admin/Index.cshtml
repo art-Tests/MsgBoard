@@ -2,7 +2,7 @@
 @using PagedList.Mvc;
 @using PagedList;
 
-@model IEnumerable<MsgBoard.Models.ViewModel.Admin.AdminIndexViewModel>
+@model IEnumerable<DataModel.Entity.User>
 
 <h2>使用者列表</h2>
 
@@ -18,9 +18,7 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RowId)
-            </td>
+
             <td>
                 <div>
                     <div class="col-md-2">
@@ -38,7 +36,7 @@
             </td>
             <td>
                 @(item.IsDel ? Html.ActionLink("Enable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = true }, new { @class = "btn btn-sm btn-default" })
-                                : Html.ActionLink("Disable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = false }, new { @class = "btn btn-sm btn-default" }))
+                                        : Html.ActionLink("Disable", "ChangeStat", "Member", new { id = item.Id, page = ViewData["nowPage"], newStat = false }, new { @class = "btn btn-sm btn-default" }))
                 @Html.ActionLink("Edit", "Update", "Member", new { id = item.Id, page = ViewData["nowPage"] }, new { @class = "btn btn-sm btn-default" })
             </td>
         </tr>

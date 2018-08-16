@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Data.SqlClient;
 using DataAccess.Interface;
+using DataAccess.Repository.Interface;
+using DataModel.Entity;
 using ExpectedObjects;
 using HashUtility.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MsgBoard.Models.Dto;
-using MsgBoard.Models.Entity;
+using MsgBoard.DataModel.Dto;
 using MsgBoard.Services;
-using MsgBoard.Services.Interface;
 using NSubstitute;
 
 namespace MsgBoardTests.Services

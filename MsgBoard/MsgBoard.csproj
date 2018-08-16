@@ -175,39 +175,16 @@
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\ReplyController.cs" />
-    <Compile Include="Extension\MyDateTimeExtension.cs" />
     <Compile Include="Filter\AuthorizePlusAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\RazorHtmlHelper.cs" />
-    <Compile Include="Models\Dto\Author.cs" />
-    <Compile Include="Models\Dto\SignInUser.cs" />
-    <Compile Include="Models\Dto\UserArticleCount.cs" />
-    <Compile Include="Models\Dto\UserLoginResult.cs" />
-    <Compile Include="Models\Entity\Password.cs" />
-    <Compile Include="Models\Entity\Post.cs" />
-    <Compile Include="Models\Entity\Reply.cs" />
-    <Compile Include="Models\Entity\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Interface\IMemberService.cs" />
-    <Compile Include="Services\Interface\IPasswordRepository.cs" />
-    <Compile Include="Services\Interface\IPostRepository.cs" />
-    <Compile Include="Services\Interface\IReplyRepository.cs" />
-    <Compile Include="Services\Interface\IUserRepository.cs" />
     <Compile Include="Services\MemberService.cs" />
-    <Compile Include="Services\Repository\PasswordRepository.cs" />
     <Compile Include="Services\PostService.cs" />
     <Compile Include="Services\ReplyService.cs" />
-    <Compile Include="Services\Repository\PostRepository.cs" />
-    <Compile Include="Services\Repository\ReplyRepository.cs" />
-    <Compile Include="Services\Repository\UserRepository.cs" />
-    <Compile Include="Models\ViewModel\Admin\AdminIndexViewModel.cs" />
-    <Compile Include="Models\ViewModel\Member\MemberCreateViewModel.cs" />
-    <Compile Include="Models\ViewModel\Member\MemberLoginViewModel.cs" />
-    <Compile Include="Models\ViewModel\Member\MemberUpdateViewModel.cs" />
-    <Compile Include="Models\ViewModel\Post\PostIndexViewModel.cs" />
-    <Compile Include="Models\ViewModel\Reply\ReplyIndexViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Msg.mdf" />
@@ -271,7 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />
-    <Folder Include="Views\Base\" />
+    <Folder Include="Models\" />
     <Folder Include="Views\Upload\" />
   </ItemGroup>
   <ItemGroup>
@@ -292,9 +269,17 @@
       <Project>{090f7fa9-5e48-48a7-8d2b-195ecd3bbe57}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataModel\DataModel.csproj">
+      <Project>{e427e9a5-f44c-4b9d-8817-6c1493585f0d}</Project>
+      <Name>DataModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HashUtility\HashUtility.csproj">
       <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
       <Name>HashUtility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MsgBoard.DataModel\MsgBoard.DataModel.csproj">
+      <Project>{0c8e213a-2a20-4664-bdff-9b5c46e0baae}</Project>
+      <Name>MsgBoard.DataModel</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

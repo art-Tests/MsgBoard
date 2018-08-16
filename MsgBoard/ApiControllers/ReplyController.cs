@@ -2,7 +2,7 @@
 using System.Web.Http;
 using DataAccess.Interface;
 using DataAccess.Services;
-using MsgBoard.Models.ViewModel.Reply;
+using MsgBoard.DataModel.ViewModel.Reply;
 using MsgBoard.Services;
 
 namespace MsgBoard.ApiControllers

@@ -7,13 +7,13 @@ using System.Linq;
 using System.Transactions;
 using System.Web;
 using DataAccess.Interface;
+using DataAccess.Repository;
+using DataAccess.Repository.Interface;
+using DataModel.Entity;
 using HashUtility.Services;
-using MsgBoard.Models.Dto;
-using MsgBoard.Models.Entity;
-using MsgBoard.Models.ViewModel.Admin;
-using MsgBoard.Models.ViewModel.Member;
+using MsgBoard.DataModel.Dto;
+using MsgBoard.DataModel.ViewModel.Member;
 using MsgBoard.Services.Interface;
-using MsgBoard.Services.Repository;
 
 namespace MsgBoard.Services
 {
@@ -193,7 +193,7 @@ namespace MsgBoard.Services
         /// 取得所有會員資料
         /// </summary>
         /// <returns></returns>
-        public IQueryable<AdminIndexViewModel> GetUserCollection() => _userRepo.GetUserCollection(_conn);
+        public IQueryable<User> GetUserCollection() => _userRepo.GetUserCollection(_conn);
 
         /// <summary>
         /// 取得會員文章、回復數量 (未刪除)

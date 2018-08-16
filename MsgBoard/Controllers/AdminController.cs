@@ -1,8 +1,8 @@
 ﻿using System.Web.Mvc;
 using DataAccess.Interface;
 using DataAccess.Services;
+using MsgBoard.DataModel.Dto;
 using MsgBoard.Filter;
-using MsgBoard.Models.Dto;
 using MsgBoard.Services;
 using PagedList;
 

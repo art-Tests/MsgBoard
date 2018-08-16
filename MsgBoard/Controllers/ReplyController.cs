@@ -2,9 +2,9 @@
 using System.Web.Mvc;
 using DataAccess.Interface;
 using DataAccess.Services;
+using DataModel.Entity;
+using MsgBoard.DataModel.Dto;
 using MsgBoard.Filter;
-using MsgBoard.Models.Dto;
-using MsgBoard.Models.Entity;
 using MsgBoard.Services;
 
 namespace MsgBoard.Controllers

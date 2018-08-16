@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using DataAccess.Interface;
-using MsgBoard.Models.Dto;
-using MsgBoard.Models.Entity;
-using MsgBoard.Models.ViewModel.Reply;
-using MsgBoard.Services.Interface;
-using MsgBoard.Services.Repository;
+using DataAccess.Repository;
+using DataAccess.Repository.Interface;
+using DataModel.Entity;
+using MsgBoard.DataModel.Dto;
+using MsgBoard.DataModel.ViewModel.Reply;
 
 namespace MsgBoard.Services
 {
@@ -13,13 +13,11 @@ namespace MsgBoard.Services
     {
         private readonly IReplyRepository _replyRepo = new ReplyRepository();
         private readonly IPostRepository _postRepo = new PostRepository();
-        private readonly IConnectionFactory _connFactory;
         private readonly IDbConnection _conn;
 
         public ReplyService(IConnectionFactory factory)
         {
-            _connFactory = factory;
-            _conn = _connFactory.GetConnection();
+            _conn = factory.GetConnection();
         }
 
         /// <summary>
