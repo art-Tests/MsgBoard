@@ -1,11 +1,11 @@
 ﻿using HashUtility.Interface;
-using HashUtility.Services;
+using HashUtility.Services.Hash;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HashUtilityTests
+namespace HashUtilityTests.Services
 {
     [TestClass]
-    public class SHA256HashToolTests
+    public class Sha256HashToolTests
     {
         private IHash _sut;
 

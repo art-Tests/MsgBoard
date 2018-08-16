@@ -71,6 +71,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factory\HashAlgorithmFactory.cs" />
+    <Compile Include="Factory\HashFactory.cs" />
     <Compile Include="Interface\IHash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -78,12 +80,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Services\BaseHashTool.cs" />
-    <Compile Include="Services\HashAlgorithmFactory.cs" />
-    <Compile Include="Services\HashFactory.cs" />
+    <Compile Include="Services\Hash\BaseHashTool.cs" />
     <Compile Include="Services\HashService.cs" />
-    <Compile Include="Services\Sha256HashTool.cs" />
-    <Compile Include="Services\Sha512HashTool.cs" />
+    <Compile Include="Services\Hash\Sha256HashTool.cs" />
+    <Compile Include="Services\Hash\Sha512HashTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

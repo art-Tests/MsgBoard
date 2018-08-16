@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using HashUtility.Factory;
 
 namespace HashUtility.Services
 {
@@ -8,6 +9,13 @@ namespace HashUtility.Services
     /// </summary>
     public class HashService
     {
+        /// <summary>
+        /// 金鑰
+        /// </summary>
+        private string _hashKey = "i_am_security_key";
+
+        private string[] _algList;
+
         public HashService()
         {
             var configAlgList = Properties.Settings.Default.algList;
@@ -23,13 +31,6 @@ namespace HashUtility.Services
         {
             _algList = algName.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
         }
-
-        /// <summary>
-        /// 金鑰
-        /// </summary>
-        private string _hashKey = "@ehsn";
-
-        private string[] _algList;
 
         /// <summary>
         /// 測試用：將Hash Key手動變更

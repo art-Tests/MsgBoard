@@ -1,20 +1,16 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
+using MsgBoard.BL.Services;
+using MsgBoard.DataModel.Dto;
 using MsgBoard.Filter;
-using MsgBoard.Models.Dto;
-using MsgBoard.Services;
 using PagedList;
 
 namespace MsgBoard.Controllers
 {
     [AuthorizePlus]
-    public class AdminController : BaseController
+    public class AdminController : Controller
     {
-        private readonly MemberService _memberService;
-
-        public AdminController()
-        {
-            _memberService = new MemberService();
-        }
+        private readonly AdminService _adminService = new AdminService();
 
         public ActionResult Index(int page = 1, int pageSize = 5)
         {
@@ -25,8 +21,8 @@ namespace MsgBoard.Controllers
 
             ViewData["nowPage"] = page;
 
-            var model = _memberService
-                .GetUserCollection(Conn)
+            var model = _adminService
+                .GetUserCollection().AsQueryable()
                 .ToPagedList(page, pageSize);
             return View(model);
         }

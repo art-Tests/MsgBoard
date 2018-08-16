@@ -1,25 +1,22 @@
 ﻿using System.Net;
-using System.Transactions;
 using System.Web.Mvc;
+using MsgBoard.BL.Services;
+using MsgBoard.DataModel.Dto;
+using MsgBoard.DataModel.ViewModel.Post;
 using MsgBoard.Filter;
-using MsgBoard.Models.Dto;
-using MsgBoard.Models.Entity;
-using MsgBoard.Services;
 using PagedList;
 
 namespace MsgBoard.Controllers
 {
-    public class PostController : BaseController
+    public class PostController : Controller
     {
         private readonly PostService _postService = new PostService();
-        private readonly ReplyService _replyService = new ReplyService();
-        private readonly MemberService _memberService = new MemberService();
 
         // GET: Post
         public ActionResult Index(int? id, string queryItem = "", int page = 1, int pageSize = 5)
         {
             var model = _postService
-                .GetPostCollection(Conn, id, queryItem)
+                .GetPostCollection(id, queryItem)
                 .ToPagedList(page, pageSize);
             return View(model);
         }
@@ -33,15 +30,10 @@ namespace MsgBoard.Controllers
 
         [HttpPost]
         [AuthorizePlus]
-        public ActionResult Create(Post model)
+        public ActionResult Create(PostViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-
-            model.CreateUserId = SignInUser.User.Id;
-            model.UpdateUserId = SignInUser.User.Id;
-            _postService.Create(Conn, model);
-
-            SignInUser.AdjustPostCnt(1);
+            _postService.CreatePost(model);
             return RedirectToAction("Index", "Post");
         }
 
@@ -53,12 +45,12 @@ namespace MsgBoard.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var model = _postService.GetPostById(Conn, id.Value);
+            var model = _postService.GetPostById(id.Value);
             return View(model);
         }
 
         [HttpPost, AuthorizePlus]
-        public ActionResult Update(int? id, Post model)
+        public ActionResult Update(int? id, PostViewModel model)
         {
             if (id == null)
             {
@@ -67,7 +59,7 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var dbPost = _postService.GetPostById(Conn, id.Value);
+            var dbPost = _postService.GetPostById(id.Value);
             if (dbPost == null)
             {
                 return View(model);
@@ -75,10 +67,7 @@ namespace MsgBoard.Controllers
 
             if (SignInUser.User.IsAdmin || SignInUser.User.Id == dbPost.CreateUserId)
             {
-                dbPost.Content = model.Content;
-                dbPost.UpdateUserId = SignInUser.User.Id;
-                _postService.Update(Conn, dbPost);
-
+                _postService.UpdatePost(model);
                 return RedirectToAction("Index", "Post");
             }
 
@@ -91,7 +80,7 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var model = _postService.GetPostById(Conn, id.Value);
+            var model = _postService.GetPostById(id.Value);
             if (model == null)
             {
                 return HttpNotFound();
@@ -99,21 +88,7 @@ namespace MsgBoard.Controllers
 
             if (SignInUser.User.IsAdmin || model.CreateUserId == SignInUser.User.Id)
             {
-                using (var transScope = new TransactionScope())
-                {
-                    using (var connection = ConnFactory.GetConnection())
-                    {
-                        // Delete Post
-                        _postService.Delete(connection, id.Value);
-                        // Delete Reply
-                        _replyService.DeleteByPostId(connection, id.Value);
-                    }
-                    transScope.Complete();
-                }
-                // 刪除文章、回復，有可能刪除到管理者或是其他人的資料，因此直接重新刷新目前User的文章數量資訊
-                var artCnt = _memberService.GetUserArticleCount(Conn, SignInUser.User.Id);
-                SignInUser.SetArticleCount(artCnt);
-
+                _postService.DeletePostAndReply(id.Value);
                 return RedirectToAction("Index", "Post");
             }
             return new HttpStatusCodeResult(HttpStatusCode.Forbidden);

@@ -44,7 +44,8 @@ namespace HashUtilityTests.Services
         {
             var memberGuid = "94a02d6c-da5d-4a43-a03d-d370db007539";
             var memberPass = "123456";
-            var expected = "2F7017875AFF769FE00D6F9F710C397108A43AF6F1B046F46BF6CB015805619D";
+            var expected = "38DE51D03073B79DA1E65638FBBB5E7867BEEAF1ACB90F225DC7EA34A5528669";
+            _sut.SetHashKey("i_am_security_key");
 
             var actual = _sut.GetMemberHashPw(memberGuid, memberPass);
             Assert.AreEqual(expected, actual);
@@ -55,7 +56,8 @@ namespace HashUtilityTests.Services
         {
             var memberGuid = "b2cba1ae-44fb-41a7-830b-0bb8eeab3dd8";
             var memberPass = "1234";
-            var expected = "11E1252247D8CB030F3DDC69BE23C2FE4AFD12C446AC6F229435B078A5451F2B";
+            var expected = "6D567DAFBA3768A740DE3C2B5F8F745BFD71BFD36234E4F1A9A6BED17A903EFF";
+            _sut.SetHashKey("i_am_security_key");
 
             var actual = _sut.GetMemberHashPw(memberGuid, memberPass);
             Assert.AreEqual(expected, actual);

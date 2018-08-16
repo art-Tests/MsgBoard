@@ -166,47 +166,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiControllers\BaseApiController.cs" />
     <Compile Include="ApiControllers\ReplyController.cs" />
-    <Compile Include="ApiControllers\testController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\MemberController.cs" />
     <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\ReplyController.cs" />
-    <Compile Include="Extension\MyDateTimeExtension.cs" />
     <Compile Include="Filter\AuthorizePlusAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\RazorHtmlHelper.cs" />
-    <Compile Include="Models\Dto\Author.cs" />
-    <Compile Include="Models\Dto\SignInUser.cs" />
-    <Compile Include="Models\Dto\UserArticleCount.cs" />
-    <Compile Include="Models\Dto\UserLoginResult.cs" />
-    <Compile Include="Models\Entity\Password.cs" />
-    <Compile Include="Models\Entity\Post.cs" />
-    <Compile Include="Models\Entity\Reply.cs" />
-    <Compile Include="Models\Entity\User.cs" />
-    <Compile Include="Models\Interface\IConnectionFactory.cs" />
-    <Compile Include="Models\Interface\IMemberService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ConnectionFactory.cs" />
-    <Compile Include="Services\MemberService.cs" />
-    <Compile Include="Services\PasswordRepository.cs" />
-    <Compile Include="Services\PostService.cs" />
-    <Compile Include="Services\ReplyService.cs" />
-    <Compile Include="Services\UserRepository.cs" />
-    <Compile Include="ViewModel\Admin\AdminIndexViewModel.cs" />
-    <Compile Include="ViewModel\Member\MemberCreateViewModel.cs" />
-    <Compile Include="ViewModel\Member\MemberLoginViewModel.cs" />
-    <Compile Include="ViewModel\Member\MemberUpdateViewModel.cs" />
-    <Compile Include="ViewModel\Post\PostIndexViewModel.cs" />
-    <Compile Include="ViewModel\Reply\ReplyIndexViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\Msg.mdf" />
@@ -270,7 +244,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\" />
-    <Folder Include="Views\Base\" />
+    <Folder Include="Models\" />
     <Folder Include="Views\Upload\" />
   </ItemGroup>
   <ItemGroup>
@@ -287,9 +261,13 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HashUtility\HashUtility.csproj">
-      <Project>{BDA209D3-A955-4318-BD4E-9AA74D9DB785}</Project>
-      <Name>HashUtility</Name>
+    <ProjectReference Include="..\MsgBoard.DataModel\MsgBoard.DataModel.csproj">
+      <Project>{0c8e213a-2a20-4664-bdff-9b5c46e0baae}</Project>
+      <Name>MsgBoard.DataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Services\MsgBoard.BL.csproj">
+      <Project>{926edcba-6748-4445-996e-263ec50c76ef}</Project>
+      <Name>MsgBoard.BL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
