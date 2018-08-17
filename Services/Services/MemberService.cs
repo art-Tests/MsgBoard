@@ -301,5 +301,17 @@ namespace MsgBoard.BL.Services
             var histroyPasswords = _passwordRepo.GetUserHistroyPasswords(_conn, userId);
             return histroyPasswords.Any(x => x.HashPw == newHashPass);
         }
+
+        /// <summary>
+        /// 會員大頭照實體路徑
+        /// </summary>
+        /// <param name="path">檔案實體路徑</param>
+        public void RemoveMemberPic(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
     }
 }

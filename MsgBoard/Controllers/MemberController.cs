@@ -153,6 +153,8 @@ namespace MsgBoard.Controllers
             var fileName = _memberService.SaveMemberPic(model.File, Server.MapPath(FileUploadPath));
             if (string.IsNullOrEmpty(fileName).Equals(false))
             {
+                // 移除舊照片
+                _memberService.RemoveMemberPic(Server.MapPath(user.Pic));
                 user.Pic = $"{FileUploadPath}/{fileName}";
             }
 
