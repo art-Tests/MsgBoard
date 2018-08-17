@@ -33,7 +33,8 @@ namespace MsgBoard.BL.Services
 
         public MemberService()
         {
-            _conn = new ConnectionFactory().GetConnection();
+            _connFactory = new ConnectionFactory();
+            _conn = _connFactory.GetConnection();
         }
 
         public MemberService(IConnectionFactory factory)

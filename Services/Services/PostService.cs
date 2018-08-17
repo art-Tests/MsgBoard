@@ -22,7 +22,8 @@ namespace MsgBoard.BL.Services
 
         public PostService()
         {
-            _conn = new ConnectionFactory().GetConnection();
+            _connFactory = new ConnectionFactory();
+            _conn = _connFactory.GetConnection();
         }
 
         public PostService(IConnectionFactory factory)
