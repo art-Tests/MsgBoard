@@ -20,16 +20,11 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //查無文章
-            var dbPost = _postService.GetPostById(id.Value);
-            if (dbPost == null)
+            //查無有效文章
+            var isExist = _postService.CheckExist(id.Value);
+            if (isExist.Equals(false))
             {
                 return HttpNotFound();
-            }
-            //已刪除文章不允許回覆
-            if (dbPost.IsDel)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             ViewBag.postId = id;
@@ -52,17 +47,13 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //查無文章
-            var model = _replyService.GetReplyById(id.Value);
-            if (model == null)
+            //查無有效回覆
+            var isExist = _replyService.CheckExist(id.Value);
+            if (isExist.Equals(false))
             {
                 return HttpNotFound();
             }
-            //已刪除文章不允許回覆
-            if (model.IsDel)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            var model = _replyService.GetReplyById(id.Value);
             return View(model);
         }
 
@@ -75,12 +66,13 @@ namespace MsgBoard.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var dbReply = _replyService.GetReplyById(id.Value);
-            if (dbReply == null)
+            var isExist = _replyService.CheckExist(id.Value);
+            if (isExist.Equals(false))
             {
                 return View(model);
             }
 
+            var dbReply = _replyService.GetReplyById(id.Value);
             if (SignInUser.User.IsAdmin || SignInUser.User.Id == dbReply.CreateUserId)
             {
                 _replyService.UpdateReply(model);
@@ -96,11 +88,13 @@ namespace MsgBoard.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var model = _replyService.GetReplyById(id.Value);
-            if (model == null)
+            var isExist = _replyService.CheckExist(id.Value);
+            if (isExist.Equals(false))
             {
                 return HttpNotFound();
             }
+
+            var model = _replyService.GetReplyById(id.Value);
             if (SignInUser.User.IsAdmin || model.CreateUserId == SignInUser.User.Id)
             {
                 _replyService.DeleteReply(model);

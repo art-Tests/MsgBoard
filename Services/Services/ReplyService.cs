@@ -155,5 +155,16 @@ order by r.CreateTime
             entity.UpdateUserId = SignInUser.User.Id;
             _replyRepo.Update(_conn, entity);
         }
+
+        /// <summary>
+        /// 是否存在有效回覆
+        /// </summary>
+        /// <param name="id">回覆Id</param>
+        /// <returns></returns>
+        public bool CheckExist(int id)
+        {
+            var reply = _replyRepo.GetReplyById(_conn, id);
+            return reply != null && reply.Id != 0 && reply.IsDel == false;
+        }
     }
 }

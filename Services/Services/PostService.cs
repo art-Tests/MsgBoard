@@ -229,5 +229,16 @@ left join [dbo].[User] (nolock) as u on p.UpdateUserId= u.Id
 where p.IsDel=0
 ";
         }
+
+        /// <summary>
+        /// 是否存在有效文章
+        /// </summary>
+        /// <param name="id">文章Id</param>
+        /// <returns></returns>
+        public bool CheckExist(int id)
+        {
+            var post = _postRepo.GetPostById(_conn, id);
+            return post != null && post.Id != 0 && post.IsDel == false;
+        }
     }
 }
