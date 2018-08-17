@@ -8,11 +8,20 @@ using PagedList;
 
 namespace MsgBoard.Controllers
 {
+    [AuthorizePlus]
     public class PostController : Controller
     {
         private readonly PostService _postService = new PostService();
 
-        // GET: Post
+        /// <summary>
+        /// 取得文章列表
+        /// </summary>
+        /// <param name="id">會員編號(選填)，需與查詢項目一併使用</param>
+        /// <param name="queryItem">要查詢文章或回覆(選填)，需與會員編號一併使用</param>
+        /// <param name="page">第幾頁</param>
+        /// <param name="pageSize">分頁筆數</param>
+        /// <returns></returns>
+        [AllowAnonymous]
         public ActionResult Index(int? id, string queryItem = "", int page = 1, int pageSize = 5)
         {
             var model = _postService
@@ -22,14 +31,9 @@ namespace MsgBoard.Controllers
         }
 
         [HttpGet]
-        [AuthorizePlus]
-        public ActionResult Create()
-        {
-            return View();
-        }
+        public ActionResult Create() => View();
 
         [HttpPost]
-        [AuthorizePlus]
         public ActionResult Create(PostViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
@@ -37,7 +41,7 @@ namespace MsgBoard.Controllers
             return RedirectToAction("Index", "Post");
         }
 
-        [HttpGet, AuthorizePlus]
+        [HttpGet]
         public ActionResult Update(int? id)
         {
             if (id == null)
@@ -49,7 +53,7 @@ namespace MsgBoard.Controllers
             return View(model);
         }
 
-        [HttpPost, AuthorizePlus]
+        [HttpPost]
         public ActionResult Update(int? id, PostViewModel model)
         {
             if (id == null)
@@ -74,6 +78,7 @@ namespace MsgBoard.Controllers
             return View(model);
         }
 
+        [HttpPost]
         public ActionResult Delete(int? id)
         {
             if (id == null)

@@ -171,6 +171,7 @@ namespace MsgBoard.Controllers
             return RedirectToAction(model.BackAction, model.BackController, new { page = model.BackPage });
         }
 
+        [AuthorizePlus]
         public ActionResult ChangeStat(int? id, bool newStat, int page = 1)
         {
             if (id == null)

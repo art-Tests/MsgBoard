@@ -12,6 +12,7 @@ namespace MsgBoard.Controllers
     {
         private readonly AdminService _adminService = new AdminService();
 
+        [HttpGet]
         public ActionResult Index(int page = 1, int pageSize = 5)
         {
             if (SignInUser.User.IsAdmin.Equals(false))
