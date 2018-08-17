@@ -1,4 +1,4 @@
-;(function(w, $) {
+;(function() {
   const delCnfmHandler = function() {
     $(this)
       .hide()
@@ -103,4 +103,4 @@
   }
   var app = new PostIndex()
   app.Init(document)
-})(window, jQuery)
+})()

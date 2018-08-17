@@ -37,8 +37,22 @@ Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Art\Project\Personal\MsgB
 
 ## 前端
 
-1. 採用 `typeScript` 改寫過 `/Post/Index` 的前端 `javascript`
-1. 需先執行下列指令進行編譯的動作
+### typings 安裝
+
+採用 `typeScript` 改寫過 `/Post/Index` 的前端 `javascript`
+
+> 開發時期撰寫 typescript 會有不認識 jQuery 的情況，需要先安裝 typings，參考網站 [typings]
+
+[typings]: https://www.npmjs.com/package/typings
+
+```
+npm install typings --global
+typings install dt~jquery --global --save
+```
+
+### 編譯前端代碼
+
+需先執行下列指令進行編譯的動作
 
 ```
 npm install
