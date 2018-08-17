@@ -8,7 +8,6 @@ using PagedList;
 
 namespace MsgBoard.Controllers
 {
-    [AuthorizePlus]
     public class PostController : Controller
     {
         private readonly PostService _postService = new PostService();
@@ -21,7 +20,7 @@ namespace MsgBoard.Controllers
         /// <param name="page">第幾頁</param>
         /// <param name="pageSize">分頁筆數</param>
         /// <returns></returns>
-        [AllowAnonymous]
+
         public ActionResult Index(int? id, string queryItem = "", int page = 1, int pageSize = 5)
         {
             var model = _postService
@@ -31,9 +30,11 @@ namespace MsgBoard.Controllers
         }
 
         [HttpGet]
+        [AuthorizePlus]
         public ActionResult Create() => View();
 
         [HttpPost]
+        [AuthorizePlus]
         public ActionResult Create(PostViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
@@ -42,6 +43,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpGet]
+        [AuthorizePlus]
         public ActionResult Update(int? id)
         {
             if (id == null)
@@ -54,6 +56,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost]
+        [AuthorizePlus]
         public ActionResult Update(int? id, PostViewModel model)
         {
             if (id == null)
@@ -79,6 +82,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost]
+        [AuthorizePlus]
         public ActionResult Delete(int? id)
         {
             if (id == null)

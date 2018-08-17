@@ -7,13 +7,13 @@ using MsgBoard.Filter;
 
 namespace MsgBoard.Controllers
 {
-    [AuthorizePlus]
     public class ReplyController : Controller
     {
         private readonly ReplyService _replyService = new ReplyService();
         private readonly PostService _postService = new PostService();
 
         [HttpGet]
+        [AuthorizePlus]
         public ActionResult Create(int? id)
         {
             //參數錯誤
@@ -33,6 +33,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost]
+        [AuthorizePlus]
         public ActionResult Create(ReplyViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
@@ -41,6 +42,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpGet]
+        [AuthorizePlus]
         public ActionResult Update(int? id)
         {
             //參數錯誤
@@ -59,6 +61,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost]
+        [AuthorizePlus]
         public ActionResult Update(int? id, ReplyViewModel model)
         {
             if (id == null)
@@ -85,6 +88,7 @@ namespace MsgBoard.Controllers
         }
 
         [HttpPost]
+        [AuthorizePlus]
         public ActionResult Delete(int? id)
         {
             if (id == null)
