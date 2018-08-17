@@ -106,7 +106,7 @@
                     {{/if}}
 
                     <div class="text-muted">Created By ${CreateAuthor.Name} @@ ${CreateTimeText}</div>
-                    {{if CreateTimeText != UpdateTimeText }}
+                    {{if CreateTimeText != UpdateTimeText || CreateAuthor.Id != UpdateAuthor.Id }}
                     <div class="text-muted">Updated By ${UpdateAuthor.Name} @@ ${UpdateTimeText}</div>
                     {{/if}}
                 </div>
