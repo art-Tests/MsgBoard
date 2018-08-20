@@ -1,7 +1,7 @@
 const path = require('path')
 module.exports = {
   entry: {
-    PostIndex: './src/Post/index.ts'
+    PostIndex: './src/Post/app.ts'
   },
   output: {
     filename: '[name].js',
@@ -12,6 +12,7 @@ module.exports = {
   },
 
   module: {
+    unknownContextCritical: false,
     rules: [
       {
         test: /\.ts$/,

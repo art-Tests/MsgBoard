@@ -1,5 +1,5 @@
 ;(function() {
-  const delCnfmHandler = function() {
+  const delConformHandler = function() {
     $(this)
       .hide()
       .siblings('.delete-confirm')
@@ -16,7 +16,7 @@
   /**
    * 確認刪除文章事件處理
    * 1. 取得文章Id
-   * 2. 透過js建立表單以Post送出刪除請求
+   * 2. 透過 javaScript 建立表單以 Post 送出刪除請求
    */
   const delPostHandler = function() {
     let postId = $(this).data('id')
@@ -71,7 +71,7 @@
         $('div[name=tmpl-div]').delegate(
           '.delete-link',
           'click',
-          delCnfmHandler
+          delConformHandler
         )
         $('div[name=tmpl-div]').delegate(
           '.delete-confirm',
@@ -87,7 +87,7 @@
       console.log('this is init()')
       document
         .querySelectorAll('a.delete-link')
-        .forEach(btn => btn.addEventListener('click', delCnfmHandler))
+        .forEach(btn => btn.addEventListener('click', delConformHandler))
 
       document
         .querySelectorAll('.delete-confirm')
@@ -101,6 +101,7 @@
         .forEach(link => link.addEventListener('click', hideReplyArea))
     }
   }
+
   var app = new PostIndex()
   app.Init(document)
 })()

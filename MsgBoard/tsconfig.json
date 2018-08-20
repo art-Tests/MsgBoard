@@ -4,5 +4,7 @@
     "module": "umd",
     "sourceMap": false,
     "lib": ["dom", "es2015", "es5", "es6"]
-  }
+  },
+
+  "exclude": ["node_modules"]
 }
