@@ -3,6 +3,7 @@
     "target": "es5",
     "module": "umd",
     "sourceMap": false,
+    "moduleResolution": "node",
     "lib": ["dom", "es2015", "es5", "es6"]
   },
 
