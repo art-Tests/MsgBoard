@@ -257,20 +257,17 @@ namespace MsgBoard.BL.Services
         {
             using (var tranScope = new TransactionScope())
             {
-                using (var connection = _connFactory.GetConnection())
-                {
-                    // Table User
-                    var fileName = SaveMemberPic(model.File, path);
-                    var user = ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
-                    user.Id = _userRepo.Create(connection, user);
-                    var userVm = ConvertToUserViewModel(user);
-                    // Table Password
-                    var password = ConvertToPassEntity(user.Id, user.Guid, model.Password);
-                    CreatePassword(password);
+                // Table User
+                var fileName = SaveMemberPic(model.File, path);
+                var user = ConvertToUserEntity(model, $"{FileUploadPath}/{fileName}");
+                user.Id = _userRepo.Create(_conn, user);
+                var userVm = ConvertToUserViewModel(user);
+                // Table Password
+                var password = ConvertToPassEntity(user.Id, user.Guid, model.Password);
+                CreatePassword(password);
 
-                    // 註冊完直接給他登入-因為是新會員，所以文章count直接給預設0即可
-                    SignInUser.UserLogin(true, userVm, new UserArticleCount());
-                }
+                // 註冊完直接給他登入-因為是新會員，所以文章count直接給預設0即可
+                SignInUser.UserLogin(true, userVm, new UserArticleCount());
 
                 tranScope.Complete();
             }
